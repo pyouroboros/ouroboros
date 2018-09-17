@@ -1,4 +1,4 @@
-![alt text](https://i.imgur.com/K3VV4Kx.png)
+![alt text](https://i.imgur.com/kYbI9Hi.png)
 
 A python alternative to [watchtower](https://github.com/v2tec/watchtower)
 
