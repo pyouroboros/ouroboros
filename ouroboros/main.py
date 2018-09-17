@@ -1,6 +1,5 @@
 import docker
-import lib.containers as containers
-import lib.image as image
+import containers, image
 
 client = docker.from_env()
 
