@@ -4,6 +4,9 @@ client = docker.from_env()
 
 class new_container_properties:
     def __init__(self, old_container, new_image):
+        """
+        Store dict for spawning new container in place of the one with outdated image
+        """
         self.name = old_container['Names'][0].replace('/','')
         self.image = new_image
         self.old_image_id = old_container['ImageID']

@@ -7,4 +7,5 @@ def pull_latest(image):
     return client.images.pull(image.tags[0].split(':')[0] + ':latest')
 
 def is_image_up_to_date(old_sha, new_sha):
+    """Returns boolean if old and new image digests match"""
     return old_sha == new_sha
