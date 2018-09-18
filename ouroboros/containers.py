@@ -2,7 +2,7 @@ import docker
 
 client = docker.from_env()
 
-class new_container_properties:
+class NewContainerProperties:
     def __init__(self, old_container, new_image):
         """
         Store object for spawning new container in place of the one with outdated image
@@ -17,10 +17,6 @@ class new_container_properties:
         self.mounts = old_container['Mounts']
         if 'Entrypoint' in old_container:
             self.entrypoint = old_container["Entrypoint"]
-
-def running():
-    """Return list of running containers"""
-    return client.containers.list()
 
 def running_properties():
     """Return container object"""
