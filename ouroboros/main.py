@@ -4,6 +4,9 @@ import containers, image
 client = docker.from_env()
 
 def main():
+    if not containers.running_properties():
+        print('[INFO] No containers running')
+
     for running_container in containers.running_properties():
         current_image = client.images.get(running_container["ImageID"])
         latest_image = image.pull_latest(current_image)

@@ -15,7 +15,7 @@ class new_container_properties:
         self.labels = old_container['Labels']
         self.network = next(iter(old_container['NetworkSettings']['Networks']))
         self.mounts = old_container['Mounts']
-        if old_container["Entrypoint"]:
+        if 'Entrypoint' in old_container:
             self.entrypoint = old_container["Entrypoint"]
 
 def running():
