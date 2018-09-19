@@ -15,6 +15,7 @@ class NewContainerProperties:
         self.labels = old_container['Labels']
         self.network = next(iter(old_container['NetworkSettings']['Networks']))
         self.mounts = old_container['Mounts']
+        self.detach = True
         if 'Entrypoint' in old_container:
             self.entrypoint = old_container["Entrypoint"]
 
