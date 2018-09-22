@@ -21,5 +21,6 @@ def main():
                 new_container = containers.create_new_container(new_config.__dict__)
                 containers.start(new_container)
                 image.remove(current_image.id)
+
 if __name__ == "__main__":
    main()
