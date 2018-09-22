@@ -69,11 +69,11 @@ def running_properties():
 
 def stop(container_object):
     """Stop out of date container"""
-    client.stop(container_object)
+    return client.stop(container_object)
 
 def remove(container_object):
     """Remove out of date container"""
-    client.remove_container(container_object)
+    return client.remove_container(container_object)
 
 def create_new_container(config):
     """Create new container with latest image"""
@@ -81,4 +81,4 @@ def create_new_container(config):
 
 def start(container_object):
     """Start newly created container with latest image"""
-    client.start(container_object)
+    return client.start(container_object)
