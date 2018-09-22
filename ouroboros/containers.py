@@ -16,7 +16,6 @@ class NewContainerProperties:
         self.labels = old_container['Labels']
         self.networking_config = client.create_networking_config({ self.get_network_name(old_container['NetworkSettings']['Networks']): client.create_networking_config() })
         self.volumes = self.get_volumes(old_container['Mounts'])
-        self.host_config = self.create_host_volume_bindings(old_container['Mounts'])
         self.detach = True
         if 'Entrypoint' in old_container:
             self.entrypoint = old_container['Entrypoint']
