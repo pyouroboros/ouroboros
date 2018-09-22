@@ -10,7 +10,11 @@ def main():
     else:
         for running_container in containers.running_properties():
             current_image = client.images.get(running_container["ImageID"])
-            latest_image = image.pull_latest(current_image)
+            try:
+                latest_image = image.pull_latest(current_image)
+            except docker.errors.APIError as e:
+                print(e)
+                break
             # if current running container is running latest image
             if not image.is_up_to_date(current_image.id, latest_image.id):
                 print('[INFO] {0:%Y-%m-%d %H:%M:%S} {1} is out of date'.format(datetime.datetime.now(), str(running_container["Names"][0]).replace('/','')))

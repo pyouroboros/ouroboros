@@ -12,7 +12,8 @@ class NewContainerProperties:
         self.command = old_container['Command']
         self.ports = self.get_container_ports(old_container['Ports'])
         self.host_config = client.create_host_config(port_bindings=self.create_host_port_bindings(old_container['Ports']),
-                                                     binds=self.create_host_volume_bindings(old_container['Mounts']))
+                                                     binds=self.create_host_volume_bindings(old_container['Mounts']),
+                                                     restart_policy={'name': 'on-failure', 'MaximumRetryCount': 1})
         self.labels = old_container['Labels']
         self.networking_config = client.create_networking_config({ self.get_network_name(old_container['NetworkSettings']['Networks']): client.create_networking_config() })
         self.volumes = self.get_volumes(old_container['Mounts'])
