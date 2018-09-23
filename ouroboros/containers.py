@@ -1,4 +1,4 @@
-import docker
+import docker, logging
 from main import api_client
 
 class NewContainerProperties:
@@ -64,7 +64,10 @@ class NewContainerProperties:
 
 def running_properties():
     """Return container object"""
-    return api_client.containers()
+    try:
+        return api_client.containers()
+    except:
+        logging.critical(('Can\'t connect to Docker API at {}').format(api_client.base_url))
 
 def stop(container_object):
     """Stop out of date container"""
