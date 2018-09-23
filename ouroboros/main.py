@@ -3,6 +3,7 @@ import containers, image
 import datetime
 
 client = docker.DockerClient(base_url='unix://var/run/docker.sock')
+api_client = docker.APIClient(base_url='unix://var/run/docker.sock')
 
 def main():
     if not containers.running_properties():
@@ -25,6 +26,7 @@ def main():
                 new_container = containers.create_new_container(new_config.__dict__)
                 containers.start(new_container)
                 image.remove(current_image.id)
+        print('[INFO] {0:%Y-%m-%d %H:%M:%S} All containers up to date'.format(datetime.datetime.now()))
 
 if __name__ == "__main__":
    main()

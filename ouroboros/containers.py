@@ -1,6 +1,5 @@
 import docker
-
-client = docker.APIClient(base_url='unix://var/run/docker.sock')
+from main import api_client
 
 class NewContainerProperties:
     def __init__(self, old_container, new_image):
@@ -11,11 +10,11 @@ class NewContainerProperties:
         self.image = new_image
         self.command = old_container['Command']
         self.ports = self.get_container_ports(old_container['Ports'])
-        self.host_config = client.create_host_config(port_bindings=self.create_host_port_bindings(old_container['Ports']),
+        self.host_config = api_client.create_host_config(port_bindings=self.create_host_port_bindings(old_container['Ports']),
                                                      binds=self.create_host_volume_bindings(old_container['Mounts']),
                                                      restart_policy={'name': 'on-failure', 'MaximumRetryCount': 1})
         self.labels = old_container['Labels']
-        self.networking_config = client.create_networking_config({ self.get_network_name(old_container['NetworkSettings']['Networks']): client.create_networking_config() })
+        self.networking_config = api_client.create_networking_config({ self.get_network_name(old_container['NetworkSettings']['Networks']): api_client.create_networking_config() })
         self.volumes = self.get_volumes(old_container['Mounts'])
         self.detach = True
         if 'Entrypoint' in old_container:
@@ -65,20 +64,20 @@ class NewContainerProperties:
 
 def running_properties():
     """Return container object"""
-    return client.containers()
+    return api_client.containers()
 
 def stop(container_object):
     """Stop out of date container"""
-    return client.stop(container_object)
+    return api_client.stop(container_object)
 
 def remove(container_object):
     """Remove out of date container"""
-    return client.remove_container(container_object)
+    return api_client.remove_container(container_object)
 
 def create_new_container(config):
     """Create new container with latest image"""
-    return client.create_container(**config)
+    return api_client.create_container(**config)
 
 def start(container_object):
     """Start newly created container with latest image"""
-    return client.start(container_object)
+    return api_client.start(container_object)
