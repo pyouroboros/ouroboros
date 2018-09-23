@@ -34,4 +34,4 @@ if __name__ == "__main__":
     schedule.every(defaults.INTERVAL).seconds.do(main)
     while True:
         schedule.run_pending()
-        time.sleep(defaults.INTERVAL / 5)
+        time.sleep(defaults.INTERVAL - 5)
