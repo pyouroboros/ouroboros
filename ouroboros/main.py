@@ -37,7 +37,7 @@ def main():
 
 if __name__ == "__main__":
     set_logger('debug')
-    schedule.every(20).seconds.do(main)
+    schedule.every(defaults.INTERVAL).seconds.do(main)
     while True:
         schedule.run_pending()
-        time.sleep(20 - 5)
+        time.sleep(defaults.INTERVAL - 5)
