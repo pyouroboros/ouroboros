@@ -16,7 +16,7 @@ def main():
                 latest_image = image.pull_latest(current_image)
             except docker.errors.APIError as e:
                 logging.error(e)
-                break
+                continue
             # if current running container is running latest image
             if not image.is_up_to_date(current_image.id, latest_image.id):
                 logging.info(('{} will be updated').format(container.get_name(running_container)))
