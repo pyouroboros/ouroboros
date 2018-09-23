@@ -12,4 +12,4 @@ def set_logger(level='info'):
     }
     if level not in levels:
         level = 'info'
-    return logging.basicConfig(format='[%(levelname)-4s] %(asctime)s %(message)s', level=(levels.get(level.lower())), datefmt='%Y-%m-%d %H:%M:%S')
+    return logging.basicConfig(format='[%(levelname)-s] %(asctime)s %(message)s', level=(levels.get(level.lower())), datefmt='%Y-%m-%d %H:%M:%S')

@@ -1,3 +1,5 @@
 *.md
 __pycache__
 *.pyc
+.vscode/
+.gitignore
