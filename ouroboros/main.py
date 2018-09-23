@@ -11,14 +11,14 @@ def main():
         logging.info('No containers are running')
     else:
         for running_container in containers.running_properties():
-            current_image = client.images.get(running_container["ImageID"])
+            current_image = client.images.get(running_container['ImageID'])
             try:
                 latest_image = image.pull_latest(current_image)
             except docker.errors.APIError as e:
                 logging.error(e)
             # if current running container is running latest image
             if not image.is_up_to_date(current_image.id, latest_image.id):
-                logging.info(('{} will be updated').format(running_container["Names"][0].replace('/','')))
+                logging.info(('{} will be updated').format(running_container['Names'][0].replace('/','')))
                 # new container object to create new container from
                 new_config = containers.NewContainerProperties(running_container, latest_image.tags[0])
                 containers.stop(running_container)
