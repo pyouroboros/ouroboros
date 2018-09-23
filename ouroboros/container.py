@@ -70,6 +70,10 @@ def running_properties():
     except:
         logging.critical(('Can\'t connect to Docker API at {}').format(api_client.base_url))
 
+def get_name(container_object):
+    """Parse out first name of container"""
+    return container_object['Names'][0].replace('/','')
+
 def stop(container_object):
     """Stop out of date container"""
     return api_client.stop(container_object)
