@@ -1,16 +1,22 @@
 #!/usr/bin/env python3
-import docker, schedule, time, datetime, logging,sys
-import container, image, defaults
+import docker
+import schedule
+import time
+import datetime
+import logging
+import container
+import image
+import defaults
 from logger import set_logger
 
 client = docker.DockerClient(base_url=defaults.LOCAL_UNIX_SOCKET)
 api_client = docker.APIClient(base_url=defaults.LOCAL_UNIX_SOCKET)
 
 def main():
-    if not container.running_properties():
+    if not container.running():
         logging.info('No containers are running')
     else:
-        for running_container in container.running_properties():
+        for running_container in container.to_monitor():
             current_image = client.images.get(running_container['ImageID'])
             try:
                 latest_image = image.pull_latest(current_image)
@@ -26,12 +32,12 @@ def main():
                 container.remove(running_container)
                 new_container = container.create_new_container(new_config.__dict__)
                 container.start(new_container)
-                image.remove(current_image.id)
+                image.remove(current_image)
         logging.info('All containers up to date')
 
 if __name__ == "__main__":
     set_logger('debug')
-    schedule.every(defaults.INTERVAL).seconds.do(main)
+    schedule.every(20).seconds.do(main)
     while True:
         schedule.run_pending()
-        time.sleep(defaults.INTERVAL - 5)
+        time.sleep(20 - 5)

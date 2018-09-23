@@ -1,4 +1,5 @@
-import docker, logging
+import docker
+import logging
 import defaults
 from main import api_client
 
@@ -63,12 +64,19 @@ class NewContainerProperties:
             })
         return volume_bindings
 
-def running_properties():
-    """Return container object"""
+def running():
     try:
-        return api_client.containers()
+        return  api_client.containers()
     except:
         logging.critical(('Can\'t connect to Docker API at {}').format(api_client.base_url))
+
+def to_monitor():
+    """Return container object list"""
+    container_list = []
+    for container in running():
+        container_list.append(get_name(container))
+    logging.debug(('Monitoring containers: {}').format(container_list))
+    return running()
 
 def get_name(container_object):
     """Parse out first name of container"""
@@ -76,16 +84,20 @@ def get_name(container_object):
 
 def stop(container_object):
     """Stop out of date container"""
+    logging.debug(('Stopping container: {}').format(get_name(container_object)))
     return api_client.stop(container_object)
 
 def remove(container_object):
     """Remove out of date container"""
+    logging.debug(('Removing container: {}').format(get_name(container_object)))
     return api_client.remove_container(container_object)
 
 def create_new_container(config):
     """Create new container with latest image"""
+    logging.debug(('Creating new container with opts: {}').format(config))
     return api_client.create_container(**config)
 
 def start(container_object):
     """Start newly created container with latest image"""
+    logging.debug(('Starting container: {}').format(container_object))
     return api_client.start(container_object)
