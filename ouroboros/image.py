@@ -1,6 +1,6 @@
 import docker
 
-client = docker.from_env()
+client = docker.DockerClient(base_url='unix://var/run/docker.sock')
 
 def pull_latest(image):
     """Return tag of latest image pulled"""
