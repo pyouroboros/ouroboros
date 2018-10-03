@@ -1,4 +1,3 @@
-import docker
 import logging
 import defaults
 from main import api_client
@@ -17,13 +16,14 @@ class NewContainerProperties:
         self.entrypoint = old_container['Config']['Entrypoint']
 
 def running():
+    """Return all running container objects list"""
     running_containers = []
     try:
         for container in api_client.containers():
             if container['State'] == 'running':
                 running_containers.append(api_client.inspect_container(container))
         return running_containers
-    except Exception as e:
+    except:
         logging.critical(('Can\'t connect to Docker API at {}').format(api_client.base_url))
 
 def to_monitor():
@@ -54,5 +54,5 @@ def create_new_container(config):
 
 def start(container_object):
     """Start newly created container with latest image"""
-    logging.debug(('Starting container: {}').format(container_object))
+    logging.debug(('Starting container: {}').format(container_object['Id']))
     return api_client.start(container_object)
