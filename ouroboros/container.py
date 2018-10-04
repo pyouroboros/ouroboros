@@ -20,12 +20,8 @@ def running():
     running_containers = []
     try:
         for container in main.api_client.containers():
-            if len(cli.monitor) == 0:
-                if container['State'] == 'running':
-                    running_containers.append(main.api_client.inspect_container(container))
-            else:
-                if container['State'] == 'running' and container['Name'] in cli.monitor:
-                    running_containers.append(main.api_client.inspect_container(container))
+            if container['State'] == 'running':
+                running_containers.append(main.api_client.inspect_container(container))
         return running_containers
     except:
         logging.critical(('Can\'t connect to Docker API at {}').format(main.api_client.base_url))
@@ -34,7 +30,10 @@ def to_monitor():
     """Return container object list"""
     container_list = []
     for container in running():
-        container_list.append(get_name(container))
+        if len(cli.monitor) == 0:
+            container_list.append(get_name(container))
+        elif container['Name'] in cli.monitor:
+            container_list.append(get_name(container))
     logging.debug(('Monitoring containers: {}').format(container_list))
     return running()
 
