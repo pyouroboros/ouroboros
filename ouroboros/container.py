@@ -1,6 +1,4 @@
 import logging
-import defaults
-from main import api_client
 
 class NewContainerProperties:
     def __init__(self, old_container, new_image):
@@ -19,12 +17,12 @@ def running():
     """Return all running container objects list"""
     running_containers = []
     try:
-        for container in api_client.containers():
+        for container in main.api_client.containers():
             if container['State'] == 'running':
-                running_containers.append(api_client.inspect_container(container))
+                running_containers.append(main.api_client.inspect_container(container))
         return running_containers
     except:
-        logging.critical(('Can\'t connect to Docker API at {}').format(api_client.base_url))
+        logging.critical(('Can\'t connect to Docker API at {}').format(main.api_client.base_url))
 
 def to_monitor():
     """Return container object list"""
@@ -41,18 +39,18 @@ def get_name(container_object):
 def stop(container_object):
     """Stop out of date container"""
     logging.debug(('Stopping container: {}').format(get_name(container_object)))
-    return api_client.stop(container_object)
+    return main.api_client.stop(container_object)
 
 def remove(container_object):
     """Remove out of date container"""
     logging.debug(('Removing container: {}').format(get_name(container_object)))
-    return api_client.remove_container(container_object)
+    return main.api_client.remove_container(container_object)
 
 def create_new_container(config):
     """Create new container with latest image"""
-    return api_client.create_container(**config)
+    return main.api_client.create_container(**config)
 
 def start(container_object):
     """Start newly created container with latest image"""
     logging.debug(('Starting container: {}').format(container_object['Id']))
-    return api_client.start(container_object)
+    return main.api_client.start(container_object)

@@ -9,12 +9,14 @@ import container
 import image
 from logger import set_logger
 
+api_client = None
+
 def main():
     if not container.running():
         logging.info('No containers are running')
     else:
         for running_container in container.to_monitor():
-            current_image = docker.APIClient(base_url=cli.host).inspect_image(running_container['Config']['Image'])
+            current_image = api_client.inspect_image(running_container['Config']['Image'])
             try:
                 latest_image = image.pull_latest(current_image)
             except docker.errors.APIError as e:
@@ -33,7 +35,9 @@ def main():
         logging.info('All containers up to date')
 
 if __name__ == "__main__":
+    global api_client
     cli.parser()
+    api_client = docker.APIClient(base_url=cli.host)
     set_logger(cli.debug)
     schedule.every(cli.interval).seconds.do(main)
     while True:
