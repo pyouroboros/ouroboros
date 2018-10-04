@@ -1,4 +1,6 @@
 import logging
+import main
+import cli
 
 class NewContainerProperties:
     def __init__(self, old_container, new_image):
@@ -18,8 +20,12 @@ def running():
     running_containers = []
     try:
         for container in main.api_client.containers():
-            if container['State'] == 'running':
-                running_containers.append(main.api_client.inspect_container(container))
+            if len(cli.monitor) == 0:
+                if container['State'] == 'running':
+                    running_containers.append(main.api_client.inspect_container(container))
+            else:
+                if container['State'] == 'running' and container['Name'] in cli.monitor:
+                    running_containers.append(main.api_client.inspect_container(container))
         return running_containers
     except:
         logging.critical(('Can\'t connect to Docker API at {}').format(main.api_client.base_url))
