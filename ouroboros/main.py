@@ -9,8 +9,6 @@ import container
 import image
 from logger import set_logger
 
-api_client = None
-
 def main():
     if not container.running():
         logging.info('No containers are running')
