@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import cli
 import docker
 import schedule
 import time
@@ -6,17 +7,14 @@ import datetime
 import logging
 import container
 import image
-import defaults
 from logger import set_logger
-
-api_client = docker.APIClient(base_url=defaults.LOCAL_UNIX_SOCKET)
 
 def main():
     if not container.running():
         logging.info('No containers are running')
     else:
         for running_container in container.to_monitor():
-            current_image = api_client.inspect_image(running_container['Config']['Image'])
+            current_image = docker.APIClient(base_url=cli.host).inspect_image(running_container['Config']['Image'])
             try:
                 latest_image = image.pull_latest(current_image)
             except docker.errors.APIError as e:
@@ -35,8 +33,9 @@ def main():
         logging.info('All containers up to date')
 
 if __name__ == "__main__":
-    set_logger('debug')
-    schedule.every(defaults.INTERVAL).seconds.do(main)
+    cli.parser()
+    set_logger(cli.debug)
+    schedule.every(cli.interval).seconds.do(main)
     while True:
         schedule.run_pending()
-        time.sleep(defaults.INTERVAL - 5)
+        time.sleep(cli.interval - 5)
