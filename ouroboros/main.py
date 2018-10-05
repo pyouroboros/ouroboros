@@ -10,13 +10,11 @@ import image
 from logger import set_logger
 
 def main():
-    global api_client
-    
     if not container.running():
         logging.info('No containers are running')
     else:
         for running_container in container.to_monitor():
-            current_image = api_client.inspect_image(running_container['Config']['Image'])
+            current_image = cli.api_client.inspect_image(running_container['Config']['Image'])
             try:
                 latest_image = image.pull_latest(current_image)
             except docker.errors.APIError as e:
