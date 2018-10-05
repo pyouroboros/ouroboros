@@ -9,11 +9,9 @@ import container
 import image
 from logger import set_logger
 
-api_client = None
-
 def main():
     global api_client
-    api_client = docker.APIClient(base_url=cli.host)
+    
     if not container.running():
         logging.info('No containers are running')
     else:
