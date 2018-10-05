@@ -25,16 +25,28 @@ def running():
     except:
         logging.critical(('Can\'t connect to Docker API at {}').format(cli.api_client.base_url))
 
+def filtered_running(container_list):
+    """Return all running container objects list"""
+    running_containers = []
+    try:
+        for container_name in container_list:
+            for container in cli.api_client.containers(filters={'name': container_name}):
+                if container['State'] == 'running':
+                    running_containers.append(cli.api_client.inspect_container(container))
+        return running_containers
+    except:
+        logging.critical(('Can\'t connect to Docker API at {}').format(cli.api_client.base_url))
+
 def to_monitor():
     """Return container object list"""
     container_list = []
     for container in running():
         if len(cli.monitor) == 0:
             container_list.append(get_name(container))
-        elif container['Name'] in cli.monitor:
+        elif get_name(container) in cli.monitor:
             container_list.append(get_name(container))
-    logging.debug(('Monitoring containers: {}').format(container_list))
-    return running()
+    logging.debug(('Monitoring active containers: {}').format(container_list))
+    return filtered_running(container_list)
 
 def get_name(container_object):
     """Parse out first name of container"""

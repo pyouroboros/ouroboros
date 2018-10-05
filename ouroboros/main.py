@@ -13,6 +13,7 @@ def main():
     if not container.running():
         logging.info('No containers are running')
     else:
+        updated_count = 0
         for running_container in container.to_monitor():
             current_image = cli.api_client.inspect_image(running_container['Config']['Image'])
             try:
@@ -30,7 +31,8 @@ def main():
                 new_container = container.create_new_container(new_config.__dict__)
                 container.start(new_container)
                 image.remove(current_image)
-        logging.info('All containers up to date')
+                updated_count += 1
+        logging.info('{} containers updated'.format(updated_count))
 
 if __name__ == "__main__":
     cli.parser()
