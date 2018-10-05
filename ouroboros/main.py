@@ -9,7 +9,11 @@ import container
 import image
 from logger import set_logger
 
+api_client = None
+
 def main():
+    global api_client
+    api_client = docker.APIClient(base_url=cli.host)
     if not container.running():
         logging.info('No containers are running')
     else:
@@ -33,9 +37,7 @@ def main():
         logging.info('All containers up to date')
 
 if __name__ == "__main__":
-    global api_client
     cli.parser()
-    api_client = docker.APIClient(base_url=cli.host)
     set_logger(cli.debug)
     schedule.every(cli.interval).seconds.do(main)
     while True:
