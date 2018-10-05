@@ -26,7 +26,7 @@ def running():
         logging.critical(('Can\'t connect to Docker API at {}').format(cli.api_client.base_url))
 
 def filtered_running(container_list):
-    """Return all running container objects list"""
+    """Return filtered running container objects list"""
     running_containers = []
     try:
         for container_name in container_list:
