@@ -32,7 +32,7 @@ def main():
                 container.start(new_container)
                 image.remove(current_image)
                 updated_count += 1
-        logging.info('{} containers updated'.format(updated_count))
+        logging.info('{} container(s) updated'.format(updated_count))
 
 if __name__ == "__main__":
     cli.parser()

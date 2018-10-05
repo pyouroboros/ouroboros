@@ -32,6 +32,5 @@ def parser():
     # checkURI(host)
     interval = args.interval or defaults.INTERVAL
     monitor = args.monitor or []
-    print(len(monitor))
     debug = args.debug or 'warn'
     api_client = docker.APIClient(base_url=host)
