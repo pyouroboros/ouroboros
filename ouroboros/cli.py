@@ -18,8 +18,7 @@ def checkURI(uri):
         r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
         r'(?::\d+)?' # optional port
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-    if re.match(regex, uri) is None:
-        exit('--url value error: {} is not a valid URI'.format(uri))
+    return re.match(regex, uri)
 
 def parser():
     """Declare command line options"""
@@ -27,15 +26,15 @@ def parser():
     parser = argparse.ArgumentParser(description='ouroboros', epilog='Example: python3 main.py -u tcp://1.2.3.4:5678 -i 20 -m container1 container2 -d warn')
     parser.add_argument('-u', '--url', help='Url for tcp host (defaults to "unix://var/run/docker.sock")', required=False)
     parser.add_argument('-i','--interval', type=int, help='Interval in seconds between checking for updates (defaults to 300s)', required=False)
-    parser.add_argument('-m','--monitor', nargs='+', help='Which container to monitor (defaults to all found).', required=False)
+    parser.add_argument('-m','--monitor', nargs='+', help='Which container to monitor (defaults to all running).', required=False)
     parser.add_argument('-d','--debug', choices=['notset','debug','info', 'warn', 'error', 'critical'], help='Change logger mode to debug (defaults to warn)', required=False)
     args = parser.parse_args()
     if args.url:
         host = args.url
-        checkURI(host)
-    else:
-        host = defaults.LOCAL_UNIX_SOCKET
+        if not checkURI(host):
+            host = defaults.LOCAL_UNIX_SOCKET
     interval = args.interval or defaults.INTERVAL
     monitor = args.monitor or []
-    debug = args.debug or 'warn'
+    debug = args.debug or 'info'
     api_client = docker.APIClient(base_url=host)
+    return args

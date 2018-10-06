@@ -1,7 +1,7 @@
 import logging
 
 def set_logger(level='info'):
-    """Set log level (Default=info"""
+    """Set log level (Default=info)"""
     levels = {
         'notset': logging.NOTSET,
         'debug': logging.DEBUG,
