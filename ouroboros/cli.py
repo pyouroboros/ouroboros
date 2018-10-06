@@ -37,3 +37,4 @@ def parser():
     monitor = args.monitor or []
     debug = args.debug or 'info'
     api_client = docker.APIClient(base_url=host)
+    return args
