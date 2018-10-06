@@ -15,6 +15,7 @@ class NewContainerProperties:
         self.entrypoint = old_container['Config']['Entrypoint']
 
 def running():
+    """Return running container objects list"""
     running_containers = []
     try:
         for container in cli.api_client.containers(filters={'status': 'running'}):
