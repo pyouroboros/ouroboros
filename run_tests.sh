@@ -9,6 +9,5 @@ for i in $(cat requirements-dev.txt);
     fi
   done
 
-#pip install -r requirements-dev.txt
 export PYTHONPATH=$(pwd)/ouroboros
 $(which python3) -m pytest -v
