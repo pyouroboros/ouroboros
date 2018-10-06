@@ -10,6 +10,7 @@ debug = ''
 api_client = None
 
 def checkURI(uri):
+    """Validate tcp:// regex"""
     regex = re.compile(
         r'^(?:tcp)s?://' # tcp://
         r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
@@ -21,6 +22,7 @@ def checkURI(uri):
         exit('--url value error: {} is not a valid URI'.format(uri))
 
 def parser():
+    """Declare command line options"""
     global host, interval, monitor, debug, api_client
     parser = argparse.ArgumentParser(description='ouroboros', epilog='Example: python3 main.py -u tcp://1.2.3.4:5678 -i 20 -m container1 container2 -d warn')
     parser.add_argument('-u', '--url', help='Url for tcp host (defaults to "unix://var/run/docker.sock")', required=False)
@@ -28,9 +30,9 @@ def parser():
     parser.add_argument('-m','--monitor', nargs='+', help='Which container to monitor (defaults to all found).', required=False)
     parser.add_argument('-d','--debug', choices=['notset','debug','info', 'warn', 'error', 'critical'], help='Change logger mode to debug (defaults to warn)', required=False)
     args = parser.parse_args()
-    checkURI(args.url)
     if args.url:
         host = args.url
+        checkURI(host)
     else:
         host = defaults.LOCAL_UNIX_SOCKET
     interval = args.interval or defaults.INTERVAL

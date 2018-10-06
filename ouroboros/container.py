@@ -28,7 +28,7 @@ def to_monitor():
     """Return filtered running container objects list"""
     running_containers = []
     try:
-        if len(cli.monitor) > 0:
+        if cli.monitor:
             for container in cli.api_client.containers(filters={'name': cli.monitor, 'status': 'running'}):
                 running_containers.append(cli.api_client.inspect_container(container))
         else:
