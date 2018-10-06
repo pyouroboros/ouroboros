@@ -37,5 +37,5 @@ def parser():
         host = defaults.LOCAL_UNIX_SOCKET
     interval = args.interval or defaults.INTERVAL
     monitor = args.monitor or []
-    debug = args.debug or 'warn'
+    debug = args.debug or 'info'
     api_client = docker.APIClient(base_url=host)

@@ -10,8 +10,9 @@ import image
 from logger import set_logger
 
 def main():
+    log = logging.getLogger(__name__)
     if not container.running():
-        logging.info('No containers are running')
+        log.info('No containers are running')
     else:
         updated_count = 0
         for running_container in container.to_monitor():
@@ -19,11 +20,11 @@ def main():
             try:
                 latest_image = image.pull_latest(current_image)
             except docker.errors.APIError as e:
-                logging.error(e)
+                log.error(e)
                 continue
             # If current running container is running latest image
             if not image.is_up_to_date(current_image['Id'], latest_image['Id']):
-                logging.info(('{} will be updated').format(container.get_name(running_container)))
+                log.info(('{} will be updated').format(container.get_name(running_container)))
                 # new container object to create new container from
                 new_config = container.NewContainerProperties(running_container, latest_image['RepoTags'][0])
                 container.stop(running_container)
@@ -32,7 +33,7 @@ def main():
                 container.start(new_container)
                 image.remove(current_image)
                 updated_count += 1
-        logging.info('{} container(s) updated'.format(updated_count))
+        log.info('{} container(s) updated'.format(updated_count))
 
 if __name__ == "__main__":
     cli.parser()
