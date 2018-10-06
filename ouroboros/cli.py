@@ -18,8 +18,7 @@ def checkURI(uri):
         r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
         r'(?::\d+)?' # optional port
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-    if re.match(regex, uri) is None:
-        exit('--url value error: {} is not a valid URI'.format(uri))
+    return re.match(regex, uri)
 
 def parser():
     """Declare command line options"""
@@ -32,9 +31,8 @@ def parser():
     args = parser.parse_args()
     if args.url:
         host = args.url
-        checkURI(host)
-    else:
-        host = defaults.LOCAL_UNIX_SOCKET
+        if not checkURI(host):
+            host = defaults.LOCAL_UNIX_SOCKET
     interval = args.interval or defaults.INTERVAL
     monitor = args.monitor or []
     debug = args.debug or 'info'
