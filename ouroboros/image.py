@@ -13,7 +13,7 @@ def check_credentials():
 def pull_latest(image):
     """Return tag of latest image pulled"""
     latest_image = image['RepoTags'][0].split(':')[0] + ':latest'
-    log.debug(('Pulling image: {}').format(latest_image))
+    log.debug(f'Pulling image: {latest_image}')
     cli.api_client.pull(latest_image, auth_config=check_credentials())
     return cli.api_client.inspect_image(latest_image)
 
@@ -23,5 +23,5 @@ def is_up_to_date(old_sha, new_sha):
 
 def remove(old_image):
     """Deletes old image after container is updated"""
-    log.info(('Removing image: {}').format(old_image['RepoTags'][0]))
+    log.info(f"Removing image: {old_image['RepoTags'][0]}")
     return cli.api_client.remove_image(old_image)

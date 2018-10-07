@@ -25,7 +25,7 @@ def main():
                 continue
             # If current running container is running latest image
             if not image.is_up_to_date(current_image['Id'], latest_image['Id']):
-                log.info(('{} will be updated').format(container.get_name(running_container)))
+                log.info(f'{container.get_name(running_container)} will be updated')
                 # new container object to create new container from
                 new_config = container.NewContainerProperties(running_container, latest_image['RepoTags'][0])
                 container.stop(running_container)
@@ -34,7 +34,7 @@ def main():
                 container.start(new_container)
                 image.remove(current_image)
                 updated_count += 1
-        log.info('{} container(s) updated'.format(updated_count))
+        log.info(f'{updated_count} container(s) updated')
 
 if __name__ == "__main__":
     cli.parser()
