@@ -1,7 +1,5 @@
 import pytest
 import ouroboros.cli as cli
-import sys
-from mock import patch
 
 def test_checkURI():
     assert cli.checkURI('tcp://0.0.0.0:1234')
@@ -9,9 +7,8 @@ def test_checkURI():
 
 @pytest.fixture
 def create_parser(mocker):
-    fake_args = ["--interval 0"]
-    mocker.patch('sys.argv', fake_args)
-    return cli.parser(sys.argv[1:])
+    mocker.patch('sys.argv', '--interval 0')
+    return cli.parser()
 
 def test_url_arg(create_parser):
     assert create_parser == ' '
