@@ -37,7 +37,7 @@ def main():
         log.info(f'{updated_count} container(s) updated')
 
 if __name__ == "__main__":
-    cli.parser()
+    cli.parser(sys.argv[1:])
     logging.basicConfig(**set_logger(cli.debug))
     schedule.every(cli.interval).seconds.do(main)
     while True:

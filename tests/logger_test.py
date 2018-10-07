@@ -1,7 +1,7 @@
 import pytest
 import ouroboros.logger as log
 
-@pytest.mark.parametrize("level_string, level_code", [
+@pytest.mark.parametrize('level_string, level_code', [
     ('debug', 10),
     ('info', 20),
     ('warn', 30),
