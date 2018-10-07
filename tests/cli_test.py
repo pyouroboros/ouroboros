@@ -9,9 +9,9 @@ def test_checkURI():
 
 @pytest.fixture
 def create_parser(mocker):
-    fake_args = [None, "--interval 0"]
+    fake_args = ["--interval 0"]
     mocker.patch('sys.argv', fake_args)
     return cli.parser(sys.argv[1:])
 
 def test_url_arg(create_parser):
-    assert create_parser is not None
+    assert create_parser == ' '
