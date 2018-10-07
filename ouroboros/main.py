@@ -8,6 +8,7 @@ import logging
 import container
 import image
 from logger import set_logger
+import sys
 
 def main():
     log = logging.getLogger(__name__)
@@ -36,7 +37,7 @@ def main():
         log.info('{} container(s) updated'.format(updated_count))
 
 if __name__ == "__main__":
-    cli.parser()
+    cli.parser(sys.argv[1:])
     logging.basicConfig(**set_logger(cli.debug))
     schedule.every(cli.interval).seconds.do(main)
     while True:
