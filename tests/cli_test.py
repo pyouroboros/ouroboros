@@ -6,16 +6,25 @@ def test_checkURI():
     assert cli.checkURI('tcp://0.0.0.0:1234')
     assert not cli.checkURI('tcp:/0.0.0.0')
 
-def test_url_arg_invalid_value(mocker):
-    mocker.patch('ouroboros.cli')
-    cli.parser(['--url', 'tcp:/0.0.0.0:1234'])
-    assert cli.host == defaults.LOCAL_UNIX_SOCKET
+# URL
+@pytest.mark.parametrize('url_args, url_result', [
+    # Invalid regex
+    (['-u', 'tcp:/0.0.0.0:1234'], defaults.LOCAL_UNIX_SOCKET),
+    (['--url', 'tcp:/0.0.0.0:1234'], defaults.LOCAL_UNIX_SOCKET),
+    # If none supplied, default to unix://
+    (['-u', ''], defaults.LOCAL_UNIX_SOCKET),
+    (['--url', ''], defaults.LOCAL_UNIX_SOCKET),
+    # Valid Regex
+    (['-u', 'tcp://0.0.0.0:1234'], 'tcp://0.0.0.0:1234'),
+    (['--url', 'tcp://0.0.0.0:1234'], 'tcp://0.0.0.0:1234'),
+])
 
-def test_url_arg_invalid_value(mocker):
+def test_url_args(mocker, url_args, url_result):
     mocker.patch('ouroboros.cli')
-    cli.parser(['--url', 'tcp:/0.0.0.0:1234'])
-    assert cli.host == defaults.LOCAL_UNIX_SOCKET
+    cli.parser(url_args)
+    assert cli.host == url_result
 
+# Interval
 def test_interval_arg_invalid_value(mocker):
     mocker.patch('ouroboros.cli')
     with pytest.raises(SystemExit) as pytest_wrapped_e:
@@ -25,3 +34,37 @@ def test_interval_arg_invalid_value(mocker):
 def test_interval_arg_valid_value(mocker):
     mocker.patch('ouroboros.cli')
     assert cli.parser(['--interval', 0])
+
+# Monitor
+@pytest.mark.parametrize('monitor_args, monitor_result', [
+    (['-m', 'test1', 'test2', 'test3'], ['test1', 'test2', 'test3']),
+    (['--monitor', 'test1', 'test2', 'test3'], ['test1', 'test2', 'test3']),
+    (['-m', ''], ['']),
+    (['--monitor', ''], ['']),
+])
+
+def test_monitor_args(mocker, monitor_args, monitor_result):
+    mocker.patch('ouroboros.cli')
+    cli.parser(monitor_args)
+    assert cli.monitor == monitor_result
+
+# Loglevel
+@pytest.mark.parametrize('loglevel_args, loglevel_result', [
+    (['-l', 'notset'], 'notset'),
+    (['-l', 'info'], 'info'),
+    (['-l', 'debug'], 'debug'),
+    (['-l', 'warn'], 'warn'),
+    (['-l', 'error'], 'error'),
+    (['-l', 'critical'], 'critical'),
+    (['--loglevel', 'notset'], 'notset'),
+    (['--loglevel', 'info'], 'info'),
+    (['--loglevel', 'debug'], 'debug'),
+    (['--loglevel', 'warn'], 'warn'),
+    (['--loglevel', 'error'], 'error'),
+    (['--loglevel', 'critical'], 'critical'),
+])
+
+def test_loglevel_args(mocker, loglevel_args, loglevel_result):
+    mocker.patch('ouroboros.cli')
+    cli.parser(loglevel_args)
+    assert cli.level == loglevel_result
