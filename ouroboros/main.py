@@ -30,7 +30,7 @@ def main():
                 new_config = container.NewContainerProperties(running_container, latest_image['RepoTags'][0])
                 container.stop(running_container)
                 container.remove(running_container)
-                new_container = container.create_new_container(new_config.__dict__)
+                new_container = container.create_new(vars(new_config))
                 container.start(new_container)
                 image.remove(current_image)
                 updated_count += 1
