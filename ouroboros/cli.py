@@ -14,7 +14,7 @@ def checkURI(uri):
     regex = re.compile(
         r'^(?:tcp)s?://' # tcp://
         r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
-        r'localhost|' #localhost...
+        r'localhost|' # localhost...
         r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
         r'(?::\d+)?' # optional port
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
@@ -37,4 +37,4 @@ def parser(sysargs):
     monitor = args.monitor or []
     level = args.loglevel or 'info'
     api_client = docker.APIClient(base_url=host)
-    return args
+    #return args
