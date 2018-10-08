@@ -38,7 +38,7 @@ def main():
 
 if __name__ == "__main__":
     cli.parser(sys.argv[1:])
-    logging.basicConfig(**set_logger(cli.loglevel))
+    logging.basicConfig(**set_logger(cli.level))
     schedule.every(cli.interval).seconds.do(main)
     while True:
         schedule.run_pending()

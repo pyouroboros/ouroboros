@@ -6,7 +6,7 @@ log = logging.getLogger(__name__)
 
 def check_credentials():
     """Returns dict of credentials if environment variable 'REPO_USER' and 'REPO_PASS' are set"""
-    if environ.get('REPO_USER') and environ.get('REPO_PASS') is not None:
+    if environ.get('REPO_USER') and environ.get('REPO_PASS'):
         return { 'username': environ['REPO_USER'], 'password': environ['REPO_PASS'] }
     return {}
 
