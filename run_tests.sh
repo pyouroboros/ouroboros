@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 module_list=$(pip list | awk '{print $1'})
+export PIP_FORMAT=columns
 
 # Install modules that arent present, save time instead of reinstalling everytime
 for i in $(cat requirements-dev.txt);
