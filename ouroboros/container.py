@@ -54,7 +54,7 @@ def remove(container_object):
     log.debug(f'Removing container: {get_name(container_object)}')
     return cli.api_client.remove_container(container_object)
 
-def create_new_container(config):
+def create_new(config):
     """Create new container with latest image"""
     return cli.api_client.create_container(**config)
 

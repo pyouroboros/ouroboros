@@ -37,4 +37,4 @@ def parser(sysargs):
     monitor = args.monitor or []
     level = args.loglevel or 'info'
     api_client = docker.APIClient(base_url=host)
-    #return args
+    return args

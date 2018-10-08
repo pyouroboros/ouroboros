@@ -7,8 +7,8 @@ import datetime
 import logging
 import container
 import image
+from sys import argv
 from logger import set_logger
-import sys
 
 def main():
     log = logging.getLogger(__name__)
@@ -30,14 +30,14 @@ def main():
                 new_config = container.NewContainerProperties(running_container, latest_image['RepoTags'][0])
                 container.stop(running_container)
                 container.remove(running_container)
-                new_container = container.create_new_container(new_config.__dict__)
+                new_container = container.create_new(vars(new_config))
                 container.start(new_container)
                 image.remove(current_image)
                 updated_count += 1
         log.info(f'{updated_count} container(s) updated')
 
 if __name__ == "__main__":
-    cli.parser(sys.argv[1:])
+    cli.parser(argv[1:])
     logging.basicConfig(**set_logger(cli.level))
     schedule.every(cli.interval).seconds.do(main)
     while True:
