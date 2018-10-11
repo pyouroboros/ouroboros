@@ -19,7 +19,7 @@ def running():
     """Return running container objects list"""
     running_containers = []
     try:
-        for container in cli.api_client.containers(filters={'status': 'running'}):
+        for container in cli.api_client.containers():
             running_containers.append(cli.api_client.inspect_container(container))
         return running_containers
     except:
@@ -30,7 +30,7 @@ def to_monitor():
     running_containers = []
     try:
         if cli.monitor:
-            for container in cli.api_client.containers(filters={'name': cli.monitor, 'status': 'running'}):
+            for container in cli.api_client.containers(filters={'name': cli.monitor}):
                 running_containers.append(cli.api_client.inspect_container(container))
         else:
             running_containers.extend(running())
