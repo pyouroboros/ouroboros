@@ -1,10 +1,4 @@
-import pytest
-import ouroboros.container as container
-import ouroboros.defaults as defaults
-
-@pytest.fixture()
-def container_object():
-    return {
+container_object = {
     'Id': 'cdfc1c483343fbfbbc6e645f80d5d76f18631e8d7f06521d03a1c2fac0c9f823',
     'Created': '2018-10-10T23:44:37.08670368Z',
     'Path': 'tail',
@@ -231,21 +225,3 @@ def container_object():
         }
     }
 }
-
-def test_new_container_properties(container_object):
-    latest = 'busybox:latest'
-    new_container = container.new_container_properties(container_object, new_image=latest)
-    assert new_container['name'] == 'testName1'
-    assert new_container['image'] == latest
-    assert new_container['host_config'] == container_object['HostConfig']
-    assert new_container['labels'] == container_object['Config']['Labels']
-    assert new_container['entrypoint'] ==  container_object['Config']['Entrypoint']
-
-# problem child
-def test_running(mocker, container_object):
-    mocker.patch('ouroboros.cli.api_client.containers', return_value=[container_object])
-    mocker.patch('ouroboros.cli.api_client.inspect_container', return_value=container_object)
-    assert container.running() == container_object
-
-def test_get_name(container_object):
-    assert container.get_name(container_object) == 'testName1'
