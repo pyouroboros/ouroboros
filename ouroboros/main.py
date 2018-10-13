@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-import cli
-import docker
-import schedule
+from sys import argv
 import time
 import datetime
 import logging
+import docker
+import schedule
 import container
 import image
-from sys import argv
+import cli
 from logger import set_logger
 
 def main():
+    """Find running containers and update them with images using latest tag"""
     log = logging.getLogger(__name__)
     if not container.running():
         log.info('No containers are running')

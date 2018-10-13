@@ -41,7 +41,7 @@ def to_monitor():
 
 def get_name(container_object):
     """Parse out first name of container"""
-    return container_object['Name'].replace('/','')
+    return container_object['Name'].replace('/', '')
 
 def stop(container_object):
     """Stop out of date container"""
