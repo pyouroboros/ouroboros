@@ -1,4 +1,6 @@
-![alt text](https://i.imgur.com/kYbI9Hi.png)
+<p align="center">
+  <img src="https://i.imgur.com/kYbI9Hi.png">
+</p>
 
 [![Build Status](https://travis-ci.org/circa10a/ouroboros.svg?branch=master)](https://travis-ci.org/circa10a/ouroboros)
 
