@@ -22,6 +22,13 @@ def checkURI(uri):
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
     return re.match(regex, uri)
 
+def get_interval_env():
+    int_env = environ.get('INTERVAL')
+    try:
+        return int(int_env)
+    except:
+        return False
+
 def parser(sysargs):
     """Declare command line options"""
     global host, interval, monitor, level, api_client, run_once
@@ -36,9 +43,12 @@ def parser(sysargs):
         host = args.url
         if not checkURI(host):
             host = defaults.LOCAL_UNIX_SOCKET
-    interval = args.interval or environ.get('INTERVAL') or defaults.INTERVAL
+    print(get_interval_env)
+    interval = args.interval or get_interval_env() or defaults.INTERVAL
     monitor = args.monitor or environ.get('MONITOR') or []
     level = args.loglevel or environ.get('LEVEL') or 'info'
     run_once = args.runonce or environ.get('RUNONCE') or False
     api_client = docker.APIClient(base_url=host)
     return args
+
+

@@ -6,6 +6,7 @@ def test_checkURI():
     assert cli.checkURI('tcp://0.0.0.0:1234')
     assert not cli.checkURI('tcp:/0.0.0.0')
 
+
 # URL
 @pytest.mark.parametrize('url_args, url_result', [
     # Invalid regex
@@ -16,7 +17,7 @@ def test_checkURI():
     (['--url', ''], defaults.LOCAL_UNIX_SOCKET),
     # Valid Regex
     (['-u', 'tcp://0.0.0.0:1234'], 'tcp://0.0.0.0:1234'),
-    (['--url', 'tcp://0.0.0.0:1234'], 'tcp://0.0.0.0:1234'),
+    (['--url', 'tcp://0.0.0.0:1234'], 'tcp://0.0.0.0:1234')
 ])
 
 def test_url_args(mocker, url_args, url_result):
@@ -25,6 +26,15 @@ def test_url_args(mocker, url_args, url_result):
     assert cli.host == url_result
 
 # Interval
+@pytest.mark.parametrize('interval_env, interval_env_result', [
+    ({'INTERVAL': 't'}, False),
+    ({'INTERVAL': '10'}, 10),
+])
+
+def test_get_interval_env(mocker, interval_env, interval_env_result):
+    mocker.patch.dict('os.environ', interval_env)
+    assert cli.get_interval_env() == interval_env_result
+
 def test_interval_arg_invalid_value(mocker):
     mocker.patch('ouroboros.cli')
     with pytest.raises(SystemExit) as pytest_wrapped_e:
@@ -40,7 +50,7 @@ def test_interval_arg_valid_value(mocker):
     (['-m', 'test1', 'test2', 'test3'], ['test1', 'test2', 'test3']),
     (['--monitor', 'test1', 'test2', 'test3'], ['test1', 'test2', 'test3']),
     (['-m', ''], ['']),
-    (['--monitor', ''], ['']),
+    (['--monitor', ''], [''])
 ])
 
 def test_monitor_args(mocker, monitor_args, monitor_result):
@@ -61,7 +71,7 @@ def test_monitor_args(mocker, monitor_args, monitor_result):
     (['--loglevel', 'debug'], 'debug'),
     (['--loglevel', 'warn'], 'warn'),
     (['--loglevel', 'error'], 'error'),
-    (['--loglevel', 'critical'], 'critical'),
+    (['--loglevel', 'critical'], 'critical')
 ])
 
 def test_loglevel_args(mocker, loglevel_args, loglevel_result):
@@ -71,8 +81,7 @@ def test_loglevel_args(mocker, loglevel_args, loglevel_result):
 
 @pytest.mark.parametrize('runonce_args, runonce_result', [
     (['-r', ], True),
-    (['--runonce', ], True),
-    ([], False),
+    (['--runonce', ], True)
 ])
 
 def test_runonce_args(mocker, runonce_args, runonce_result):
