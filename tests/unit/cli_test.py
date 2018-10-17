@@ -68,3 +68,14 @@ def test_loglevel_args(mocker, loglevel_args, loglevel_result):
     mocker.patch('ouroboros.cli')
     cli.parser(loglevel_args)
     assert cli.level == loglevel_result
+
+@pytest.mark.parametrize('runonce_args, runonce_result', [
+    (['-r', ], True),
+    (['--runonce', ], True),
+    ([], False),
+])
+
+def test_runonce_args(mocker, runonce_args, runonce_result):
+    mocker.patch('ouroboros.cli')
+    cli.parser(runonce_args)
+    assert cli.run_once == runonce_result

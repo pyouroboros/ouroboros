@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from sys import argv
+from sys import exit
 import time
 import datetime
 import logging
@@ -36,6 +37,7 @@ def main():
                 image.remove(current_image)
                 updated_count += 1
         log.info(f'{updated_count} container(s) updated')
+        if cli.run_once: exit(0)
 
 if __name__ == "__main__":
     cli.parser(argv[1:])
