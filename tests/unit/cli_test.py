@@ -88,3 +88,13 @@ def test_runonce_args(mocker, runonce_args, runonce_result):
     mocker.patch('ouroboros.cli')
     cli.parser(runonce_args)
     assert cli.run_once == runonce_result
+
+@pytest.mark.parametrize('cleanup_args, cleanup_result', [
+    (['-c', ], True),
+    (['--cleanup', ], True)
+])
+
+def test_cleanup_args(mocker, cleanup_args, cleanup_result):
+    mocker.patch('ouroboros.cli')
+    cli.parser(cleanup_args)
+    assert cli.cleanup == cleanup_result
