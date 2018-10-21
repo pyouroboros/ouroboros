@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # Usage:
 # ./run_tests.sh # Runs all
 # ./run_tests.sh unit # Runs unit tests
