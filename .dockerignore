@@ -7,3 +7,4 @@ tests/
 requirements-dev.txt
 *.sh
 .coveragerc
+.travis.yml
