@@ -1,6 +1,5 @@
-<p align="center">
-  <img src="https://i.imgur.com/kYbI9Hi.png">
-</p>
+
+![alt text](https://i.imgur.com/kYbI9Hi.png)
 
 [![Travis](https://img.shields.io/travis/circa10a/ouroboros.svg?style=flat-square)](https://travis-ci.org/circa10a/ouroboros)
 [![Codecov](https://img.shields.io/codecov/c/github/circa10a/ouroboros.svg?style=flat-square)](https://codecov.io/gh/circa10a/ouroboros)
