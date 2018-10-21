@@ -28,7 +28,7 @@ def main():
             # If current running container is running latest image
             if not image.is_up_to_date(old_sha=current_image['Id'], new_sha=latest_image['Id']):
                 log.info(f'{container.get_name(container_object=running_container)} will be updated')
-                # new container object to create new container from
+                # new container dict to create new container from
                 new_config = container.new_container_properties(old_container=running_container, new_image=latest_image['RepoTags'][0])
                 container.stop(container_object=running_container)
                 container.remove(container_object=running_container)
