@@ -13,10 +13,10 @@ stages:
 jobs:
   include:
     - stage: test
-      script: - ./run_tests.sh
+      script: ./run_tests.sh
 
     - stage: coverage
-      script: - codecov
+      script: codecov
 
     #- stage: deploy
     #  script: ./deploy
