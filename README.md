@@ -16,7 +16,7 @@ Ouroboros will monitor all running docker containers or those you specify and up
 
 - Push your image to your registry and simply wait a couple of minutes for ouroboros to find the new image and redeploy your container autonomously.
 - Limit your server ssh access
-- `ssh -i key server.domainname "docker pull ... && docker run ...` is for scrubs
+- `ssh -i key server.domainname "docker pull ... && docker run ..."` is for scrubs
 
 ## Usage
 
