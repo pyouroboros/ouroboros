@@ -22,7 +22,7 @@ deploy:
     on:
       branch: master
 
-after_deploy:
+after_success:
   script: bash ./deploy.sh
     on:
       branch: master
