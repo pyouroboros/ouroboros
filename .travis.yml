@@ -23,6 +23,4 @@ deploy:
       branch: master
 
 after_success:
-  script: bash ./deploy.sh
-    on:
-      branch: master
+  - bash ./deploy.sh
