@@ -12,7 +12,7 @@ after_script:
 
 before_deploy:
   script:
-    - git tag $(grep -i version ouroboros/__init__.py | cut -d= -f2 | tr -d "'")
+    - git tag $(grep -i version ouroboros/__init__.py | cut -d= -f2)
 
 deploy:
   - provider: script
