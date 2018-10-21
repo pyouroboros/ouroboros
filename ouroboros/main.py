@@ -2,7 +2,6 @@
 from sys import argv
 from sys import exit
 import time
-import datetime
 import logging
 import docker
 import schedule
