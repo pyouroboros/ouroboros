@@ -10,8 +10,18 @@ script:
 after_script:
   - codecov
 
+before_deploy:
+  script:
+    - git tag $(grep -i version ouroboros/__init__.py | awk -F= '{gsub("\047",""); print $2}')
+
 deploy:
-  provider: script
-  script: bash ./deploy.sh
-  on:
-    branch: master
+  - provider: script
+    script: bash ./deploy.sh
+    on:
+      branch: master
+  - provider: releases
+    api_key: $github_api_key
+    skip_cleanup: true
+    on:
+      branch: master
+      tags: true
