@@ -42,7 +42,7 @@ services:
     image: circa10a/ouroboros
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 6 --loglevel debug
+    command: --interval 60 --loglevel debug
 ```
 
 > By default, running containers will be polled every 5 min
