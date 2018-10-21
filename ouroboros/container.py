@@ -11,7 +11,8 @@ def new_container_properties(old_container, new_image):
         'command': old_container['Config']['Cmd'],
         'host_config': old_container['HostConfig'],
         'labels': old_container['Config']['Labels'],
-        'entrypoint': old_container['Config']['Entrypoint']
+        'entrypoint': old_container['Config']['Entrypoint'],
+        'environment': old_container['Config']['Env']
     }
     return props
 
@@ -19,8 +20,9 @@ def running():
     """Return running container objects list"""
     running_containers = []
     try:
-        for container in cli.api_client.containers():
-            running_containers.append(cli.api_client.inspect_container(container))
+        for container in cli.api_client.containers(filters={'status': 'running'}):
+            if 'ouroboros' not in container['Image']:
+                running_containers.append(cli.api_client.inspect_container(container))
         return running_containers
     except:
         log.critical(f'Can\'t connect to Docker API at {cli.api_client.base_url}')
@@ -30,7 +32,7 @@ def to_monitor():
     running_containers = []
     try:
         if cli.monitor:
-            for container in cli.api_client.containers(filters={'name': cli.monitor}):
+            for container in cli.api_client.containers(filters={'name': cli.monitor, 'status': 'running'}):
                 running_containers.append(cli.api_client.inspect_container(container))
         else:
             running_containers.extend(running())

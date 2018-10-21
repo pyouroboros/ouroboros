@@ -168,6 +168,7 @@ container_object = {
         'StdinOnce': False,
         'Env': [
             'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+            'testEnvVar=testVar',
         ],
         'Cmd': [
             'tail',

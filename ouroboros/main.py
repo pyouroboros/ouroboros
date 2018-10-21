@@ -21,21 +21,21 @@ def main():
         for running_container in container.to_monitor():
             current_image = cli.api_client.inspect_image(running_container['Config']['Image'])
             try:
-                latest_image = image.pull_latest(current_image)
+                latest_image = image.pull_latest(image=current_image)
             except docker.errors.APIError as e:
                 log.error(e)
                 continue
             # If current running container is running latest image
-            if not image.is_up_to_date(current_image['Id'], latest_image['Id']):
-                log.info(f'{container.get_name(running_container)} will be updated')
+            if not image.is_up_to_date(old_sha=current_image['Id'], new_sha=latest_image['Id']):
+                log.info(f'{container.get_name(container_object=running_container)} will be updated')
                 # new container object to create new container from
-                new_config = container.new_container_properties(running_container, latest_image['RepoTags'][0])
-                container.stop(running_container)
-                container.remove(running_container)
-                new_container = container.create_new(new_config)
-                container.start(new_container)
+                new_config = container.new_container_properties(old_container=running_container, new_image=latest_image['RepoTags'][0])
+                container.stop(container_object=running_container)
+                container.remove(container_object=running_container)
+                new_container = container.create_new(config=new_config)
+                container.start(container_object=new_container)
                 if cli.cleanup:
-                    image.remove(current_image)
+                    image.remove(old_image=current_image)
                 updated_count += 1
         log.info(f'{updated_count} container(s) updated')
         if cli.run_once:
@@ -43,8 +43,8 @@ def main():
 
 if __name__ == "__main__":
     cli.parser(argv[1:])
-    logging.basicConfig(**set_logger(cli.level))
+    logging.basicConfig(**set_logger(cli.loglevel))
     schedule.every(cli.interval).seconds.do(main)
     while True:
         schedule.run_pending()
-        time.sleep(cli.interval - 5)
+        time.sleep(cli.interval - 1)

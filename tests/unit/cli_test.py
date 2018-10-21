@@ -1,4 +1,5 @@
 import pytest
+from os import environ
 import ouroboros.cli as cli
 import ouroboros.defaults as defaults
 
@@ -77,7 +78,18 @@ def test_monitor_args(mocker, monitor_args, monitor_result):
 def test_loglevel_args(mocker, loglevel_args, loglevel_result):
     mocker.patch('ouroboros.cli')
     cli.parser(loglevel_args)
-    assert cli.level == loglevel_result
+    assert cli.loglevel == loglevel_result
+
+@pytest.mark.parametrize('loglevel_env_var, loglevel_env_var_result', [
+    ({'LOGLEVEL': 'debug'}, 'debug'),
+    ({'_LOGLEVEL': ''}, defaults.LOGLEVEL),
+])
+
+def test_loglevel_env_var(mocker, loglevel_env_var, loglevel_env_var_result):
+    mocker.patch.dict('os.environ', loglevel_env_var)
+    mocker.patch('ouroboros.cli')
+    cli.parser([])
+    assert cli.loglevel == loglevel_env_var_result
 
 @pytest.mark.parametrize('runonce_args, runonce_result', [
     (['-r', ], True),
@@ -89,6 +101,17 @@ def test_runonce_args(mocker, runonce_args, runonce_result):
     cli.parser(runonce_args)
     assert cli.run_once == runonce_result
 
+@pytest.mark.parametrize('runonce_env_var, runonce_env_var_result', [
+    ({'RUNONCE': 'true'}, 'true'),
+    ({'_RUNONCE': ''}, defaults.RUNONCE),
+])
+
+def test_runonce_env_var(mocker, runonce_env_var, runonce_env_var_result):
+    mocker.patch.dict('os.environ', runonce_env_var)
+    mocker.patch('ouroboros.cli')
+    cli.parser([])
+    assert cli.run_once == runonce_env_var_result
+
 @pytest.mark.parametrize('cleanup_args, cleanup_result', [
     (['-c', ], True),
     (['--cleanup', ], True)
@@ -98,3 +121,14 @@ def test_cleanup_args(mocker, cleanup_args, cleanup_result):
     mocker.patch('ouroboros.cli')
     cli.parser(cleanup_args)
     assert cli.cleanup == cleanup_result
+
+@pytest.mark.parametrize('cleanup_env_var, cleanup_env_var_result', [
+    ({'CLEANUP': 'true'}, 'true'),
+    ({'_CLEANUP': ''}, defaults.CLEANUP),
+])
+
+def test_cleanup_env_var(mocker, cleanup_env_var, cleanup_env_var_result):
+    mocker.patch.dict('os.environ', cleanup_env_var)
+    mocker.patch('ouroboros.cli')
+    cli.parser([])
+    assert cli.cleanup == cleanup_env_var_result
