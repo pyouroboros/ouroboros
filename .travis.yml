@@ -11,7 +11,6 @@ after_script:
   - codecov
 
 before_deploy:
-  script:
     - git tag $(grep -i version ouroboros/__init__.py | cut -d= -f2)
 
 deploy:
