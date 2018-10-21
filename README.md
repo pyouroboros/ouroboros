@@ -12,9 +12,11 @@ A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
 
 ## Overview
 
-Ouroboros will monitor all running docker containers or those you specify and update said containers to the latest available image in the remote registry with the `latest` tag with the same parameters that were used when the container was first created. Examples: volume/bind mounts, docker network connections, environment variables, restart policies, entrypoints, commands, etc.
+Ouroboros will monitor all running docker containers or those you specify and update said containers to the latest available image in the remote registry using the `latest` tag with the same parameters that were used when the container was first created such as volume/bind mounts, docker network connections, environment variables, restart policies, entrypoints, commands, etc.
 
-This allows you to just push your image to your registry and simply wait a couple of minutes for ouroboros to find the new image and redeploy your container autonomously.
+- Push your image to your registry and simply wait a couple of minutes for ouroboros to find the new image and redeploy your container autonomously.
+- Limit your server ssh access
+- `ssh -i key server.domainname "docker pull ... && docker run ...` is for scrubs
 
 ## Usage
 
@@ -45,7 +47,7 @@ docker run --rm circa10a/ouroboros --help
 
 ### Private Registries
 
-If your running containers' docker images are stored in a secure registry that requires a username and password, simply instantiate ouroboros with 2 environment variables(`REPO_USER` and `REPO_PASS`).
+If your running containers' docker images are stored in a secure registry that requires a username and password, simply run ouroboros with 2 environment variables(`REPO_USER` and `REPO_PASS`).
 
 ```bash
 docker run -d --name ouroboros \
@@ -58,7 +60,7 @@ docker run -d --name ouroboros \
 
 ### Update containers on a remote host
 
-Ouroboros can be configured to like so.
+Ouroboros can monitor things other than just local, pass the `--url` argument to update a system with the Docker API exposed.
 
 > Default is unix://var/run/docker.sock
 
@@ -106,7 +108,7 @@ docker run -d --name ouroboros \
 
 ### Update all containers and quit ouroboros
 
-If you prefer ouroboros didn't run all the time and only update all your running containers in one go, provide the `runonce` argument and ouroboros will terminate itself after updating all your containers one time.
+If you prefer ouroboros didn't run all the time and only update all of your running containers in one go, provide the `runonce` argument and ouroboros will terminate itself after updating all your containers one time.
 
 > Default is off
 
