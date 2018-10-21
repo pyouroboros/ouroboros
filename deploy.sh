@@ -6,7 +6,7 @@ NAMESPACE=${USER}/${PROJECT}
 # Auth
 echo $docker_password | docker login -u=$USER --password-stdin
 # Latest
-docker build -t $NAMESPACE:latest .
+docker build --squash -t $NAMESPACE:latest .
 docker push $NAMESPACE:latest
 # Versioned
 docker tag $NAMESPACE:latest $NAMESPACE:$VERSION
