@@ -6,8 +6,6 @@
 ![Docker Pulls](https://img.shields.io/docker/pulls/circa10a/ouroboros.svg?style=flat-square)
 [![](https://images.microbadger.com/badges/image/circa10a/ouroboros.svg)](https://microbadger.com/images/circa10a/ouroboros "Get your own image badge on microbadger.com")
 
-[![Build Status](https://travis-ci.org/circa10a/ouroboros.svg?branch=master)](https://travis-ci.org/circa10a/ouroboros)
-
 A python alternative to [watchtower](https://github.com/v2tec/watchtower)
 
 Automatically update your running Docker containers to the latest available image.
