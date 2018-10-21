@@ -1,0 +1,9 @@
+name: ouroboros_dev
+dependencies:
+  - pip:
+      - docker
+      - schedule
+      - pytest
+      - pytest-cov
+      - pytest-mock
+      - codecov

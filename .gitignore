@@ -112,3 +112,7 @@ dmypy.json
 
 #vscode
 .vscode/
+
+# JetBrains
+.idea/
+*.iml
