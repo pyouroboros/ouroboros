@@ -4,19 +4,8 @@ python:
 services:
   - docker
 
-stages:
-  - test
-  - coverage
-  - name: deploy
-    if: branch = master
+script:
+  - ./run_tests.sh
 
-jobs:
-  include:
-    - stage: test
-      script: ./run_tests.sh
-
-    - stage: coverage
-      script: codecov
-
-    #- stage: deploy
-    #  script: ./deploy
+after_script:
+  - codecov
