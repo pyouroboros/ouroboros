@@ -2,7 +2,7 @@ from os import environ
 import argparse
 import docker
 import re
-import defaults
+from . import defaults
 
 host = ''
 interval = ''
