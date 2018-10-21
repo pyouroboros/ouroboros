@@ -3,25 +3,26 @@ import cli
 
 log = logging.getLogger(__name__)
 
-class NewContainerProperties:
-    def __init__(self, old_container, new_image):
-        """
-        Store object for spawning new container in place of the one with outdated image
-        """
-        self.name = get_name(old_container)
-        self.image = new_image
-        self.command = old_container['Config']['Cmd']
-        self.host_config = old_container['HostConfig']
-        self.labels = old_container['Config']['Labels']
-        self.detach = True
-        self.entrypoint = old_container['Config']['Entrypoint']
+def new_container_properties(old_container, new_image):
+    """Store object for spawning new container in place of the one with outdated image"""
+    props = {
+        'name': get_name(old_container),
+        'image': new_image,
+        'command': old_container['Config']['Cmd'],
+        'host_config': old_container['HostConfig'],
+        'labels': old_container['Config']['Labels'],
+        'entrypoint': old_container['Config']['Entrypoint'],
+        'environment': old_container['Config']['Env']
+    }
+    return props
 
 def running():
     """Return running container objects list"""
     running_containers = []
     try:
         for container in cli.api_client.containers(filters={'status': 'running'}):
-            running_containers.append(cli.api_client.inspect_container(container))
+            if 'ouroboros' not in container['Image']:
+                running_containers.append(cli.api_client.inspect_container(container))
         return running_containers
     except:
         log.critical(f'Can\'t connect to Docker API at {cli.api_client.base_url}')
@@ -42,7 +43,7 @@ def to_monitor():
 
 def get_name(container_object):
     """Parse out first name of container"""
-    return container_object['Name'].replace('/','')
+    return container_object['Name'].replace('/', '')
 
 def stop(container_object):
     """Stop out of date container"""

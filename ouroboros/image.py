@@ -1,13 +1,13 @@
+from os import environ
 import logging
 import cli
-from os import environ
 
 log = logging.getLogger(__name__)
 
 def check_credentials():
     """Returns dict of credentials if environment variable 'REPO_USER' and 'REPO_PASS' are set"""
     if environ.get('REPO_USER') and environ.get('REPO_PASS'):
-        return { 'username': environ['REPO_USER'], 'password': environ['REPO_PASS'] }
+        return {'username': environ['REPO_USER'], 'password': environ['REPO_PASS']}
     return {}
 
 def pull_latest(image):
