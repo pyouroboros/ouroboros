@@ -24,5 +24,5 @@ deploy:
 
 after_deploy:
   script: bash ./deploy.sh
-   on:
+    on:
       branch: master
