@@ -29,6 +29,22 @@ docker run -d --name ouroboros \
   circa10a/ouroboros
 ```
 
+or via `docker-compose`:
+
+```yaml
+version: '3'
+services:
+  nginx:
+    image: nginx:1.14-alpine
+    ports:
+     - 80:80
+  ouroboros:
+    image: circa10a/ouroboros
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 6 --loglevel debug
+```
+
 > By default, running containers will be polled every 5 min
 
 ### Options
@@ -52,7 +68,16 @@ If your running containers' docker images are stored in a secure registry that r
 
 ```bash
 docker run -d --name ouroboros \
-  -e REPO_USER=myUser -e REPO_PASS=myPassword \
+  -v REPO_USER=myUser -e REPO_PASS=myPassword \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  circa10a/ouroboros
+```
+
+You can alternatively bind mount `~/.docker/config.json` which won't require the above environment variables.
+
+```bash
+docker run -d --name ouroboros \
+  -v $HOME/.docker/config.json:/root/.docker/config.json \
   -v /var/run/docker.sock:/var/run/docker.sock \
   circa10a/ouroboros
 ```
