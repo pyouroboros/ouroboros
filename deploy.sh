@@ -16,5 +16,4 @@ docker push $NAMESPACE:$VERSION
 # Git tags
 git remote set-url origin https://$USER:$github_api_key@github.com/$USER/$PROJECT.git
 git tag $VERSION
-git push --tags
-[ -f ~/.git/config ] && rm ~/.git/config
+git push --tags --force
