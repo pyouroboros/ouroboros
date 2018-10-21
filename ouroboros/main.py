@@ -47,4 +47,4 @@ if __name__ == "__main__":
     schedule.every(cli.interval).seconds.do(main)
     while True:
         schedule.run_pending()
-        time.sleep(cli.interval - 1)
+        time.sleep(1)
