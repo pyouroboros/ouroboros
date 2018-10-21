@@ -3,5 +3,20 @@ python:
   - 3.6
 services:
   - docker
-script:
-  - ./run_tests.sh
+
+stages:
+  - test
+  - coverage
+  - name: deploy
+    if: branch = master
+
+jobs:
+include:
+  - stage: test
+    script: - ./run_tests.sh
+
+  - stage: coverage
+    script: - codecov
+
+  - stage: deploy
+    script: ./deploy
