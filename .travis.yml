@@ -10,6 +10,10 @@ script:
 after_script:
   - codecov
 
+after_success:
+  - bash ./deploy.sh
+  if: branch = master
+
 before_deploy: |-
   git config --local user.name "circa10a" && \
   git config --local user.email "caleblemoine@gmail.com" && \
@@ -22,5 +26,3 @@ deploy:
     on:
       branch: master
 
-after_success:
-  - bash ./deploy.sh
