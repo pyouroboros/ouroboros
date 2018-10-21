@@ -44,10 +44,12 @@ def parser(sysargs):
     parser.add_argument('-r', '--runonce', help='Only run ouroboros once then exit', action='store_true', required=False)
     parser.add_argument('-c', '--cleanup', help='Remove old images after updating', action='store_true', required=False)
     args = parser.parse_args(sysargs)
+
     if args.url:
         host = args.url
         if not checkURI(host):
             host = defaults.LOCAL_UNIX_SOCKET
+
     interval = args.interval or get_interval_env() or defaults.INTERVAL
     monitor = args.monitor or environ.get('MONITOR') or []
     loglevel = args.loglevel or environ.get('LOGLEVEL') or 'info'
