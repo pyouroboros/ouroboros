@@ -5,6 +5,7 @@
 [![Codecov](https://img.shields.io/codecov/c/github/circa10a/ouroboros.svg?style=flat-square)](https://codecov.io/gh/circa10a/ouroboros)
 ![Docker Pulls](https://img.shields.io/docker/pulls/circa10a/ouroboros.svg?style=flat-square)
 [![](https://images.microbadger.com/badges/image/circa10a/ouroboros.svg)](https://microbadger.com/images/circa10a/ouroboros "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/version/circa10a/ouroboros.svg)](https://microbadger.com/images/circa10a/ouroboros "Get your own version badge on microbadger.com")
 
 Automatically update your running Docker containers to the latest available image.
 
