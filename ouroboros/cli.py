@@ -23,6 +23,7 @@ def checkURI(uri):
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
     return re.match(regex, uri)
 
+
 def get_interval_env():
     """Attempt to convert INTERVAL environment variable to int"""
     int_env = environ.get('INTERVAL')
@@ -30,6 +31,7 @@ def get_interval_env():
         return int(int_env)
     except:
         return False
+
 
 def parser(sysargs):
     """Declare command line options"""
