@@ -104,7 +104,7 @@ docker run -d --name ouroboros \
   circa10a/ouroboros --loglevel debug
 ```
 
-### Update all containers once
+### Update all containers and quit ouroboros
 
 If you prefer ouroboros didn't run all the time and only update all your running containers in one go, provide the `runonce` argument and ouroboros will terminate itself after updating all your containers one time.
 
