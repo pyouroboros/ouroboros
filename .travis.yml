@@ -11,12 +11,12 @@ stages:
     if: branch = master
 
 jobs:
-include:
-  - stage: test
-    script: - ./run_tests.sh
+  include:
+    - stage: test
+      script: - ./run_tests.sh
 
-  - stage: coverage
-    script: - codecov
+    - stage: coverage
+      script: - codecov
 
-  - stage: deploy
-    script: ./deploy
+    #- stage: deploy
+    #  script: ./deploy
