@@ -20,6 +20,7 @@ Ouroboros will monitor all running docker containers or those you specify and up
 - `ssh -i key server.domainname "docker pull ... && docker run ..."` is for scrubs
 
 ## Usage
+![alt text](https://thumbs.gfycat.com/SerpentineExhaustedHind-size_restricted.gif)
 
 `Ouroboros` is deployed via docker image like so:
 
