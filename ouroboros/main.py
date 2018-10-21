@@ -40,6 +40,7 @@ def main():
         if cli.run_once:
             exit(0)
 
+
 if __name__ == "__main__":
     cli.parser(argv[1:])
     logging.basicConfig(**set_logger(cli.loglevel))
