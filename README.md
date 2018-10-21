@@ -111,24 +111,24 @@ docker run -d --name ouroboros \
 
 If you prefer ouroboros didn't run all the time and only update all of your running containers in one go, provide the `runonce` argument and ouroboros will terminate itself after updating all your containers one time.
 
-> Default is off
+> Default is `False`
 
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --runonce true
+  circa10a/ouroboros --runonce
 ```
 
 ### Remove old docker images
 
 Ouroboros has the option to remove the older docker image if a new one is found and the container is then updated. To tidy up after updates, pass the `cleanup` argument.
 
-> Default is off
+> Default is `False`
 
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --cleanup true
+  circa10a/ouroboros --cleanup
 ```
 
 ## Execute Tests
