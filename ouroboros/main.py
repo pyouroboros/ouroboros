@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-from sys import argv
-from sys import exit
+from sys import argv, exit
 import time
 import logging
 import docker
@@ -9,6 +8,7 @@ import container
 import image
 import cli
 from logger import set_logger
+
 
 def main():
     """Find running containers and update them with images using latest tag"""
