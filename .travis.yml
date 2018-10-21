@@ -13,6 +13,5 @@ after_script:
 deploy:
   provider: script
   script: bash ./deploy.sh
-    on:
-      branch: master
-
+  on:
+    branch: master
