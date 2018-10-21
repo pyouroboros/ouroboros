@@ -12,6 +12,7 @@ api_client = None
 run_once = None
 cleanup = None
 
+
 def checkURI(uri):
     """Validate tcp:// regex"""
     regex = re.compile(
