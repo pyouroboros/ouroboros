@@ -17,4 +17,4 @@ for i in $(cat requirements-dev.txt);
 
 export PYTHONPATH=$(pwd)/ouroboros
 
-$(which python3) -m pytest tests/$1 -v --cov-report term-missing --cov=$PYTHONPATH -s
+$(which python3) -m pytest tests/$1 -v --cov-report term-missing --cov=$PYTHONPATH 
