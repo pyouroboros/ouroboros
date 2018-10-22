@@ -41,8 +41,7 @@ def parser(sysargs):
     parser.add_argument('-l', '--loglevel', choices=['notset', 'debug', 'info', 'warn', 'error', 'critical'], help='Change logger mode (defaults to info)', required=False)
     parser.add_argument('-r', '--runonce', help='Only run ouroboros once then exit', action='store_true', required=False)
     parser.add_argument('-c', '--cleanup', help='Remove old images after updating', action='store_true', required=False)
-    parser.add_argument('-p', '--port', help='What port to run metrics server on', required=False, default=8000)
-    parser.add_argument('--nometrics', help="Flag, if true do not run the metrics server", action='store_true', required=False)
+    parser.add_argument('--metrics', type=int, help="Port to run the metrics server on. If not defined, will not run metrics server", required=False, default=0)
     args = parser.parse_args(sysargs)
     if args.url:
         host = args.url

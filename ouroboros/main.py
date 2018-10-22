@@ -52,8 +52,8 @@ def main():
 if __name__ == "__main__":
     cli.parser(argv[1:])
     # start our prometheus metrics http server
-    if not cli.nometrics:
-        start_http_server(cli.port)
+    if cli.metrics != 0:
+        start_http_server(cli.metrics)
     logging.basicConfig(**set_logger(cli.loglevel))
     schedule.every(cli.interval).seconds.do(main)
     while True:
