@@ -10,10 +10,15 @@ import container
 import image
 import cli
 from logger import set_logger
+from prometheus_client import start_http_server
+from prometheus_client import Counter
+
 
 def main():
     """Find running containers and update them with images using latest tag"""
     log = logging.getLogger(__name__)
+    # Setup our prometheus counter
+    updated_containers_counter = Counter('containers_updated', 'Count of containers updated')
     if not container.running():
         log.info('No containers are running')
     else:
@@ -37,12 +42,18 @@ def main():
                 if cli.cleanup:
                     image.remove(old_image=current_image)
                 updated_count += 1
+                updated_containers_counter.inc()
+
         log.info(f'{updated_count} container(s) updated')
         if cli.run_once:
             exit(0)
 
+
 if __name__ == "__main__":
     cli.parser(argv[1:])
+    # start our prometheus metrics http server
+    if not cli.nometrics:
+        start_http_server(8000)
     logging.basicConfig(**set_logger(cli.loglevel))
     schedule.every(cli.interval).seconds.do(main)
     while True:
