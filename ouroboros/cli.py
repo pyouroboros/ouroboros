@@ -14,13 +14,32 @@ cleanup = None
 
 def checkURI(uri):
     """Validate tcp:// regex"""
-    regex = re.compile(
-        r'^(?:tcp)s?://' # tcp://
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
-        r'localhost|' # localhost...
-        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
-        r'(?::\d+)?' # optional port
-        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+    regex = re.compile( r"""(?xi) # "verbose" mode & case-insensitive
+        \A                        # in the beginning...
+        tcps?://                  # tcp or tcps protocol
+        (?:                       # hostname / IP address
+         (?:                      # short or FQDN
+          (?![-.a-z0-9]{254,})    # up to 253 total chars in identifier
+          (?![.0-9]+)             # not completely numeric
+          (?:                     # hostname part
+           (?=[a-z0-9])           # starts with alnum only
+           [-a-z0-9]{1,63}        # 1-63 alphanumeric or hyphen chars
+           (?<=[a-z0-9])          # ends with alnum only
+          )
+          (?:                     # domain name components are less strict
+           \.                     # period separator
+           [-a-z0-9]{1,63}        # 1-63 alphanumeric or hyphen chars
+           (?<!-)                 # doesn't end with a hyphen
+          )*                      # zero or more domain components
+         )|(?:                    # or an IP address
+          (?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}  # 0-255
+             (?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)
+         )
+        )
+        (?::\d{1,5})?             # optional port
+        (?:/\S*)?                 # optional path / trailing slash
+        \Z
+        """)
     return re.match(regex, uri)
 
 def get_interval_env():
