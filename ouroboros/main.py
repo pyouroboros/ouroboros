@@ -10,7 +10,7 @@ import cli
 from logger import set_logger
 
 
-def main():
+def main(args):
     """Find running containers and update them with images using latest tag"""
     log = logging.getLogger(__name__)
     if not container.running():
@@ -33,18 +33,18 @@ def main():
                 container.remove(container_object=running_container)
                 new_container = container.create_new(config=new_config)
                 container.start(container_object=new_container)
-                if cli.cleanup:
+                if args.cleanup:
                     image.remove(old_image=current_image)
                 updated_count += 1
         log.info(f'{updated_count} container(s) updated')
-        if cli.run_once:
+        if args.run_once:
             exit(0)
 
 
 if __name__ == "__main__":
     args = cli.parse(argv[1:])
     logging.basicConfig(**set_logger(args.loglevel))
-    schedule.every(args.interval).seconds.do(main)
+    schedule.every(args.interval).seconds.do(main, args=args)
 
     while True:
         schedule.run_pending()

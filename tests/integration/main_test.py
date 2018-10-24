@@ -1,6 +1,7 @@
 import docker
 import imp
 import pytest
+import ouroboros.main as main
 import ouroboros.defaults as defaults
 
 api_client = docker.APIClient(defaults.LOCAL_UNIX_SOCKET)
@@ -55,6 +56,8 @@ def test_main(mocker):
                        'RUNONCE': 'true',
                        'CLEANUP': 'true',
                        'MONITOR': test_container_name})
+    mocker.patch('ouroboros.cli.api_client', api_client)
+
     with pytest.raises(SystemExit):
         assert imp.load_source('__main__', 'ouroboros/main.py') == SystemExit
 
