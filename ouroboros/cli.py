@@ -53,7 +53,7 @@ def get_interval_env():
         return False
 
 
-def parser(sysargs):
+def parse(sysargs):
     """Declare command line options"""
     global host, interval, monitor, loglevel, api_client, run_once, cleanup
     parser = argparse.ArgumentParser(description='ouroboros',

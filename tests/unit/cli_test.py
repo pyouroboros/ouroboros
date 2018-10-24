@@ -23,7 +23,7 @@ def test_checkURI():
 
 def test_url_args(mocker, url_args, url_result):
     mocker.patch('ouroboros.cli')
-    cli.parser(url_args)
+    cli.parse(url_args)
     assert cli.host == url_result
 
 # Interval
@@ -39,12 +39,12 @@ def test_get_interval_env(mocker, interval_env, interval_env_result):
 def test_interval_arg_invalid_value(mocker):
     mocker.patch('ouroboros.cli')
     with pytest.raises(SystemExit) as pytest_wrapped_e:
-            cli.parser(['--interval', 'test'])
+            cli.parse(['--interval', 'test'])
             assert pytest_wrapped_e.type == SystemExit
 
 def test_interval_arg_valid_value(mocker):
     mocker.patch('ouroboros.cli')
-    assert cli.parser(['--interval', 0])
+    assert cli.parse(['--interval', 0])
 
 # Monitor
 @pytest.mark.parametrize('monitor_args, monitor_result', [
@@ -56,7 +56,7 @@ def test_interval_arg_valid_value(mocker):
 
 def test_monitor_args(mocker, monitor_args, monitor_result):
     mocker.patch('ouroboros.cli')
-    cli.parser(monitor_args)
+    cli.parse(monitor_args)
     assert cli.monitor == monitor_result
 
 # Loglevel
@@ -77,7 +77,7 @@ def test_monitor_args(mocker, monitor_args, monitor_result):
 
 def test_loglevel_args(mocker, loglevel_args, loglevel_result):
     mocker.patch('ouroboros.cli')
-    cli.parser(loglevel_args)
+    cli.parse(loglevel_args)
     assert cli.loglevel == loglevel_result
 
 @pytest.mark.parametrize('loglevel_env_var, loglevel_env_var_result', [
@@ -88,7 +88,7 @@ def test_loglevel_args(mocker, loglevel_args, loglevel_result):
 def test_loglevel_env_var(mocker, loglevel_env_var, loglevel_env_var_result):
     mocker.patch.dict('os.environ', loglevel_env_var)
     mocker.patch('ouroboros.cli')
-    cli.parser([])
+    cli.parse([])
     assert cli.loglevel == loglevel_env_var_result
 
 @pytest.mark.parametrize('runonce_args, runonce_result', [
@@ -98,7 +98,7 @@ def test_loglevel_env_var(mocker, loglevel_env_var, loglevel_env_var_result):
 
 def test_runonce_args(mocker, runonce_args, runonce_result):
     mocker.patch('ouroboros.cli')
-    cli.parser(runonce_args)
+    cli.parse(runonce_args)
     assert cli.run_once == runonce_result
 
 @pytest.mark.parametrize('runonce_env_var, runonce_env_var_result', [
@@ -109,7 +109,7 @@ def test_runonce_args(mocker, runonce_args, runonce_result):
 def test_runonce_env_var(mocker, runonce_env_var, runonce_env_var_result):
     mocker.patch.dict('os.environ', runonce_env_var)
     mocker.patch('ouroboros.cli')
-    cli.parser([])
+    cli.parse([])
     assert cli.run_once == runonce_env_var_result
 
 @pytest.mark.parametrize('cleanup_args, cleanup_result', [
@@ -119,7 +119,7 @@ def test_runonce_env_var(mocker, runonce_env_var, runonce_env_var_result):
 
 def test_cleanup_args(mocker, cleanup_args, cleanup_result):
     mocker.patch('ouroboros.cli')
-    cli.parser(cleanup_args)
+    cli.parse(cleanup_args)
     assert cli.cleanup == cleanup_result
 
 @pytest.mark.parametrize('cleanup_env_var, cleanup_env_var_result', [
@@ -130,5 +130,5 @@ def test_cleanup_args(mocker, cleanup_args, cleanup_result):
 def test_cleanup_env_var(mocker, cleanup_env_var, cleanup_env_var_result):
     mocker.patch.dict('os.environ', cleanup_env_var)
     mocker.patch('ouroboros.cli')
-    cli.parser([])
+    cli.parse([])
     assert cli.cleanup == cleanup_env_var_result

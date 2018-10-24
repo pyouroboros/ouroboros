@@ -42,7 +42,7 @@ def main():
 
 
 if __name__ == "__main__":
-    cli.parser(argv[1:])
+    cli.parse(argv[1:])
     logging.basicConfig(**set_logger(cli.loglevel))
     schedule.every(cli.interval).seconds.do(main)
 
