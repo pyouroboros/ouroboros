@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
-from sys import argv
-from sys import exit
+from sys import argv, exit
 import time
-import datetime
 import logging
 import docker
 import schedule
@@ -10,6 +8,7 @@ import container
 import image
 import cli
 from logger import set_logger
+
 
 def main():
     """Find running containers and update them with images using latest tag"""
@@ -41,10 +40,12 @@ def main():
         if cli.run_once:
             exit(0)
 
+
 if __name__ == "__main__":
     cli.parser(argv[1:])
     logging.basicConfig(**set_logger(cli.loglevel))
     schedule.every(cli.interval).seconds.do(main)
+
     while True:
         schedule.run_pending()
         time.sleep(1)
