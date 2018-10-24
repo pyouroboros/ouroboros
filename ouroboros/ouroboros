@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+
+if __name__ == "__main__":
+    import sys
+    import ouroboros.main as oro
+    oro.main(sys.argv[1:])
