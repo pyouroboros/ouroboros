@@ -39,3 +39,11 @@ def test_to_monitor_exception(mocker, caplog):
 
     container.to_monitor(monitor='test')
     assert 'connect to Docker API' in caplog.text
+
+
+def test_running_exception(mocker, caplog):
+    mocker.patch.object(container.cli, 'api_client')
+    container.cli.api_client.containers.side_effect = BaseException("I'm blasting off again!")
+
+    container.running()
+    assert 'connect to Docker API' in caplog.text
