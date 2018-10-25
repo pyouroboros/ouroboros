@@ -5,12 +5,7 @@ import re
 import defaults
 
 host = ''
-interval = ''
-monitor = []
-loglevel = ''
 api_client = None
-run_once = None
-cleanup = None
 
 
 def checkURI(uri):
@@ -53,21 +48,27 @@ def get_interval_env():
         return False
 
 
-def parser(sysargs):
+def parse(sysargs):
     """Declare command line options"""
-    global host, interval, monitor, loglevel, api_client, run_once, cleanup
+    global host, api_client
     parser = argparse.ArgumentParser(description='ouroboros',
                                      epilog='Example: python3 main.py -u tcp://1.2.3.4:5678 -i 20 -m container1 container2 -l warn')
     parser.add_argument('-u', '--url', help='Url for tcp host (defaults to "unix://var/run/docker.sock")')
-    parser.add_argument('-i', '--interval', type=int, default=get_interval_env() or defaults.INTERVAL,
+
+    parser.add_argument('-i', '--interval', type=int, default=get_interval_env() or defaults.INTERVAL, dest="interval",
                         help='Interval in seconds between checking for updates (defaults to 300s)')
-    parser.add_argument('-m', '--monitor', nargs='+', default=environ.get('MONITOR') or [],
+
+    parser.add_argument('-m', '--monitor', nargs='+', default=environ.get('MONITOR') or [], dest="monitor",
                         help='Which container to monitor (defaults to all running).')
+
     parser.add_argument('-l', '--loglevel', choices=['notset', 'debug', 'info', 'warn', 'error', 'critical'],
-                        default=environ.get('LOGLEVEL') or 'info', help='Change logger mode (defaults to info)')
-    parser.add_argument('-r', '--runonce', default=environ.get('RUNONCE') or False,
+                        dest="loglevel", default=environ.get('LOGLEVEL') or 'info',
+                        help='Change logger mode (defaults to info)')
+
+    parser.add_argument('-r', '--runonce', default=environ.get('RUNONCE') or False, dest="run_once",
                         help='Only run ouroboros once then exit', action='store_true')
-    parser.add_argument('-c', '--cleanup', default=environ.get('CLEANUP') or False,
+
+    parser.add_argument('-c', '--cleanup', default=environ.get('CLEANUP') or False, dest="cleanup",
                         help='Remove old images after updating', action='store_true')
     args = parser.parse_args(sysargs)
 
@@ -76,10 +77,5 @@ def parser(sysargs):
         if not checkURI(host):
             host = defaults.LOCAL_UNIX_SOCKET
 
-    interval = args.interval
-    monitor = args.monitor
-    loglevel = args.loglevel
-    run_once = args.runonce
-    cleanup = args.cleanup
     api_client = docker.APIClient(base_url=host)
     return args
