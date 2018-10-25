@@ -1,6 +1,5 @@
 import pytest
 import ouroboros.container as container
-import ouroboros.defaults as defaults
 from container_object import container_object
 
 @pytest.fixture()
