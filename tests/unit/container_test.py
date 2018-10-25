@@ -32,3 +32,10 @@ def test_to_monitor(mocker):
     assert result == []
     container.cli.api_client.containers.assert_called_once()
 
+
+def test_to_monitor_exception(mocker, caplog):
+    mocker.patch.object(container.cli, 'api_client')
+    container.cli.api_client.containers.side_effect = BaseException('I blew up!!')
+
+    container.to_monitor(monitor='test')
+    assert 'connect to Docker API' in caplog.text
