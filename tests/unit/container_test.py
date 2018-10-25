@@ -22,3 +22,13 @@ def test_new_container_properties(fake_container):
 
 def test_get_name(fake_container):
     assert container.get_name(fake_container) == 'testName1'
+
+
+def test_to_monitor(mocker):
+    mocker.patch.object(container.cli, 'api_client')
+    container.cli.api_client.containers.return_value = []
+
+    result = container.to_monitor(monitor='test')
+    assert result == []
+    container.cli.api_client.containers.assert_called_once()
+
