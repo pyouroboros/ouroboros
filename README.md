@@ -22,8 +22,6 @@ Ouroboros will monitor all running docker containers or those you specify and up
 ## Usage
 ![alt text](https://thumbs.gfycat.com/SerpentineExhaustedHind-size_restricted.gif)
 
-> Docker networks are strongly recommended for maintaining connected containers rather than links and may result in error if a container's link dependency does not instantiate fast enough.
-
 `Ouroboros` is deployed via docker image like so:
 
 ```bash
