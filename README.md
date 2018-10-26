@@ -22,6 +22,8 @@ Ouroboros will monitor all running docker containers or those you specify and up
 ## Usage
 ![alt text](https://thumbs.gfycat.com/SerpentineExhaustedHind-size_restricted.gif)
 
+> Docker networks are strongly recommended for maintaining connected containers rather than links and may result in error if a container's link dependency does not instantiate fast enough.
+
 `Ouroboros` is deployed via docker image like so:
 
 ```bash
@@ -52,16 +54,18 @@ services:
 
 > All arguments can be ran together without conflication
 
+> All arguments can be supplemented with environment variables, but command line arguments will take priority
+
 ```
 docker run --rm circa10a/ouroboros --help
 ```
 
-- `--url`, `-u` Monitor and update containers on a remote system by providing the `url` argument. Default is `unix://var/run/docker.sock`
-- `--interval`, `-i` Change how often ouroboros checks the remote docker registry for image updates (in seconds). Default is `300`
-- `--monitor`, `-m` Only monitor select containers which supports an infinite amount of container names. Default is all containers.
-- `--loglevel`, `-l` The amount of logging details can be supressed or increased Default is `info`.
-- `--runonce`, `-r` Update all your running containers in one go and terminate ouroboros. Default is `False`.
-- `--cleanup`, `-c` Remove the older docker image if a new one is found and updated. Default is `False`.
+- `--url`, `-u` Monitor and update containers on a remote system by providing the `url` argument. Default is `unix://var/run/docker.sock`. Environment variable: `URL=tcp://localhost:2375`
+- `--interval`, `-i` Change how often ouroboros checks the remote docker registry for image updates (in seconds). Default is `300`. Environment variable: `INTERVAL=60`.
+- `--monitor`, `-m` Only monitor select containers which supports an infinite amount of container names. Default is all containers. Environment variable: `MONITOR=test_container`
+- `--loglevel`, `-l` The amount of logging details can be supressed or increased Default is `info`. Environment variable: `LOGLEVEL=debug`
+- `--runonce`, `-r` Update all your running containers in one go and terminate ouroboros. Default is `False`. Environment variable: `RUNONCE=true`
+- `--cleanup`, `-c` Remove the older docker image if a new one is found and updated. Default is `False`. Environment variable: `CLEANUP=true`
 
 ### Private Registries
 
