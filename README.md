@@ -46,8 +46,6 @@ services:
     command: --interval 60 --loglevel debug
 ```
 
-> By default, running containers will be polled every 5 min
-
 ### Options
 
 > All arguments can be ran together without conflication
