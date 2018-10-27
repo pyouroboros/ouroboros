@@ -56,7 +56,7 @@ def test_main(mocker):
                        'CLEANUP': 'true',
                        'MONITOR': test_container_name})
     with pytest.raises(SystemExit):
-        assert imp.load_source('__main__', 'ouroboros/main.py') == SystemExit
+        assert imp.load_source('__main__', 'ouroboros/ouroboros') == SystemExit
 
 
 def test_container_updated(mocker):
