@@ -1,5 +1,4 @@
 import logging
-import cli
 
 log = logging.getLogger(__name__)
 
@@ -18,37 +17,37 @@ def new_container_properties(old_container, new_image):
     return props
 
 
-def running():
+def running(api_client):
     """Return running container objects list"""
     running_containers = []
     try:
-        for container in cli.api_client.containers(
+        for container in api_client.containers(
                 filters={'status': 'running'}):
             if 'ouroboros' not in container['Image']:
                 running_containers.append(
-                    cli.api_client.inspect_container(container))
+                    api_client.inspect_container(container))
         return running_containers
     except BaseException:
         log.critical(
-            f'Can\'t connect to Docker API at {cli.api_client.base_url}')
+            f'Can\'t connect to Docker API at {api_client.base_url}')
 
 
-def to_monitor(monitor=None):
+def to_monitor(monitor=None, api_client=None):
     """Return filtered running container objects list"""
     running_containers = []
     try:
         if monitor:
-            for container in cli.api_client.containers(
+            for container in api_client.containers(
                     filters={'name': monitor, 'status': 'running'}):
                 running_containers.append(
-                    cli.api_client.inspect_container(container))
+                    api_client.inspect_container(container))
         else:
-            running_containers.extend(running())
+            running_containers.extend(running(api_client))
         log.info(f'{len(running_containers)} running container(s) matched filter')
         return running_containers
     except BaseException:
         log.critical(
-            f'Can\'t connect to Docker API at {cli.api_client.base_url}')
+            f'Can\'t connect to Docker API at {api_client.base_url}')
 
 
 def get_name(container_object):
@@ -56,24 +55,24 @@ def get_name(container_object):
     return container_object['Name'].replace('/', '')
 
 
-def stop(container_object):
+def stop(container_object, api_client):
     """Stop out of date container"""
     log.debug(f'Stopping container: {get_name(container_object)}')
-    return cli.api_client.stop(container_object)
+    return api_client.stop(container_object)
 
 
-def remove(container_object):
+def remove(container_object, api_client):
     """Remove out of date container"""
     log.debug(f'Removing container: {get_name(container_object)}')
-    return cli.api_client.remove_container(container_object)
+    return api_client.remove_container(container_object)
 
 
-def create_new(config):
+def create_new(config, api_client):
     """Create new container with latest image"""
-    return cli.api_client.create_container(**config)
+    return api_client.create_container(**config)
 
 
-def start(container_object):
+def start(container_object, api_client):
     """Start newly created container with latest image"""
     log.debug(f"Starting container: {container_object['Id']}")
-    return cli.api_client.start(container_object)
+    return api_client.start(container_object)

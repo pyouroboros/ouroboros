@@ -1,7 +1,8 @@
 import pytest
 import ouroboros.container as container
 from container_object import container_object
-
+import docker
+import ouroboros.defaults
 
 @pytest.fixture()
 def fake_container():
@@ -25,25 +26,28 @@ def test_get_name(fake_container):
 
 
 def test_to_monitor(mocker):
-    mocker.patch.object(container.cli, 'api_client')
-    container.cli.api_client.containers.return_value = []
+    mock_client = mocker.Mock(spec=docker.APIClient)
+    mock_client.base_url = ouroboros.defaults.LOCAL_UNIX_SOCKET
+    mock_client.containers.return_value = []
 
-    result = container.to_monitor(monitor='test')
+    result = container.to_monitor(monitor='test', api_client=mock_client)
     assert result == []
-    container.cli.api_client.containers.assert_called_once()
+    mock_client.containers.assert_called_once()
 
 
 def test_to_monitor_exception(mocker, caplog):
-    mocker.patch.object(container.cli, 'api_client')
-    container.cli.api_client.containers.side_effect = BaseException('I blew up!!')
+    mock_client = mocker.Mock(spec=docker.APIClient)
+    mock_client.base_url = ouroboros.defaults.LOCAL_UNIX_SOCKET
+    mock_client.containers.side_effect = BaseException('I blew up!!')
 
-    container.to_monitor(monitor='test')
+    container.to_monitor(monitor='test', api_client=mock_client)
     assert 'connect to Docker API' in caplog.text
 
 
 def test_running_exception(mocker, caplog):
-    mocker.patch.object(container.cli, 'api_client')
-    container.cli.api_client.containers.side_effect = BaseException("I'm blasting off again!")
+    mock_client = mocker.Mock(spec=docker.APIClient)
+    mock_client.base_url = ouroboros.defaults.LOCAL_UNIX_SOCKET
+    mock_client.containers.side_effect = BaseException("I'm blasting off again!")
 
-    container.running()
+    container.running(mock_client)
     assert 'connect to Docker API' in caplog.text

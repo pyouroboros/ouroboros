@@ -1,10 +1,7 @@
 from os import environ
 import argparse
-import docker
 import re
 import defaults
-
-api_client = None
 
 
 def checkURI(uri):
@@ -49,7 +46,6 @@ def get_interval_env():
 
 def parse(sysargs):
     """Declare command line options"""
-    global api_client
     parser = argparse.ArgumentParser(description='ouroboros',
                                      epilog='Example: python3 main.py -u tcp://1.2.3.4:5678 -i 20 -m container1 container2 -l warn')
 
@@ -79,5 +75,4 @@ def parse(sysargs):
         if args.url is not defaults.LOCAL_UNIX_SOCKET:
             args.url = args.url if checkURI(args.url) else defaults.LOCAL_UNIX_SOCKET
 
-    api_client = docker.APIClient(base_url=args.url)
     return args
