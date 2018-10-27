@@ -46,7 +46,6 @@ def get_interval_env():
 
 def parse(sysargs):
     """Declare command line options"""
-    global api_client
     parser = argparse.ArgumentParser(description='ouroboros',
                                      epilog='Example: python3 main.py -u tcp://1.2.3.4:5678 -i 20 -m container1 container2 -l warn')
 
