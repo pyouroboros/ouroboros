@@ -22,8 +22,8 @@ def test_checkURI():
 ])
 def test_url_args(mocker, url_args, url_result):
     mocker.patch('ouroboros.cli')
-    cli.parse(url_args)
-    assert cli.host == url_result
+    args = cli.parse(url_args)
+    assert args.url == url_result
 
 # Interval
 
