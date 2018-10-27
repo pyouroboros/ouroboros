@@ -43,7 +43,7 @@ def get_interval_env():
     int_env = environ.get('INTERVAL')
     try:
         return int(int_env)
-    except:
+    except (ValueError, TypeError):
         return False
 
 
