@@ -55,7 +55,7 @@ def test_main(mocker):
                        'RUNONCE': 'true',
                        'CLEANUP': 'true',
                        'MONITOR': test_container_name})
-    mocker.patch('ouroboros.cli.api_client', api_client)
+    #mocker.patch('ouroboros.cli.api_client', api_client)
 
     with pytest.raises(SystemExit):
         assert imp.load_source('__main__', 'ouroboros/main.py') == SystemExit

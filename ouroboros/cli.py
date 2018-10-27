@@ -1,10 +1,7 @@
 from os import environ
 import argparse
-import docker
 import re
 import defaults
-
-api_client = None
 
 
 def checkURI(uri):
@@ -79,5 +76,4 @@ def parse(sysargs):
         if args.url is not defaults.LOCAL_UNIX_SOCKET:
             args.url = args.url if checkURI(args.url) else defaults.LOCAL_UNIX_SOCKET
 
-    api_client = docker.APIClient(base_url=args.url)
     return args
