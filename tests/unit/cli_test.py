@@ -12,13 +12,10 @@ def test_checkURI():
 @pytest.mark.parametrize('url_args, url_result', [
     # Invalid regex
     (['-u', 'tcp:/0.0.0.0:1234'], defaults.LOCAL_UNIX_SOCKET),
-    (['--url', 'tcp:/0.0.0.0:1234'], defaults.LOCAL_UNIX_SOCKET),
     # If none supplied, default to unix://
     (['-u', ''], defaults.LOCAL_UNIX_SOCKET),
-    (['--url', ''], defaults.LOCAL_UNIX_SOCKET),
     # Valid Regex
     (['-u', 'tcp://0.0.0.0:1234'], 'tcp://0.0.0.0:1234'),
-    (['--url', 'tcp://0.0.0.0:1234'], 'tcp://0.0.0.0:1234')
 ])
 def test_url_args(mocker, url_args, url_result):
     mocker.patch('ouroboros.cli')
