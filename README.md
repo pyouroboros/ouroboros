@@ -22,7 +22,7 @@ Ouroboros will monitor all running docker containers or those you specify and up
 ## Usage
 ![alt text](https://thumbs.gfycat.com/SerpentineExhaustedHind-size_restricted.gif)
 
-`Ouroboros` is deployed via docker image like so:
+Ouroboros is deployed via docker image like so:
 
 ```bash
 docker run -d --name ouroboros \
@@ -45,6 +45,20 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 60 --loglevel debug
 ```
+
+Ouroboros can also be installed via `pip`:
+
+```bash
+pip install ouroboros-cli
+```
+
+And can then be invoked using the `ouroboros` command:
+
+```bash
+$ ouroboros --interval 5 --loglevel debug
+```
+
+> This can be useful if you would like to create a `systemd` service or similar daemon that doesn't run in a container
 
 ### Options
 
