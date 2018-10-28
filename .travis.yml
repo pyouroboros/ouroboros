@@ -14,6 +14,7 @@ deploy:
   - provider: pypi
     user: circa10a
     password: $pypi_password
+    skip_existing: true
     on:
       branch: master
 
