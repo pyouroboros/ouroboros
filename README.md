@@ -3,9 +3,11 @@
 
 [![Travis](https://img.shields.io/travis/circa10a/ouroboros/master.svg?style=flat-square)](https://travis-ci.org/circa10a/ouroboros)
 [![Codecov](https://img.shields.io/codecov/c/github/circa10a/ouroboros.svg?style=flat-square)](https://codecov.io/gh/circa10a/ouroboros)
-![Docker Pulls](https://img.shields.io/docker/pulls/circa10a/ouroboros.svg?style=flat-square)
-[![](https://images.microbadger.com/badges/image/circa10a/ouroboros.svg)](https://microbadger.com/images/circa10a/ouroboros "Get your own image badge on microbadger.com")
-[![](https://images.microbadger.com/badges/version/circa10a/ouroboros.svg)](https://microbadger.com/images/circa10a/ouroboros "Get your own version badge on microbadger.com")
+[![Docker Pulls](https://img.shields.io/docker/pulls/circa10a/ouroboros.svg?style=flat-square)](https://hub.docker.com/r/circa10a/ouroboros/)
+[![Layers](https://images.microbadger.com/badges/image/circa10a/ouroboros.svg)](https://microbadger.com/images/circa10a/ouroboros)
+[![Image Version](https://images.microbadger.com/badges/version/circa10a/ouroboros.svg)](https://hub.docker.com/r/circa10a/ouroboros/)
+[![Pypi Version](https://img.shields.io/pypi/v/ouroboros-cli.svg?style=flat-square)](https://pypi.org/project/ouroboros-cli/)
+[![Pypi Downloads](https://img.shields.io/pypi/dm/ouroboros-cli.svg?style=flat-square)](https://pypi.org/project/ouroboros-cli/)
 
 Automatically update your running Docker containers to the latest available image.
 
