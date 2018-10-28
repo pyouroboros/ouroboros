@@ -22,6 +22,8 @@ Ouroboros will monitor all running docker containers or those you specify and up
 ## Usage
 ![alt text](https://thumbs.gfycat.com/SerpentineExhaustedHind-size_restricted.gif)
 
+### Docker
+
 Ouroboros is deployed via docker image like so:
 
 ```bash
@@ -46,6 +48,7 @@ services:
     command: --interval 60 --loglevel debug
 ```
 
+### Pip
 Ouroboros can also be installed via `pip`:
 
 ```bash
