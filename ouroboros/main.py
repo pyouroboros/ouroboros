@@ -1,13 +1,8 @@
-#!/usr/bin/env python3
-from sys import argv, exit
-import time
+from sys import exit
 import logging
 import docker
-import schedule
-import container
-import image
-import cli
-from logger import set_logger
+from ouroboros import container
+from ouroboros import image
 
 
 def main(args, api_client):
@@ -39,14 +34,3 @@ def main(args, api_client):
         log.info(f'{updated_count} container(s) updated')
         if args.run_once:
             exit(0)
-
-
-if __name__ == "__main__":
-    args = cli.parse(argv[1:])
-    api_client = docker.APIClient(base_url=args.url)
-    logging.basicConfig(**set_logger(args.loglevel))
-    schedule.every(args.interval).seconds.do(main, args=args, api_client=api_client)
-
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
