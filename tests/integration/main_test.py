@@ -28,29 +28,29 @@ test_container_props = {
     ]
 }
 
-
 def test_create_network():
     api_client.create_network(test_network)
     assert api_client.inspect_network(test_network)['Name'] == test_network
 
 
-def test_create_container():
-    api_client.pull(repository=test_repo, tag=test_tag)
-    api_client.create_container(**test_container_props, networking_config=api_client.create_networking_config({test_network: api_client.create_endpoint_config()}),
-                                host_config=api_client.create_host_config(binds=[f"{test_container_props['volumes'][0]}:{test_container_mount_dest}"],
-                                                                          port_bindings={test_container_props['ports'][0]: test_host_port}))
-    api_client.start(test_container_name)
-    running_container = api_client.containers(
-        filters={'name': test_container_name})[0]
-    assert running_container['State'] == 'running'
-    assert running_container['Id'] in api_client.inspect_network(test_network)[
-        'Containers']
+@pytest.fixture()
+def create_container():
+    def init(tag):
+        test_container_props.update({'image': f'{test_repo}:{tag}'})
+        api_client.pull(repository=test_repo, tag=tag)
+        api_client.create_container(**test_container_props, networking_config=api_client.create_networking_config({test_network: api_client.create_endpoint_config()}),
+                                    host_config=api_client.create_host_config(binds=[f"{test_container_props['volumes'][0]}:{test_container_mount_dest}"],
+                                                                            port_bindings={test_container_props['ports'][0]: test_host_port}))
+        api_client.start(test_container_name)
+        running_container = api_client.containers(filters={'name': test_container_name})[0]
+    return init
 
 
-def test_main(mocker):
+def test_main_with_latest(mocker, create_container):
+    create_container('latest')
     mocker.patch('sys.argv', [''])
     mocker.patch.dict('os.environ',
-                      {'INTERVAL': '6',
+                      {'INTERVAL': '5',
                        'LOGLEVEL': 'debug',
                        'RUNONCE': 'true',
                        'CLEANUP': 'true',
@@ -59,7 +59,7 @@ def test_main(mocker):
         assert imp.load_source('__main__', 'ouroboros/ouroboros') == SystemExit
 
 
-def test_container_updated(mocker):
+def test_container_updated_to_latest(mocker):
     running_container = api_client.containers(
         filters={'name': test_container_name})[0]
     new_container = api_client.inspect_container(running_container)
@@ -67,15 +67,51 @@ def test_container_updated(mocker):
         f"{test_container_props['ports'][0]}/tcp"][0]['HostPort']
     assert new_container['State']['Status'] == 'running'
     assert new_container['Config']['Image'] == f'{test_repo}:latest'
-    assert new_container['Config']['Cmd'] == test_container_props['command'].split(
-    )
+    assert new_container['Config']['Cmd'] == test_container_props['command'].split()
     assert test_container_props['environment'][0] in new_container['Config']['Env']
     assert new_container['Mounts'][0]['Source'] == test_container_props['volumes'][0]
     assert new_container['Mounts'][0]['Destination'] == test_container_mount_dest
     assert host_port == str(test_host_port)
 
 
-def test_rm_updated_container():
+def test_rm_updated_container_latest():
+    running_container = api_client.containers(
+        filters={'name': test_container_name})[0]
+    api_client.stop(running_container)
+    api_client.remove_container(running_container)
+    assert api_client.containers(filters={'name': test_container_name}) == []
+
+
+def test_main_with_keeptag(mocker, create_container):
+    create_container(test_tag)
+    mocker.patch('sys.argv', ['--keep-tag'])
+    mocker.patch.dict('os.environ',
+                      {'INTERVAL': '5',
+                       'LOGLEVEL': 'debug',
+                       'RUNONCE': 'true',
+                       'CLEANUP': 'true',
+                       'KEEPTAG': 'true',
+                       'MONITOR': test_container_name})
+    with pytest.raises(SystemExit):
+        assert imp.load_source('__main__', 'ouroboros/ouroboros') == SystemExit
+
+
+def test_container_updated_with_same_tag(mocker):
+    running_container = api_client.containers(
+        filters={'name': test_container_name})[0]
+    new_container = api_client.inspect_container(running_container)
+    host_port = new_container['HostConfig']['PortBindings'][
+        f"{test_container_props['ports'][0]}/tcp"][0]['HostPort']
+    assert new_container['State']['Status'] == 'running'
+    assert new_container['Config']['Image'] == test_image
+    assert new_container['Config']['Cmd'] == test_container_props['command'].split()
+    assert test_container_props['environment'][0] in new_container['Config']['Env']
+    assert new_container['Mounts'][0]['Source'] == test_container_props['volumes'][0]
+    assert new_container['Mounts'][0]['Destination'] == test_container_mount_dest
+    assert host_port == str(test_host_port)
+
+
+def test_rm_updated_container_with_same_tag():
     running_container = api_client.containers(
         filters={'name': test_container_name})[0]
     api_client.stop(running_container)

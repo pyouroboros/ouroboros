@@ -6,7 +6,7 @@ from . import defaults
 
 def checkURI(uri):
     """Validate tcp:// regex"""
-    regex = re.compile( r"""(?xi) # "verbose" mode & case-insensitive
+    regex = re.compile(r"""(?xi) # "verbose" mode & case-insensitive
         \A                        # in the beginning...
         tcps?://                  # tcp or tcps protocol
         (?:                       # hostname / IP address
@@ -68,12 +68,17 @@ def parse(sysargs):
 
     parser.add_argument('-c', '--cleanup', default=environ.get('CLEANUP') or False, dest="cleanup",
                         help='Remove old images after updating', action='store_true')
+
+    parser.add_argument('-k', '--keep-tag', default=environ.get('KEEPTAG') or False, dest="keep_tag",
+                        help='Check for image updates of the same tag instead of pulling latest', action='store_true')
+
     args = parser.parse_args(sysargs)
 
     if not args.url:
         args.url = defaults.LOCAL_UNIX_SOCKET
     else:
         if args.url is not defaults.LOCAL_UNIX_SOCKET:
-            args.url = args.url if checkURI(args.url) else defaults.LOCAL_UNIX_SOCKET
+            args.url = args.url if checkURI(
+                args.url) else defaults.LOCAL_UNIX_SOCKET
 
     return args
