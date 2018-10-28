@@ -47,8 +47,7 @@ def get_interval_env():
 def parse(sysargs):
     """Declare command line options"""
     parser = argparse.ArgumentParser(description='ouroboros',
-                                     epilog='Example: ouroboros -u tcp://1.2.3.4:5678'
-                                     + '-i 20 -m container1 container2 -l warn')
+                                     epilog=f'Example: ouroboros -u tcp://1.2.3.4:5678 -i 20 -m container1 container2 -l warn')
 
     parser.add_argument('-u', '--url', default=defaults.LOCAL_UNIX_SOCKET,
                         help='Url for tcp host (defaults to "unix://var/run/docker.sock")')
