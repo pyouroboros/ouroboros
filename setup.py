@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='ouroboros-cli',
-    version='0.2.0',
+    version='0.2.1',
     url='https://github.com/circa10a/ouroboros',
     classifiers=['Programming Language :: Python'],
     packages=find_packages(exclude=['tests']),
