@@ -1,5 +1,5 @@
 #!/usr/bin/env bash -e
-VERSION=$(grep -i version ouroboros/__init__.py | awk -F= '{gsub("\047",""); print $2}')
+VERSION=$(grep -i version ./setup.py | awk -F= '{gsub("\047",""); gsub(",",""); print $2}')
 
 # Docker
 USER='circa10a'

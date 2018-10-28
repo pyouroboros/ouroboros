@@ -11,7 +11,13 @@ after_script:
   - codecov
 
 deploy:
-  provider: script
-  script: bash ./deploy.sh
-  on:
-    branch: master
+  - provider: pypi
+    user: circa10a
+    password: $pypi_password
+    on:
+      branch: master
+
+  - provider: script
+    script: bash ./deploy.sh
+    on:
+      branch: master

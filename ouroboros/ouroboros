@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 if __name__ == "__main__":
     import sys
@@ -12,7 +12,8 @@ if __name__ == "__main__":
     args = cli.parse(sys.argv[1:])
     api_client = docker.APIClient(base_url=args.url)
     logging.basicConfig(**set_logger(args.loglevel))
-    schedule.every(args.interval).seconds.do(main, args=args, api_client=api_client)
+    schedule.every(args.interval).seconds.do(
+        main, args=args, api_client=api_client)
 
     while True:
         schedule.run_pending()
