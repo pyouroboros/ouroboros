@@ -84,7 +84,7 @@ def test_rm_updated_container_latest():
 
 def test_main_with_keeptag(mocker, create_container):
     create_container(test_tag)
-    mocker.patch('sys.argv', ['--keep-tag'])
+    mocker.patch('sys.argv', [''])
     mocker.patch.dict('os.environ',
                       {'INTERVAL': '5',
                        'LOGLEVEL': 'debug',
