@@ -49,4 +49,4 @@ pip install --requirement <( for m in  "${!missing_modules[@]}"; do echo "$m"; d
 
 export PYTHONPATH="$(pwd)/ouroboros"
 
-python3 -m pytest "tests/$1" -v --cov-report term-missing --cov="$PYTHONPATH" -s
+python3 -m pytest "tests/$1" -v --cov-report term-missing --cov="$PYTHONPATH"
