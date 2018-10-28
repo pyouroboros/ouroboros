@@ -78,7 +78,6 @@ def parse(sysargs):
         args.url = defaults.LOCAL_UNIX_SOCKET
     else:
         if args.url is not defaults.LOCAL_UNIX_SOCKET:
-            args.url = args.url if checkURI(
-                args.url) else defaults.LOCAL_UNIX_SOCKET
+            args.url = args.url if checkURI(args.url) else defaults.LOCAL_UNIX_SOCKET
 
     return args
