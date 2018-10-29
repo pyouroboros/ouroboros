@@ -59,7 +59,7 @@ def parse(sysargs):
                         help='Which container to monitor (defaults to all running).')
 
     parser.add_argument('-l', '--loglevel', choices=['notset', 'debug', 'info', 'warn', 'error', 'critical'],
-                        dest="loglevel", default=environ.get('LOGLEVEL', 'info'),
+                        dest="loglevel", default=environ.get('LOGLEVEL') or 'info',
                         help='Change logger mode (defaults to info)')
 
     parser.add_argument('-r', '--runonce', default=environ.get('RUNONCE') or False, dest='run_once',
