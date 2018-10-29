@@ -15,7 +15,7 @@ def main(args, api_client):
         for running_container in container.to_monitor(api_client=api_client):
             current_image = api_client.inspect_image(running_container['Config']['Image'])
             try:
-                latest_image = image.pull_latest(image=current_image, keep_tag=args.keep_tag, api_client=api_client)
+                latest_image = image.pull_latest(image=current_image, args=args, api_client=api_client)
             except docker.errors.APIError as e:
                 log.error(e)
                 continue

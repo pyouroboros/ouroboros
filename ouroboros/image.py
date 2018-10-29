@@ -12,10 +12,10 @@ def check_credentials():
     return {}
 
 
-def pull_latest(image, keep_tag, api_client):
+def pull_latest(image, args, api_client):
     """Return tag of latest image pulled"""
     latest_image = image['RepoTags'][0].split(':')[0] + ':latest'
-    if keep_tag:
+    if args.keep_tag:
         latest_image = image['RepoTags'][0]
     log.debug(f'Pulling image: {latest_image}')
     api_client.pull(latest_image, auth_config=check_credentials())
