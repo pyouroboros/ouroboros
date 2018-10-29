@@ -35,19 +35,15 @@ def test_create_network():
 
 @pytest.fixture()
 def create_container():
-    def init(tag):
-        test_container_props.update({'image': f'{test_repo}:{tag}'})
-        api_client.pull(repository=test_repo, tag=tag)
+        api_client.pull(repository=test_repo, tag=test_tag)
         api_client.create_container(**test_container_props, networking_config=api_client.create_networking_config({test_network: api_client.create_endpoint_config()}),
                                     host_config=api_client.create_host_config(binds=[f"{test_container_props['volumes'][0]}:{test_container_mount_dest}"],
                                                                             port_bindings={test_container_props['ports'][0]: test_host_port}))
         api_client.start(test_container_name)
         running_container = api_client.containers(filters={'name': test_container_name})[0]
-    return init
 
 
 def test_main_with_latest(mocker, create_container):
-    create_container('latest')
     mocker.patch('sys.argv', [''])
     mocker.patch.dict('os.environ',
                       {'INTERVAL': '5',
@@ -58,6 +54,8 @@ def test_main_with_latest(mocker, create_container):
     with pytest.raises(SystemExit):
         assert imp.load_source('__main__', 'ouroboros/ouroboros') == SystemExit
 
+def test_image_cleanup():
+    assert api_client.images(name=test_image) == []
 
 def test_container_updated_to_latest(mocker):
     running_container = api_client.containers(
@@ -83,7 +81,6 @@ def test_rm_updated_container_latest():
 
 
 def test_main_with_keeptag(mocker, create_container):
-    create_container(test_tag)
     mocker.patch('sys.argv', [''])
     mocker.patch.dict('os.environ',
                       {'INTERVAL': '5',
@@ -117,14 +114,6 @@ def test_rm_updated_container_with_same_tag():
     api_client.stop(running_container)
     api_client.remove_container(running_container)
     assert api_client.containers(filters={'name': test_container_name}) == []
-
-
-def test_rm_test_images():
-    images = [test_image, f'{test_repo}:latest']
-    for image in images:
-        if api_client.images(image):
-            api_client.remove_image(image)
-            assert api_client.images(name=image) == []
 
 
 def test_rm_network():
