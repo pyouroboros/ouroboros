@@ -59,7 +59,7 @@ def parse(sysargs):
     parser.add_argument('-m', '--monitor', nargs='+', default=environ.get('MONITOR') or [], dest="monitor",
                         help='Which container to monitor (defaults to all running).')
 
-    parser.add_argument('-n', '--ignore', default=environ.get('IGNORE') or [], dest='ignore',
+    parser.add_argument('-n', '--ignore', nargs='+', default=environ.get('IGNORE') or [], dest='ignore',
                         help='Which container(s) to ignore.')
 
     parser.add_argument('-l', '--loglevel', choices=['notset', 'debug', 'info', 'warn', 'error', 'critical'],
