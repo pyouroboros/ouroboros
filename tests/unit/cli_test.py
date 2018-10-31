@@ -126,7 +126,7 @@ def test_runonce_env_var(mocker, runonce_env_var, runonce_env_var_result):
     assert args.run_once == runonce_env_var_result
 
 
-def test_reconcile(mocker):
+def test_reconcile():
     args = cli.parse(["-m", "test1", "test2", "-n", "test3", "test1"])
     assert "test1" not in args.monitor
     assert "test1" in args.ignore
