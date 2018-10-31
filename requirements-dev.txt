@@ -3,4 +3,5 @@ schedule
 pytest
 pytest-cov
 pytest-mock
+pytest-console-scripts
 codecov

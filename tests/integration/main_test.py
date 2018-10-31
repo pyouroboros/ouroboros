@@ -1,6 +1,6 @@
 import docker
-import imp
 import pytest
+from importlib.machinery import SourceFileLoader
 import ouroboros.defaults as defaults
 
 api_client = docker.APIClient(defaults.LOCAL_UNIX_SOCKET)
@@ -28,6 +28,7 @@ test_container_props = {
     ]
 }
 
+
 def test_create_network():
     api_client.create_network(test_network)
     assert api_client.inspect_network(test_network)['Name'] == test_network
@@ -46,16 +47,18 @@ def create_container():
 def test_main_with_latest(mocker, create_container):
     mocker.patch('sys.argv', [''])
     mocker.patch.dict('os.environ',
-                      {'INTERVAL': '5',
+                      {'INTERVAL': '1',
                        'LOGLEVEL': 'debug',
                        'RUNONCE': 'true',
                        'CLEANUP': 'true',
                        'MONITOR': test_container_name})
     with pytest.raises(SystemExit):
-        assert imp.load_source('__main__', 'ouroboros/ouroboros') == SystemExit
+        assert SourceFileLoader('__main__', 'ouroboros/ouroboros').load_module() == SystemExit
+
 
 def test_image_cleanup():
     assert api_client.images(name=test_image) == []
+
 
 def test_container_updated_to_latest(mocker):
     running_container = api_client.containers(
@@ -80,17 +83,17 @@ def test_rm_updated_container_latest():
     assert api_client.containers(filters={'name': test_container_name}) == []
 
 
-def test_main_with_keeptag(mocker, create_container):
-    mocker.patch('sys.argv', [''])
+@pytest.mark.script_launch_mode('subprocess')
+def test_main_with_keeptag(mocker, create_container, script_runner):
     mocker.patch.dict('os.environ',
-                      {'INTERVAL': '5',
+                      {'INTERVAL': '1',
                        'LOGLEVEL': 'debug',
                        'RUNONCE': 'true',
                        'CLEANUP': 'true',
                        'KEEPTAG': 'true',
                        'MONITOR': test_container_name})
-    with pytest.raises(SystemExit):
-        assert imp.load_source('__main__', 'ouroboros/ouroboros') == SystemExit
+    status = script_runner.run('ouroboros')
+    assert status.success
 
 
 def test_container_updated_with_same_tag(mocker):
