@@ -72,6 +72,7 @@ def parse(sysargs):
     parser.add_argument('-c', '--cleanup', default=environ.get('CLEANUP') or False, dest="cleanup",
                         help='Remove old images after updating', action='store_true')
     args = parser.parse_args(sysargs)
+    reconcile_ignore_monitor(args)
 
     if not args.url:
         args.url = defaults.LOCAL_UNIX_SOCKET
@@ -80,3 +81,11 @@ def parse(sysargs):
             args.url = args.url if checkURI(args.url) else defaults.LOCAL_UNIX_SOCKET
 
     return args
+
+
+def reconcile_ignore_monitor(args):
+    intersection = set(args.ignore).intersection(set(args.monitor))
+
+    # Something is in both
+    if intersection:
+        args.monitor = [name for name in args.monitor if name not in intersection]

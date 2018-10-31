@@ -126,6 +126,16 @@ def test_runonce_env_var(mocker, runonce_env_var, runonce_env_var_result):
     assert args.run_once == runonce_env_var_result
 
 
+def test_reconcile(mocker):
+    args = cli.parse(["-m", "test1", "test2", "-n", "test3", "test1"])
+    assert "test1" not in args.monitor
+    assert "test1" in args.ignore
+
+    args = cli.parse(["-m", "test1", "-n", "test4"])
+    assert "test1" in args.monitor and len(args.monitor) == 1
+    assert "test4" in args.ignore and len(args.ignore) == 1
+
+
 @pytest.mark.parametrize('cleanup_args, cleanup_result', [
     (['-c', ], True),
     (['--cleanup', ], True)
