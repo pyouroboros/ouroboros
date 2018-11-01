@@ -12,7 +12,7 @@ def main(args, api_client):
         log.info('No containers are running')
     else:
         updated_count = 0
-        for running_container in container.to_monitor(api_client=api_client):
+        for running_container in container.to_monitor(monitor=args.monitor, api_client=api_client):
             current_image = api_client.inspect_image(running_container['Config']['Image'])
             try:
                 latest_image = image.pull_latest(image=current_image, api_client=api_client)
