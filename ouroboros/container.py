@@ -57,7 +57,7 @@ def reconcile_monitor_ignore(monitor, ignore):
         log.warning(f'Container(s): {intersection} specified in monitor and ignore. Container(s) will not be updated.')
         monitor = [name for name in monitor if name not in intersection]
 
-    return monitor, ignore
+    return monitor
 
 
 def get_name(container_object):

@@ -33,7 +33,7 @@ def test_get_name(fake_container):
     (["test1"], [], ["test1"], False)
 ])
 def test_reconcile_monitor_ignore(caplog, monitor_args, ignore_args, mon_result, expected_caplog):
-    result, _ = container.reconcile_monitor_ignore(monitor_args, ignore_args)
+    result = container.reconcile_monitor_ignore(monitor_args, ignore_args)
     assert result == mon_result
     if expected_caplog:
         assert "specified in monitor and ignore." in caplog.text
