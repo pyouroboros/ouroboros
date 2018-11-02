@@ -17,7 +17,7 @@ def new_container_properties(old_container, new_image):
     return props
 
 
-def running(api_client):
+def running(api_client, ignore=None):
     """Return running container objects list"""
     running_containers = []
     try:
@@ -35,19 +35,22 @@ def running(api_client):
 def to_monitor(monitor=None, ignore=None, api_client=None):
     """Return filtered running container objects list"""
     running_containers = []
-    try:
-        if monitor:
+    if monitor and ignore:
+        monitor = reconcile_monitor_ignore(monitor, ignore)
+
+    if monitor:
+        try:
             for container in api_client.containers(
                     filters={'name': monitor, 'status': 'running'}):
                 running_containers.append(
                     api_client.inspect_container(container))
-        else:
-            running_containers.extend(running(api_client))
-        log.info(f'{len(running_containers)} running container(s) matched filter')
-        return running_containers
-    except BaseException:
-        log.critical(
-            f'Can\'t connect to Docker API at {api_client.base_url}')
+        except BaseException:
+            log.critical(
+                f'Can\'t connect to Docker API at {api_client.base_url}')
+    else:
+        running_containers.extend(running(api_client, ignore))
+
+    return running_containers
 
 
 def reconcile_monitor_ignore(monitor, ignore):
