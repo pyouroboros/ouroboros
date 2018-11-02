@@ -72,7 +72,6 @@ def parse(sysargs):
     parser.add_argument('-c', '--cleanup', default=environ.get('CLEANUP') or False, dest="cleanup",
                         help='Remove old images after updating', action='store_true')
     args = parser.parse_args(sysargs)
-    reconcile_ignore_monitor(args)
 
     if not args.url:
         args.url = defaults.LOCAL_UNIX_SOCKET
