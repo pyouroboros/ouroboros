@@ -83,9 +83,4 @@ def parse(sysargs):
     return args
 
 
-def reconcile_ignore_monitor(args):
-    intersection = set(args.ignore).intersection(set(args.monitor))
 
-    # Something is in both
-    if intersection:
-        args.monitor = [name for name in args.monitor if name not in intersection]

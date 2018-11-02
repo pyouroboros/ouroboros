@@ -32,7 +32,7 @@ def running(api_client):
             f'Can\'t connect to Docker API at {api_client.base_url}')
 
 
-def to_monitor(monitor=None, api_client=None):
+def to_monitor(monitor=None, ignore=None, api_client=None):
     """Return filtered running container objects list"""
     running_containers = []
     try:
@@ -48,6 +48,16 @@ def to_monitor(monitor=None, api_client=None):
     except BaseException:
         log.critical(
             f'Can\'t connect to Docker API at {api_client.base_url}')
+
+
+def reconcile_monitor_ignore(monitor, ignore):
+    intersection = set(ignore).intersection(set(monitor))
+
+    if intersection:
+        log.warning(f'Container(s): {intersection} specified in monitor and ignore. Container(s) will not be updated.')
+        monitor = [name for name in monitor if name not in intersection]
+
+    return monitor, ignore
 
 
 def get_name(container_object):
