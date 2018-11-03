@@ -38,7 +38,7 @@ def test_to_monitor(mocker):
 def test_to_monitor_exception(mocker, caplog):
     mock_client = mocker.Mock(spec=docker.APIClient)
     mock_client.base_url = ouroboros.defaults.LOCAL_UNIX_SOCKET
-    mock_client.containers.side_effect = BaseException('I blew up!!')
+    mock_client.containers.side_effect = docker.errors.DockerException('I blew up!!')
 
     container.to_monitor(monitor='test', api_client=mock_client)
     assert 'connect to Docker API' in caplog.text
@@ -47,7 +47,7 @@ def test_to_monitor_exception(mocker, caplog):
 def test_running_exception(mocker, caplog):
     mock_client = mocker.Mock(spec=docker.APIClient)
     mock_client.base_url = ouroboros.defaults.LOCAL_UNIX_SOCKET
-    mock_client.containers.side_effect = BaseException("I'm blasting off again!")
+    mock_client.containers.side_effect = docker.errors.DockerException("I'm blasting off again!")
 
     container.running(mock_client)
     assert 'connect to Docker API' in caplog.text

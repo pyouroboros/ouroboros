@@ -1,4 +1,5 @@
 import logging
+from docker.errors import DockerException
 
 log = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ def running(api_client):
             if 'ouroboros' not in container['Image']:
                 running_containers.append(
                     api_client.inspect_container(container))
-    except BaseException:
+    except DockerException:
         log.critical(
             f'Can\'t connect to Docker API at {api_client.base_url}')
     return running_containers
