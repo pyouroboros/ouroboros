@@ -3,6 +3,7 @@ import ouroboros.container as container
 from container_object import container_object
 import docker
 import ouroboros.defaults
+import logging
 
 @pytest.fixture()
 def fake_container():
@@ -25,13 +26,14 @@ def test_get_name(fake_container):
     assert container.get_name(fake_container) == 'testName1'
 
 
-def test_to_monitor(mocker):
+def test_to_monitor(mocker, caplog):
     mock_client = mocker.Mock(spec=docker.APIClient)
     mock_client.base_url = ouroboros.defaults.LOCAL_UNIX_SOCKET
     mock_client.containers.return_value = []
-
-    result = container.to_monitor(monitor='test', api_client=mock_client)
+    caplog.set_level(logging.INFO)
+    result = container.to_monitor(monitor=['test'], ignore=['boop'], api_client=mock_client)
     assert result == []
+    assert 'Ignoring container(s): boop' in caplog.text
     mock_client.containers.assert_called_once()
 
 

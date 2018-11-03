@@ -41,6 +41,7 @@ def to_monitor(monitor=None, ignore=None, api_client=None):
         running_containers = [container for container in running_containers if get_name(container) in monitor]
 
     if ignore:
+        log.info(f'Ignoring container(s): {", ".join(ignore)}')
         running_containers = [container for container in running_containers if get_name(container) not in ignore]
 
     return running_containers
