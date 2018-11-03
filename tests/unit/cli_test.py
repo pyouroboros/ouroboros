@@ -59,9 +59,21 @@ def test_monitor_args(mocker, monitor_args, monitor_result):
     args = cli.parse(monitor_args)
     assert args.monitor == monitor_result
 
-# Loglevel
+
+# Ignore
+@pytest.mark.parametrize('ignore_args, ignore_result', [
+    (['-n', 'test1', 'test2', 'test3'], ['test1', 'test2', 'test3']),
+    (['--ignore', 'test1', 'test2', 'test3'], ['test1', 'test2', 'test3']),
+    (['-n', ''], ['']),
+    (['--ignore', ''], [''])
+])
+def test_ignore_args(mocker, ignore_args, ignore_result):
+    mocker.patch('ouroboros.cli')
+    args = cli.parse(ignore_args)
+    assert args.ignore == ignore_result
 
 
+# Log level
 @pytest.mark.parametrize('loglevel_args, loglevel_result', [
     (['-l', 'notset'], 'notset'),
     (['-l', 'info'], 'info'),

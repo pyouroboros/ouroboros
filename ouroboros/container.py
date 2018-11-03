@@ -1,4 +1,5 @@
 import logging
+from docker.errors import DockerException
 
 log = logging.getLogger(__name__)
 
@@ -18,36 +19,32 @@ def new_container_properties(old_container, new_image):
 
 
 def running(api_client):
-    """Return running container objects list"""
+    """Return running container objects list, except ouroboros itself"""
     running_containers = []
     try:
-        for container in api_client.containers(
-                filters={'status': 'running'}):
+        for container in api_client.containers(filters={'status': 'running'}):
             if 'ouroboros' not in container['Image']:
                 running_containers.append(
                     api_client.inspect_container(container))
-        return running_containers
-    except BaseException:
+    except DockerException:
         log.critical(
             f'Can\'t connect to Docker API at {api_client.base_url}')
+    return running_containers
 
 
-def to_monitor(monitor=None, api_client=None):
+def to_monitor(monitor=None, ignore=None, api_client=None):
     """Return filtered running container objects list"""
-    running_containers = []
-    try:
-        if monitor:
-            for container in api_client.containers(
-                    filters={'name': monitor, 'status': 'running'}):
-                running_containers.append(
-                    api_client.inspect_container(container))
-        else:
-            running_containers.extend(running(api_client))
-        log.info(f'{len(running_containers)} running container(s) matched filter')
-        return running_containers
-    except BaseException:
-        log.critical(
-            f'Can\'t connect to Docker API at {api_client.base_url}')
+
+    running_containers = running(api_client)
+
+    if monitor:
+        running_containers = [container for container in running_containers if get_name(container) in monitor]
+
+    if ignore:
+        log.info(f'Ignoring container(s): {", ".join(ignore)}')
+        running_containers = [container for container in running_containers if get_name(container) not in ignore]
+
+    return running_containers
 
 
 def get_name(container_object):
@@ -58,13 +55,13 @@ def get_name(container_object):
 def stop(container_object, api_client):
     """Stop out of date container"""
     log.debug(f'Stopping container: {get_name(container_object)}')
-    return api_client.stop(container_object)
+    api_client.stop(container_object)
 
 
 def remove(container_object, api_client):
     """Remove out of date container"""
     log.debug(f'Removing container: {get_name(container_object)}')
-    return api_client.remove_container(container_object)
+    api_client.remove_container(container_object)
 
 
 def create_new(config, api_client):
@@ -75,4 +72,4 @@ def create_new(config, api_client):
 def start(container_object, api_client):
     """Start newly created container with latest image"""
     log.debug(f"Starting container: {container_object['Id']}")
-    return api_client.start(container_object)
+    api_client.start(container_object)

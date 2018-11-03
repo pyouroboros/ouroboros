@@ -1,5 +1,6 @@
 from os import environ
 import logging
+from docker.errors import DockerException
 
 log = logging.getLogger(__name__)
 
@@ -28,4 +29,9 @@ def is_up_to_date(old_sha, new_sha):
 def remove(old_image, api_client):
     """Deletes old image after container is updated"""
     log.info(f"Removing image: {old_image['RepoTags'][0]}")
-    return api_client.remove_image(old_image)
+    result = {}
+    try:
+        result = api_client.remove_image(old_image)
+    except DockerException as e:
+        log.critical(f"Could not clean up image: {old_image['RepoTags'][0]}, reason: \n{e}")
+    return result

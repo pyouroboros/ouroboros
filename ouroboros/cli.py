@@ -59,6 +59,9 @@ def parse(sysargs):
     parser.add_argument('-m', '--monitor', nargs='+', default=environ.get('MONITOR') or [], dest="monitor",
                         help='Which container to monitor (defaults to all running).')
 
+    parser.add_argument('-n', '--ignore', nargs='+', default=environ.get('IGNORE') or [], dest='ignore',
+                        help='Which container(s) to ignore.')
+
     parser.add_argument('-l', '--loglevel', choices=['notset', 'debug', 'info', 'warn', 'error', 'critical'],
                         dest="loglevel", default=environ.get('LOGLEVEL') or 'info',
                         help='Change logger mode (defaults to info)')
@@ -77,3 +80,6 @@ def parse(sysargs):
             args.url = args.url if checkURI(args.url) else defaults.LOCAL_UNIX_SOCKET
 
     return args
+
+
+

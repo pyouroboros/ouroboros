@@ -84,6 +84,10 @@ docker run --rm circa10a/ouroboros --help
 - `--monitor`, `-m` Only monitor select containers which supports an infinite amount of container names.
   - Default is all containers.
   - Environment variable: `MONITOR=test_container`
+- `--ignore`, `-n` Ignore the listed container names.
+  - Default is none.
+  - Environment variable: `IGNORE=test_container`
+  - If a container name is specified to monitor and ignore, ignore takes precedent.
 - `--loglevel`, `-l` The amount of logging details can be supressed or increased.
   - Default is `info`.
   - Environment variable: `LOGLEVEL=debug`.
