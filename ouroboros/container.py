@@ -55,13 +55,13 @@ def get_name(container_object):
 def stop(container_object, api_client):
     """Stop out of date container"""
     log.debug(f'Stopping container: {get_name(container_object)}')
-    return api_client.stop(container_object)
+    api_client.stop(container_object)
 
 
 def remove(container_object, api_client):
     """Remove out of date container"""
     log.debug(f'Removing container: {get_name(container_object)}')
-    return api_client.remove_container(container_object)
+    api_client.remove_container(container_object)
 
 
 def create_new(config, api_client):
@@ -72,4 +72,4 @@ def create_new(config, api_client):
 def start(container_object, api_client):
     """Start newly created container with latest image"""
     log.debug(f"Starting container: {container_object['Id']}")
-    return api_client.start(container_object)
+    api_client.start(container_object)
