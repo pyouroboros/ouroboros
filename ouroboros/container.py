@@ -17,50 +17,32 @@ def new_container_properties(old_container, new_image):
     return props
 
 
-def running(api_client, ignore=None):
-    """Return running container objects list"""
+def running(api_client):
+    """Return running container objects list, except ouroboros itself"""
     running_containers = []
     try:
-        for container in api_client.containers(
-                filters={'status': 'running'}):
+        for container in api_client.containers(filters={'status': 'running'}):
             if 'ouroboros' not in container['Image']:
                 running_containers.append(
                     api_client.inspect_container(container))
-        return running_containers
     except BaseException:
         log.critical(
             f'Can\'t connect to Docker API at {api_client.base_url}')
+    return running_containers
 
 
 def to_monitor(monitor=None, ignore=None, api_client=None):
     """Return filtered running container objects list"""
-    running_containers = []
-    if monitor and ignore:
-        monitor = reconcile_monitor_ignore(monitor, ignore)
+
+    running_containers = running(api_client)
 
     if monitor:
-        try:
-            for container in api_client.containers(
-                    filters={'name': monitor, 'status': 'running'}):
-                running_containers.append(
-                    api_client.inspect_container(container))
-        except BaseException:
-            log.critical(
-                f'Can\'t connect to Docker API at {api_client.base_url}')
-    else:
-        running_containers.extend(running(api_client, ignore))
+        running_containers = [container for container in running_containers if get_name(container) in monitor]
+
+    if ignore:
+        running_containers = [container for container in running_containers if get_name(container) not in ignore]
 
     return running_containers
-
-
-def reconcile_monitor_ignore(monitor, ignore):
-    intersection = set(ignore).intersection(set(monitor))
-
-    if intersection:
-        log.warning(f'Container(s): {intersection} specified in monitor and ignore. Container(s) will not be updated.')
-        monitor = [name for name in monitor if name not in intersection]
-
-    return monitor
 
 
 def get_name(container_object):
