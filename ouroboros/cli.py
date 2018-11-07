@@ -53,26 +53,26 @@ def parse(sysargs):
     parser.add_argument('-u', '--url', default=defaults.LOCAL_UNIX_SOCKET,
                         help='Url for tcp host (defaults to "unix://var/run/docker.sock")')
 
-    parser.add_argument('-i', '--interval', type=int, default=get_interval_env() or defaults.INTERVAL, dest="interval",
+    parser.add_argument('-i', '--interval', type=int, default=get_interval_env() or defaults.INTERVAL, dest='interval',
                         help='Interval in seconds between checking for updates (defaults to 300s)')
 
-    parser.add_argument('-m', '--monitor', nargs='+', default=environ.get('MONITOR') or [], dest="monitor",
+    parser.add_argument('-m', '--monitor', nargs='+', default=environ.get('MONITOR') or [], dest='monitor',
                         help='Which container to monitor (defaults to all running).')
 
     parser.add_argument('-n', '--ignore', nargs='+', default=environ.get('IGNORE') or [], dest='ignore',
                         help='Which container(s) to ignore.')
 
     parser.add_argument('-l', '--loglevel', choices=['notset', 'debug', 'info', 'warn', 'error', 'critical'],
-                        dest="loglevel", default=environ.get('LOGLEVEL') or 'info',
+                        dest='loglevel', default=environ.get('LOGLEVEL') or 'info',
                         help='Change logger mode (defaults to info)')
 
-    parser.add_argument('-r', '--runonce', default=environ.get('RUNONCE') or False, dest="run_once",
+    parser.add_argument('-r', '--runonce', default=environ.get('RUNONCE') or False, dest='run_once',
                         help='Only run ouroboros once then exit', action='store_true')
 
-    parser.add_argument('-c', '--cleanup', default=environ.get('CLEANUP') or False, dest="cleanup",
+    parser.add_argument('-c', '--cleanup', default=environ.get('CLEANUP') or False, dest='cleanup',
                         help='Remove old images after updating', action='store_true')
 
-    parser.add_argument('-k', '--keep-tag', default=environ.get('KEEPTAG') or False, dest="keep_tag",
+    parser.add_argument('-k', '--keep-tag', default=environ.get('KEEPTAG') or False, dest='keep_tag',
                         help='Check for image updates of the same tag instead of pulling latest', action='store_true')
     args = parser.parse_args(sysargs)
 
