@@ -83,6 +83,3 @@ def parse(sysargs):
             args.url = args.url if checkURI(args.url) else defaults.LOCAL_UNIX_SOCKET
 
     return args
-
-
-
