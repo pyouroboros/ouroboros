@@ -59,7 +59,7 @@ def test_create_container():
 def test_main(mocker, caplog):
     mocker.patch('sys.argv', [''])
     mocker.patch.dict('os.environ',
-                      {'INTERVAL': '6',
+                      {'INTERVAL': '1',
                        'LOGLEVEL': 'debug',
                        'RUNONCE': 'true',
                        'CLEANUP': 'true',
