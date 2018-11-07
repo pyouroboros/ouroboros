@@ -45,7 +45,7 @@ shopt -qu nocasematch extglob
 
 # Generate a requirement "file" containing only remaining missing modules
 # If everything is installed, file will be empty and pip exits quietly
-pip install --user --requirement <( for m in  "${!missing_modules[@]}"; do echo "$m"; done )
+pip install --requirement <( for m in  "${!missing_modules[@]}"; do echo "$m"; done )
 
 export PYTHONPATH="$(pwd)/ouroboros"
 
