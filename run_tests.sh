@@ -10,7 +10,7 @@ cd "$( dirname "$0" )"
 function list_missing_modules {
   comm -2 -3 \
   <( sort ./requirements-dev.txt ) \
-  <( pip list format=columns | awk '$0=$1' | sort )
+  <( pip list --format=columns | awk '$0=$1' | sort )
 }
 
 # create associative array of missing modules
@@ -45,7 +45,7 @@ shopt -qu nocasematch extglob
 
 # Generate a requirement "file" containing only remaining missing modules
 # If everything is installed, file will be empty and pip exits quietly
-pip install --requirement <( for m in  "${!missing_modules[@]}"; do echo "$m"; done )
+pip install --user --requirement <( for m in  "${!missing_modules[@]}"; do echo "$m"; done )
 
 export PYTHONPATH="$(pwd)/ouroboros"
 

@@ -71,6 +71,9 @@ def parse(sysargs):
 
     parser.add_argument('-c', '--cleanup', default=environ.get('CLEANUP') or False, dest="cleanup",
                         help='Remove old images after updating', action='store_true')
+
+    parser.add_argument('-k', '--keep-tag', default=environ.get('KEEPTAG') or False, dest="keep_tag",
+                        help='Check for image updates of the same tag instead of pulling latest', action='store_true')
     args = parser.parse_args(sysargs)
 
     if not args.url:
