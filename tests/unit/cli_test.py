@@ -145,3 +145,24 @@ def test_cleanup_env_var(mocker, cleanup_env_var, cleanup_env_var_result):
     mocker.patch('ouroboros.cli')
     args = cli.parse([])
     assert args.cleanup == cleanup_env_var_result
+
+
+@pytest.mark.parametrize('keeptag_args, keeptag_result', [
+    (['-k', ], True),
+    (['--keep-tag', ], True)
+])
+def test_keeptag_args(mocker, keeptag_args, keeptag_result):
+    mocker.patch('ouroboros.cli')
+    args = cli.parse(keeptag_args)
+    assert args.keep_tag == keeptag_result
+
+
+@pytest.mark.parametrize('keeptag_env_var, keeptag_env_var_result', [
+    ({'KEEPTAG': 'true'}, 'true'),
+    ({'_KEEPTAG': ''}, defaults.KEEPTAG),
+])
+def test_keeptag_env_var(mocker, keeptag_env_var, keeptag_env_var_result):
+    mocker.patch.dict('os.environ', keeptag_env_var)
+    mocker.patch('ouroboros.cli')
+    args = cli.parse([])
+    assert args.keep_tag == keeptag_env_var_result

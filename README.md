@@ -15,7 +15,7 @@ A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
 
 ## Overview
 
-Ouroboros will monitor all running docker containers or those you specify and update said containers to the latest available image in the remote registry using the `latest` tag with the same parameters that were used when the container was first created such as volume/bind mounts, docker network connections, environment variables, restart policies, entrypoints, commands, etc.
+Ouroboros will monitor all running docker containers or those you specify and update said containers to the latest available image in the remote registry using the `latest` tag with the same parameters that were used when the container was first created such as volume/bind mounts, docker network connections, environment variables, restart policies, entrypoints, commands, etc. While ouroboros updates images to `latest` by default, that can be [overridden](#Options) to only monitor updates of a specific tag. Similar to [watchtower](https://github.com/v2tec/watchtower).
 
 - Push your image to your registry and simply wait a couple of minutes for ouroboros to find the new image and redeploy your container autonomously.
 - Limit your server ssh access
@@ -97,6 +97,9 @@ docker run --rm circa10a/ouroboros --help
 - `--cleanup`, `-c` Remove the older docker image if a new one is found and updated.
   - Default is `False`.
   - Environment variable: `CLEANUP=true`
+- `--keep-tag`, `-k` Only monitor if updates are made to the tag of the image that the container was created with instead of using `latest`.
+  - Default is `False`.
+  - Environment variable: `KEEPTAG=true`
 
 ### Private Registries
 
@@ -119,6 +122,16 @@ docker run -d --name ouroboros \
 ```
 
 ## Examples
+
+### Monitor for updates for original tag
+ Instead of always updating to `latest` you can specify if you would like Ouroboros to only check for updates for your original container's image tag.
+ e.g. If your container was start with `nginx:1.14-alpine` using `--keep-tag` will poll the docker registry and compare digests. If there is a new image for `nginx:1.14-alpine`, ouroboros will update your container using the newly patched version.
+ > Default is `False`
+ ```bash
+docker run -d --name ouroboros \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  circa10a/ouroboros --keep-tag
+```
 
 ### Update containers on a remote host
 

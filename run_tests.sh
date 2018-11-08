@@ -10,7 +10,7 @@ cd "$( dirname "$0" )"
 function list_missing_modules {
   comm -2 -3 \
   <( sort ./requirements-dev.txt ) \
-  <( pip list format=columns | awk '$0=$1' | sort )
+  <( pip list --format=columns | awk '$0=$1' | sort )
 }
 
 # create associative array of missing modules

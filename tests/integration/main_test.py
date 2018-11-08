@@ -59,7 +59,7 @@ def test_create_container():
 def test_main(mocker, caplog):
     mocker.patch('sys.argv', [''])
     mocker.patch.dict('os.environ',
-                      {'INTERVAL': '6',
+                      {'INTERVAL': '1',
                        'LOGLEVEL': 'debug',
                        'RUNONCE': 'true',
                        'CLEANUP': 'true',
@@ -79,8 +79,7 @@ def test_container_updated(mocker):
         f"{test_container_props['ports'][0]}/tcp"][0]['HostPort']
     assert new_container['State']['Status'] == 'running'
     assert new_container['Config']['Image'] == f'{test_repo}:latest'
-    assert new_container['Config']['Cmd'] == test_container_props['command'].split(
-    )
+    assert new_container['Config']['Cmd'] == test_container_props['command'].split()
     assert test_container_props['environment'][0] in new_container['Config']['Env']
     assert new_container['Mounts'][0]['Source'] == test_container_props['volumes'][0]
     assert new_container['Mounts'][0]['Destination'] == test_container_mount_dest
