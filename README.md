@@ -125,7 +125,7 @@ docker run -d --name ouroboros \
 
 ### Monitor for updates for original tag
  Instead of always updating to `latest` you can specify if you would like Ouroboros to only check for updates for your original container's image tag.
- e.g. If your container was start with `nginx:1.14-alpine` using `--keep-tag` will poll the docker registry and compare digests. If there is a new image for `nginx:1.14-alpine`, ouroboros will update your container using the newly patched version.
+ e.g. If your container was started with `nginx:1.14-alpine` using `--keep-tag` will poll the docker registry and compare digests. If there is a new image for `nginx:1.14-alpine`, ouroboros will update your container using the newly patched version.
  > Default is `False`
  ```bash
 docker run -d --name ouroboros \
