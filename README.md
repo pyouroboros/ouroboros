@@ -100,7 +100,7 @@ docker run --rm circa10a/ouroboros --help
 - `--keep-tag`, `-k` Only monitor if updates are made to the tag of the image that the container was created with instead of using `latest`.
   - Default is `False`.
   - Environment variable: `KEEPTAG=true`
-- `--metrics` What port to run prometheus endpoint on. Running on port `8000` by default if `--metrics` is not supplied
+- `--metrics` What port to run prometheus endpoint on. Running on port `8000` by default if `--metrics` is not supplied.
   - Default is `8000`.
   - Environment variable: `METRICS`
 
