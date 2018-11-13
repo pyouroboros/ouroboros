@@ -1,5 +1,6 @@
 docker
 schedule
+prometheus_client
 pytest
 pytest-cov
 pytest-mock

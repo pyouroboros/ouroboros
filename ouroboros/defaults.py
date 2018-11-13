@@ -5,3 +5,4 @@ LOGLEVEL = 'info'
 RUNONCE = False
 CLEANUP = False
 KEEPTAG = False
+METRICS_PORT = 8000

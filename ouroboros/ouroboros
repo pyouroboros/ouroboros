@@ -4,12 +4,14 @@ if __name__ == "__main__":
     import sys
     import ouroboros.cli as cli
     from ouroboros.logger import set_logger
+    from prometheus_client import start_http_server
     import docker
     import schedule
     import logging
     from ouroboros.main import main
     import time
     args = cli.parse(sys.argv[1:])
+    start_http_server(args.metrics)
     api_client = docker.APIClient(base_url=args.url)
     logging.basicConfig(**set_logger(args.loglevel))
     schedule.every(args.interval).seconds.do(

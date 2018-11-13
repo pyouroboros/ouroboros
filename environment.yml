@@ -3,3 +3,4 @@ dependencies:
   - pip:
       - docker
       - schedule
+      - prometheus_client
