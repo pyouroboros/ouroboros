@@ -100,6 +100,9 @@ docker run --rm circa10a/ouroboros --help
 - `--keep-tag`, `-k` Only monitor if updates are made to the tag of the image that the container was created with instead of using `latest`.
   - Default is `False`.
   - Environment variable: `KEEPTAG=true`
+- `--metrics` What port to run prometheus endpoint on. Running on port `8000` by default if `--metrics` is not supplied
+  - Default is `8000`.
+  - Environment variable: `METRICS`
 
 ### Private Registries
 
@@ -204,6 +207,21 @@ docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
   circa10a/ouroboros --cleanup
 ```
+
+### Prometheus metrics
+
+Ouroboros keeps track of containers being updated and how many are being monitored. Said metrics are exported using `prometheus`. Metrics are enabled with or without this flag, it is up to you if you would like to expose the port or not.
+
+> Default is `8000`
+
+```bash
+docker run -d --name ouroboros \
+  -p 5000:5000 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  circa10a/ouroboros --metrics 5000
+```
+
+You should then be able to see the metrics at http://localhost:5000/
 
 ## Execute Tests
 
