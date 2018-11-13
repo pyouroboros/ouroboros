@@ -223,6 +223,23 @@ docker run -d --name ouroboros \
 
 You should then be able to see the metrics at http://localhost:5000/
 
+Example text from endpoint:
+
+```
+# HELP containers_updated_total Count of containers updated
+# TYPE containers_updated_total counter
+containers_updated_total{container="all"} 2.0
+containers_updated_total{container="alpine"} 1.0
+containers_updated_total{container="busybox"} 1.0
+# TYPE containers_updated_created gauge
+containers_updated_created{container="all"} 1542152615.625264
+containers_updated_created{container="alpine"} 1542152615.6252713
+containers_updated_created{container="busybox"} 1542152627.7476819
+# HELP containers_being_monitored Count of containers being monitored
+# TYPE containers_being_monitored gauge
+containers_being_monitored 2.0
+```
+
 ## Execute Tests
 
 > Script will install dependencies from `requirements-dev.txt`
