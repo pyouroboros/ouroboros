@@ -210,7 +210,7 @@ docker run -d --name ouroboros \
 
 ### Prometheus metrics
 
-Ouroboros keeps track of containers being updated and how many are being monitored. Said metrics are exported using [prometheus](https://prometheus.io/). Metrics are enabled with or without this flag, it is up to you if you would like to expose the port or not.
+Ouroboros keeps track of containers being updated and how many are being monitored. Said metrics are exported using [prometheus](https://prometheus.io/). Metrics are collected by ouroboros with or without this flag, it is up to you if you would like to expose the port or not.
 
 > Default is `8000`
 
