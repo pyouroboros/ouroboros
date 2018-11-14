@@ -113,7 +113,7 @@ If your running containers' docker images are stored in a secure registry that r
 
 ```bash
 docker run -d --name ouroboros \
-  -v REPO_USER=myUser -e REPO_PASS=myPassword \
+  -e REPO_USER=myUser -e REPO_PASS=myPassword \
   -v /var/run/docker.sock:/var/run/docker.sock \
   circa10a/ouroboros
 ```
