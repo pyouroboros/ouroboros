@@ -11,6 +11,5 @@ import ouroboros.defaults as defaults
     (defaults.METRICS_ADDR, '127.0.0.1'),
     (defaults.METRICS_PORT, 8000)
 ])
-
 def test_defaults(default, result):
     assert default == result

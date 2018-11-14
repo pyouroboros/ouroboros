@@ -103,6 +103,7 @@ def test_loglevel_env_var(mocker, loglevel_env_var, loglevel_env_var_result):
     args = cli.parse([])
     assert args.loglevel == loglevel_env_var_result
 
+
 # Run once
 @pytest.mark.parametrize('runonce_args, runonce_result', [
     (['-r', ], True),
@@ -123,6 +124,7 @@ def test_runonce_env_var(mocker, runonce_env_var, runonce_env_var_result):
     mocker.patch('ouroboros.cli')
     args = cli.parse([])
     assert args.run_once == runonce_env_var_result
+
 
 # Cleanup
 @pytest.mark.parametrize('cleanup_args, cleanup_result', [
@@ -145,6 +147,7 @@ def test_cleanup_env_var(mocker, cleanup_env_var, cleanup_env_var_result):
     args = cli.parse([])
     assert args.cleanup == cleanup_env_var_result
 
+
 # Keeptag
 @pytest.mark.parametrize('keeptag_args, keeptag_result', [
     (['-k', ], True),
@@ -166,6 +169,7 @@ def test_keeptag_env_var(mocker, keeptag_env_var, keeptag_env_var_result):
     args = cli.parse([])
     assert args.keep_tag == keeptag_env_var_result
 
+
 # METRICS_ADDR
 @pytest.mark.parametrize('metrics_addr_args, metrics_addr_result', [
     (['--metrics-addr', '127.0.0.0'], '127.0.0.0')
@@ -179,12 +183,12 @@ def test_metrics_addr_args(mocker, metrics_addr_args, metrics_addr_result):
 @pytest.mark.parametrize('metrics_addr_env_var, metrics_addr_env_var_result', [
     ({'METRICS_ADDR': '127.0.0.0'}, '127.0.0.0'),
 ])
-
 def test_metrics_addr_env_var(mocker, metrics_addr_env_var, metrics_addr_env_var_result):
     mocker.patch.dict('os.environ', metrics_addr_env_var)
     mocker.patch('ouroboros.cli')
     args = cli.parse([])
     assert args.metrics_addr == metrics_addr_env_var_result
+
 
 # METRICS_PORT
 @pytest.mark.parametrize('metrics_port_args, metrics_port_result', [
