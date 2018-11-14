@@ -74,7 +74,10 @@ def parse(sysargs):
     parser.add_argument('-k', '--keep-tag', default=environ.get('KEEPTAG') or False, dest='keep_tag',
                         help='Check for image updates of the same tag instead of pulling latest', action='store_true')
 
-    parser.add_argument('--metrics', type=int, default=get_int_env_var(env_var=environ.get('METRICS')) or defaults.METRICS, dest='metrics',
+    parser.add_argument('--metrics-addr', default=environ.get('METRICS_ADDR') or defaults.METRICS_ADDR, dest='metrics_addr',
+                        help='Bind address to run Prometheus exporter on')
+
+    parser.add_argument('--metrics-port', type=int, default=get_int_env_var(env_var=environ.get('METRICS_PORT')) or defaults.METRICS_PORT, dest='metrics_port',
                         help='Port to run Prometheus exporter on')
     args = parser.parse_args(sysargs)
 

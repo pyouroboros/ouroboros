@@ -166,18 +166,47 @@ def test_keeptag_env_var(mocker, keeptag_env_var, keeptag_env_var_result):
     args = cli.parse([])
     assert args.keep_tag == keeptag_env_var_result
 
-# METRICS
-@pytest.mark.parametrize('metrics_env, metrics_env_result', [
-    ({'METRICS': 't'}, False),
-    ({'METRICS': '8001'}, 8001),
+# METRICS_ADDR
+@pytest.mark.parametrize('metrics_addr_args, metrics_addr_result', [
+    (['--metrics-addr', '127.0.0.0'], '127.0.0.0')
 ])
-def get_int_env_var(mocker, metrics_env, metrics_env_result):
-    mocker.patch.dict('os.environ', metrics_env)
-    assert cli.get_int_env_var(env_var=environ.get('METRICS')) == metrics_env_result
+def test_metrics_addr_args(mocker, metrics_addr_args, metrics_addr_result):
+    mocker.patch('ouroboros.cli')
+    args = cli.parse(metrics_addr_args)
+    assert args.metrics_addr == metrics_addr_result
 
 
-def test_metrics_arg_invalid_value(mocker):
+@pytest.mark.parametrize('metrics_addr_env_var, metrics_addr_env_var_result', [
+    ({'METRICS_ADDR': '127.0.0.0'}, '127.0.0.0'),
+])
+
+def test_metrics_addr_env_var(mocker, metrics_addr_env_var, metrics_addr_env_var_result):
+    mocker.patch.dict('os.environ', metrics_addr_env_var)
+    mocker.patch('ouroboros.cli')
+    args = cli.parse([])
+    assert args.metrics_addr == metrics_addr_env_var_result
+
+# METRICS_PORT
+@pytest.mark.parametrize('metrics_port_args, metrics_port_result', [
+    (['--metrics-port', '8001'], 8001)
+])
+def test_metrics_port_args(mocker, metrics_port_args, metrics_port_result):
+    mocker.patch('ouroboros.cli')
+    args = cli.parse(metrics_port_args)
+    assert args.metrics_port == metrics_port_result
+
+
+@pytest.mark.parametrize('metrics_port_env_var, metrics_port_env_varresult', [
+    ({'METRICS_PORT': 'test'}, False),
+    ({'METRICS_PORT': '8001'}, 8001),
+])
+def get_metrics_port_int_env_var(mocker, metrics_port_env_var, metrics_port_env_var_result):
+    mocker.patch.dict('os.environ', metrics_port_env_var)
+    assert cli.get_int_env_var(env_var=environ.get('METRICS_PORT')) == metrics_port_env_var_result
+
+
+def test_metrics_port_arg_invalid_value(mocker):
     mocker.patch('ouroboros.cli')
     with pytest.raises(SystemExit) as pytest_wrapped_e:
-        cli.parse(['--metrics', 'test'])
+        cli.parse(['--metrics-port', 'test'])
         assert pytest_wrapped_e.type == SystemExit

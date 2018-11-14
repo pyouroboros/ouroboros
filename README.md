@@ -100,9 +100,12 @@ docker run --rm circa10a/ouroboros --help
 - `--keep-tag`, `-k` Only monitor if updates are made to the tag of the image that the container was created with instead of using `latest`.
   - Default is `False`.
   - Environment variable: `KEEPTAG=true`
-- `--metrics` What port to run prometheus endpoint on. Running on port `8000` by default if `--metrics` is not supplied.
+- `--metrics-addr` What address for the prometheus endpoint to bind to. Runs on `127.0.0.1` by default if `--metrics-addr` is not supplied.
+  - Default is `127.0.0.1`.
+  - Environment variable: `METRICS_ADDR`
+- `--metrics-port` What port to run prometheus endpoint on. Running on port `8000` by default if `--metrics-port` is not supplied.
   - Default is `8000`.
-  - Environment variable: `METRICS`
+  - Environment variable: `METRICS_PORT`
 
 ### Private Registries
 
@@ -210,7 +213,9 @@ docker run -d --name ouroboros \
 
 ### Prometheus metrics
 
-Ouroboros keeps track of containers being updated and how many are being monitored. Said metrics are exported using [prometheus](https://prometheus.io/). Metrics are collected by ouroboros with or without this flag, it is up to you if you would like to expose the port or not.
+Ouroboros keeps track of containers being updated and how many are being monitored. Said metrics are exported using [prometheus](https://prometheus.io/). Metrics are collected by ouroboros with or without this flag, it is up to you if you would like to expose the port or not. You can also bind the http server to a different interface for systems using multiple networks. `--metrics-port` and `--metrics-addr` can run independently of each other without issue.
+
+#### Port
 
 > Default is `8000`
 
@@ -218,12 +223,27 @@ Ouroboros keeps track of containers being updated and how many are being monitor
 docker run -d --name ouroboros \
   -p 5000:5000 \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --metrics 5000
+  circa10a/ouroboros --metrics-port 5000
 ```
 
 You should then be able to see the metrics at http://localhost:5000/
 
-Example text from endpoint:
+#### Bind Address
+
+Ouroboros allows you to bind the exporter to a different interface using the `--metrics-addr` argument.
+
+> Default is `127.0.0.1`
+
+```bash
+docker run -d --name ouroboros \
+  -p 8000:8000 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  circa10a/ouroboros --metrics-addr 10.0.0.1
+```
+
+Then access via http://10.0.0.1:8000/
+
+**Example text from endpoint:**
 
 ```
 # HELP containers_updated_total Count of containers updated

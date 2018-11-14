@@ -11,7 +11,7 @@ if __name__ == "__main__":
     from ouroboros.main import main
     import time
     args = cli.parse(sys.argv[1:])
-    start_http_server(args.metrics)
+    start_http_server(args.metrics_port, addr=args.metrics_addr)
     api_client = docker.APIClient(base_url=args.url)
     logging.basicConfig(**set_logger(args.loglevel))
     schedule.every(args.interval).seconds.do(
