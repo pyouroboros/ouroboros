@@ -7,7 +7,8 @@ import ouroboros.defaults as defaults
     (defaults.MONITOR, []),
     (defaults.LOGLEVEL, 'info'),
     (defaults.RUNONCE, False),
-    (defaults.CLEANUP, False)
+    (defaults.CLEANUP, False),
+    (defaults.METRICS, 8000)
 ])
 
 def test_defaults(default, result):

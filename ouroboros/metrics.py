@@ -13,5 +13,5 @@ def container_updates(label):
 
 
 def monitored_containers(num):
-    """Increment container update count based on label"""
+    """Set number of containers being monitoring with a gauge"""
     monitored_containers_gauge.set(num)
