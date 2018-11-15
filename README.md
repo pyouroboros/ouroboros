@@ -97,7 +97,7 @@ docker run --rm circa10a/ouroboros --help
 - `--cleanup`, `-c` Remove the older docker image if a new one is found and updated.
   - Default is `False`.
   - Environment variable: `CLEANUP=true`
-- `--keep-tag`, `-k` Only monitor if updates are made to the tag of the image that the container was created with instead of using `latest`.
+- `--keep-tag`, `-k` Only monitor if updates are made to the tag of the image that the container was created with instead of using `latest`. This will enable [watchtower](https://github.com/v2tec/watchtower) like functionality.
   - Default is `False`.
   - Environment variable: `KEEPTAG=true`
 - `--metrics-addr` What address for the prometheus endpoint to bind to. Runs on `127.0.0.1` by default if `--metrics-addr` is not supplied.
