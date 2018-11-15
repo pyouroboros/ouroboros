@@ -35,11 +35,10 @@ def checkURI(uri):
     return re.match(regex, uri)
 
 
-def get_interval_env():
-    """Attempt to convert INTERVAL environment variable to int"""
-    int_env = environ.get('INTERVAL')
+def get_int_env_var(env_var):
+    """Attempt to convert environment variable to int"""
     try:
-        return int(int_env)
+        return int(env_var)
     except (ValueError, TypeError):
         return False
 
@@ -53,7 +52,7 @@ def parse(sysargs):
     parser.add_argument('-u', '--url', default=defaults.LOCAL_UNIX_SOCKET,
                         help='Url for tcp host (defaults to "unix://var/run/docker.sock")')
 
-    parser.add_argument('-i', '--interval', type=int, default=get_interval_env() or defaults.INTERVAL, dest='interval',
+    parser.add_argument('-i', '--interval', type=int, default=get_int_env_var(env_var=environ.get('INTERVAL')) or defaults.INTERVAL, dest='interval',
                         help='Interval in seconds between checking for updates (defaults to 300s)')
 
     parser.add_argument('-m', '--monitor', nargs='+', default=environ.get('MONITOR') or [], dest='monitor',
@@ -74,6 +73,12 @@ def parse(sysargs):
 
     parser.add_argument('-k', '--keep-tag', default=environ.get('KEEPTAG') or False, dest='keep_tag',
                         help='Check for image updates of the same tag instead of pulling latest', action='store_true')
+
+    parser.add_argument('--metrics-addr', default=environ.get('METRICS_ADDR') or defaults.METRICS_ADDR, dest='metrics_addr',
+                        help='Bind address to run Prometheus exporter on')
+
+    parser.add_argument('--metrics-port', type=int, default=get_int_env_var(env_var=environ.get('METRICS_PORT')) or defaults.METRICS_PORT, dest='metrics_port',
+                        help='Port to run Prometheus exporter on')
     args = parser.parse_args(sysargs)
 
     if not args.url:

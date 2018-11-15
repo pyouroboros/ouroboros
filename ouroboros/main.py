@@ -3,6 +3,7 @@ import logging
 import docker
 from ouroboros import container
 from ouroboros import image
+from ouroboros import metrics
 
 
 def main(args, api_client):
@@ -12,7 +13,10 @@ def main(args, api_client):
         log.info('No containers are running')
     else:
         updated_count = 0
-        for running_container in container.to_monitor(monitor=args.monitor, ignore=args.ignore, api_client=api_client):
+        monitored_containers = container.to_monitor(monitor=args.monitor, ignore=args.ignore, api_client=api_client)
+        metrics.monitored_containers(num=len(monitored_containers))
+        for running_container in monitored_containers:
+            container_name = f'{container.get_name(container_object=running_container)}'
             current_image = api_client.inspect_image(running_container['Config']['Image'])
 
             try:
@@ -40,6 +44,10 @@ def main(args, api_client):
                 if args.cleanup:
                     image.remove(old_image=current_image, api_client=api_client)
                 updated_count += 1
+
+                metrics.container_updates(label='all')
+                metrics.container_updates(label=container_name)
+
         log.info(f'{updated_count} container(s) updated')
         if args.run_once:
             exit(0)

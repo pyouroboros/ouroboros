@@ -8,9 +8,9 @@ import ouroboros.logger as log
     ('error', 40),
     ('critical', 50),
 ])
-
 def test_logger_levels(level_string, level_code):
     assert log.set_logger(level_string)['level'] == level_code
+
 
 def test_logger_invalid_level():
     assert log.set_logger('wrong')['level'] == 20

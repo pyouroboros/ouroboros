@@ -1,3 +1,4 @@
+from os import environ
 import pytest
 import ouroboros.cli as cli
 import ouroboros.defaults as defaults
@@ -22,16 +23,15 @@ def test_url_args(mocker, url_args, url_result):
     args = cli.parse(url_args)
     assert args.url == url_result
 
+
 # Interval
-
-
 @pytest.mark.parametrize('interval_env, interval_env_result', [
     ({'INTERVAL': 't'}, False),
     ({'INTERVAL': '10'}, 10),
 ])
-def test_get_interval_env(mocker, interval_env, interval_env_result):
+def get_int_env_var(mocker, interval_env, interval_env_result):
     mocker.patch.dict('os.environ', interval_env)
-    assert cli.get_interval_env() == interval_env_result
+    assert cli.get_int_env_var(env_var=environ.get('INTERVAL')) == interval_env_result
 
 
 def test_interval_arg_invalid_value(mocker):
@@ -45,9 +45,8 @@ def test_interval_arg_valid_value(mocker):
     mocker.patch('ouroboros.cli')
     assert cli.parse(['--interval', 0])
 
+
 # Monitor
-
-
 @pytest.mark.parametrize('monitor_args, monitor_result', [
     (['-m', 'test1', 'test2', 'test3'], ['test1', 'test2', 'test3']),
     (['--monitor', 'test1', 'test2', 'test3'], ['test1', 'test2', 'test3']),
@@ -105,6 +104,7 @@ def test_loglevel_env_var(mocker, loglevel_env_var, loglevel_env_var_result):
     assert args.loglevel == loglevel_env_var_result
 
 
+# Run once
 @pytest.mark.parametrize('runonce_args, runonce_result', [
     (['-r', ], True),
     (['--runonce', ], True)
@@ -126,6 +126,7 @@ def test_runonce_env_var(mocker, runonce_env_var, runonce_env_var_result):
     assert args.run_once == runonce_env_var_result
 
 
+# Cleanup
 @pytest.mark.parametrize('cleanup_args, cleanup_result', [
     (['-c', ], True),
     (['--cleanup', ], True)
@@ -147,6 +148,7 @@ def test_cleanup_env_var(mocker, cleanup_env_var, cleanup_env_var_result):
     assert args.cleanup == cleanup_env_var_result
 
 
+# Keeptag
 @pytest.mark.parametrize('keeptag_args, keeptag_result', [
     (['-k', ], True),
     (['--keep-tag', ], True)
@@ -166,3 +168,49 @@ def test_keeptag_env_var(mocker, keeptag_env_var, keeptag_env_var_result):
     mocker.patch('ouroboros.cli')
     args = cli.parse([])
     assert args.keep_tag == keeptag_env_var_result
+
+
+# METRICS_ADDR
+@pytest.mark.parametrize('metrics_addr_args, metrics_addr_result', [
+    (['--metrics-addr', '127.0.0.0'], '127.0.0.0')
+])
+def test_metrics_addr_args(mocker, metrics_addr_args, metrics_addr_result):
+    mocker.patch('ouroboros.cli')
+    args = cli.parse(metrics_addr_args)
+    assert args.metrics_addr == metrics_addr_result
+
+
+@pytest.mark.parametrize('metrics_addr_env_var, metrics_addr_env_var_result', [
+    ({'METRICS_ADDR': '127.0.0.0'}, '127.0.0.0'),
+])
+def test_metrics_addr_env_var(mocker, metrics_addr_env_var, metrics_addr_env_var_result):
+    mocker.patch.dict('os.environ', metrics_addr_env_var)
+    mocker.patch('ouroboros.cli')
+    args = cli.parse([])
+    assert args.metrics_addr == metrics_addr_env_var_result
+
+
+# METRICS_PORT
+@pytest.mark.parametrize('metrics_port_args, metrics_port_result', [
+    (['--metrics-port', '8001'], 8001)
+])
+def test_metrics_port_args(mocker, metrics_port_args, metrics_port_result):
+    mocker.patch('ouroboros.cli')
+    args = cli.parse(metrics_port_args)
+    assert args.metrics_port == metrics_port_result
+
+
+@pytest.mark.parametrize('metrics_port_env_var, metrics_port_env_varresult', [
+    ({'METRICS_PORT': 'test'}, False),
+    ({'METRICS_PORT': '8001'}, 8001),
+])
+def get_metrics_port_int_env_var(mocker, metrics_port_env_var, metrics_port_env_var_result):
+    mocker.patch.dict('os.environ', metrics_port_env_var)
+    assert cli.get_int_env_var(env_var=environ.get('METRICS_PORT')) == metrics_port_env_var_result
+
+
+def test_metrics_port_arg_invalid_value(mocker):
+    mocker.patch('ouroboros.cli')
+    with pytest.raises(SystemExit) as pytest_wrapped_e:
+        cli.parse(['--metrics-port', 'test'])
+        assert pytest_wrapped_e.type == SystemExit
