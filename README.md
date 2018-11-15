@@ -102,10 +102,10 @@ docker run --rm circa10a/ouroboros --help
   - Environment variable: `KEEPTAG=true`
 - `--metrics-addr` What address for the prometheus endpoint to bind to. Runs on `127.0.0.1` by default if `--metrics-addr` is not supplied.
   - Default is `127.0.0.1`.
-  - Environment variable: `METRICS_ADDR`
+  - Environment variable: `METRICS_ADDR=127.0.0.1`
 - `--metrics-port` What port to run prometheus endpoint on. Running on port `8000` by default if `--metrics-port` is not supplied.
   - Default is `8000`.
-  - Environment variable: `METRICS_PORT`
+  - Environment variable: `METRICS_PORT=8000`
 
 ### Private Registries
 
