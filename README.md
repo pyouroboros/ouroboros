@@ -100,9 +100,9 @@ docker run --rm circa10a/ouroboros --help
 - `--keep-tag`, `-k` Only monitor if updates are made to the tag of the image that the container was created with instead of using `latest`. This will enable [watchtower](https://github.com/v2tec/watchtower)-like functionality.
   - Default is `False`.
   - Environment variable: `KEEPTAG=true`
-- `--metrics-addr` What address for the prometheus endpoint to bind to. Runs on `127.0.0.1` by default if `--metrics-addr` is not supplied.
-  - Default is `127.0.0.1`.
-  - Environment variable: `METRICS_ADDR=127.0.0.1`
+- `--metrics-addr` What address for the prometheus endpoint to bind to. This arg is best suited for `ouroboros-cli`.
+  - Default is `0.0.0.0`.
+  - Environment variable: `METRICS_ADDR=0.0.0.0`
 - `--metrics-port` What port to run prometheus endpoint on. Running on port `8000` by default if `--metrics-port` is not supplied.
   - Default is `8000`.
   - Environment variable: `METRICS_PORT=8000`
@@ -230,9 +230,9 @@ You should then be able to see the metrics at http://localhost:5000/
 
 #### Bind Address
 
-Ouroboros allows you to bind the exporter to a different interface using the `--metrics-addr` argument.
+Ouroboros allows you to bind the exporter to a different interface using the `--metrics-addr` argument. This works better for the CLI since docker networks always use `172.*.*.*` addresses, unless you have a very specific config.
 
-> Default is `127.0.0.1`
+> Default is `0.0.0.0`
 
 ```bash
 docker run -d --name ouroboros \

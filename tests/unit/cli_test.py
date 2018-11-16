@@ -172,7 +172,7 @@ def test_keeptag_env_var(mocker, keeptag_env_var, keeptag_env_var_result):
 
 # METRICS_ADDR
 @pytest.mark.parametrize('metrics_addr_args, metrics_addr_result', [
-    (['--metrics-addr', '127.0.0.0'], '127.0.0.0')
+    (['--metrics-addr', '0.0.0.1'], '0.0.0.1')
 ])
 def test_metrics_addr_args(mocker, metrics_addr_args, metrics_addr_result):
     mocker.patch('ouroboros.cli')
@@ -181,7 +181,7 @@ def test_metrics_addr_args(mocker, metrics_addr_args, metrics_addr_result):
 
 
 @pytest.mark.parametrize('metrics_addr_env_var, metrics_addr_env_var_result', [
-    ({'METRICS_ADDR': '127.0.0.0'}, '127.0.0.0'),
+    ({'METRICS_ADDR': '0.0.0.1'}, '0.0.0.1'),
 ])
 def test_metrics_addr_env_var(mocker, metrics_addr_env_var, metrics_addr_env_var_result):
     mocker.patch.dict('os.environ', metrics_addr_env_var)

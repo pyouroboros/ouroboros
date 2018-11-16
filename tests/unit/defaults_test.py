@@ -8,7 +8,7 @@ import ouroboros.defaults as defaults
     (defaults.LOGLEVEL, 'info'),
     (defaults.RUNONCE, False),
     (defaults.CLEANUP, False),
-    (defaults.METRICS_ADDR, '127.0.0.1'),
+    (defaults.METRICS_ADDR, '0.0.0.0'),
     (defaults.METRICS_PORT, 8000)
 ])
 def test_defaults(default, result):
