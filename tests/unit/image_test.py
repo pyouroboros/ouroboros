@@ -14,7 +14,7 @@ def test_image_check_credentials_env_var(mocker):
 
 def test_image_check_credentials_false_env_var(mocker):
     mocker.patch.dict('os.environ', {'REPO_USR': 'test_user', 'REPO_PaSS': 'test_pass'})
-    assert image.check_credentials() == {}
+    assert image.check_credentials() == None
 
 
 def test_image_is_up_to_date():
