@@ -10,7 +10,7 @@ def check_credentials():
     if environ.get('REPO_USER') and environ.get('REPO_PASS'):
         return {'username': environ['REPO_USER'],
                 'password': environ['REPO_PASS']}
-    return {}
+    return None
 
 
 def pull_latest(image, keep_tag, api_client):
