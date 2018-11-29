@@ -129,7 +129,7 @@ docker run --rm circa10a/ouroboros --help
 
 ### Config File
 
-You can provide a [docker env file](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file) to supplement a config file with all the above listed arguments.
+You can provide a [docker env file](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file) to supplement a config file with all the above listed arguments by utilizing the supported environment variables.
 
 ```bash
 docker run -d --name ouroboros \
