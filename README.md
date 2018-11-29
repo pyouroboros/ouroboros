@@ -13,6 +13,26 @@ Automatically update your running Docker containers to the latest available imag
 
 A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Usage](#usage)
+  - [Docker](#docker)
+  - [Pip](#pip)
+  - [Options](#options)
+  - [Config File](#config-file)
+  - [Private Registries](#private-registries)
+- [Examples](#examples)
+  - [Monitor for updates for original tag](#monitor-for-updates-for-original-tag)
+  - [Update containers on a remote host](#update-containers-on-a-remote-host)
+  - [Change update frequency](#change-update-frequency)
+  - [Change loglevel](#change-loglevel)
+  - [Update all containers and quit ouroboros](#update-all-containers-and-quit-ouroboros)
+  - [Remove old docker images](#remove-old-docker-images)
+- [Prometheus metrics](#prometheus-metrics)
+- [Execute Tests](#execute-tests)
+- [Contributing](#contributing)
+
 ## Overview
 
 Ouroboros will monitor all running docker containers or those you specify and update said containers to the latest available image in the remote registry using the `latest` tag with the same parameters that were used when the container was first created such as volume/bind mounts, docker network connections, environment variables, restart policies, entrypoints, commands, etc. While ouroboros updates images to `latest` by default, that can be [overridden](#Options) to only monitor updates of a specific tag. Similar to [watchtower](https://github.com/v2tec/watchtower).
@@ -107,6 +127,24 @@ docker run --rm circa10a/ouroboros --help
   - Default is `8000`.
   - Environment variable: `METRICS_PORT=8000`
 
+### Config File
+
+You can provide a [docker env file](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file) to supplement a config file with all the above listed arguments by utilizing the supported environment variables.
+
+```bash
+docker run -d --name ouroboros \
+  --env-file env.list \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  circa10a/ouroboros
+```
+
+**Sample env.list**
+
+```
+URL=tcp://localhost:2375
+INTERVAL=60
+KEEPTAG=true
+```
 ### Private Registries
 
 If your running containers' docker images are stored in a secure registry that requires a username and password, simply run ouroboros with 2 environment variables(`REPO_USER` and `REPO_PASS`).
