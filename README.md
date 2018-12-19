@@ -16,6 +16,7 @@ A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
 ## Table of Contents
 
 - [Overview](#overview)
+- [Changelog](doc/CHANGELOG.md)
 - [Usage](#usage)
   - [Docker](#docker)
   - [Pip](#pip)
