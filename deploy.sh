@@ -7,12 +7,23 @@ PROJECT='ouroboros'
 NAMESPACE=${USER}/${PROJECT}
 # Auth
 echo $docker_password | docker login -u=$USER --password-stdin
-# Latest
+
+# Latest x86
 docker build -t $NAMESPACE:latest .
 docker push $NAMESPACE:latest
-# Versioned
+# Versioned x86
 docker tag $NAMESPACE:latest $NAMESPACE:$VERSION
 docker push $NAMESPACE:$VERSION
+
+# prepare qemu for ARM builds
+docker run --rm --privileged multiarch/qemu-user-static:register --reset
+
+# Latest ARM
+docker build -t $NAMESPACE:latest-rpi -f ./Dockerfile.rpi
+docker push $NAMESPACE:latest-rpi
+# Versioned ARM
+docker tag $NAMESPACE:latest-rpi $NAMESPACE:$VERSION-rpi
+docker push $NAMESPACE:$VERSION-rpi
 
 # Git tags
 git remote set-url origin https://$USER:$github_api_key@github.com/$USER/$PROJECT.git

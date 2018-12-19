@@ -6,3 +6,4 @@ tests/
 *.sh
 .coveragerc
 .travis.yml
+doc/
