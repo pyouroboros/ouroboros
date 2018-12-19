@@ -49,10 +49,18 @@ Ouroboros will monitor all running docker containers or those you specify and up
 
 Ouroboros is deployed via docker image like so:
 
+**x86**
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
   circa10a/ouroboros
+```
+
+**ARM/RPI**
+```bash
+docker run -d --name ouroboros \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  circa10a/ouroboros:latest-rpi
 ```
 
 or via `docker-compose`:
