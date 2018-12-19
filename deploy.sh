@@ -19,7 +19,7 @@ docker push $NAMESPACE:$VERSION
 docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
 # Latest ARM
-docker build -t $NAMESPACE:latest-rpi .
+docker build -t $NAMESPACE:latest-rpi -f ./Dockerfile.rpi
 docker push $NAMESPACE:latest-rpi
 # Versioned ARM
 docker tag $NAMESPACE:latest-rpi $NAMESPACE:$VERSION-rpi
