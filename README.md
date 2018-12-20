@@ -198,7 +198,7 @@ Example using ouroboros to update containers every Monday at 5AM:
 * 5 * * 1 ouroboros --interval 1 --runonce
 ```
 
-Using the [`--runonce`](#update-all-containers-and-quit-ouroboros) arg allows to ouroboros to make one pass updating all/specified containers and then exit.
+Using the [`--runonce`](#update-all-containers-and-quit-ouroboros) arg tells ouroboros to make one pass updating all/specified containers and then exit.
 
 ## Examples
 
