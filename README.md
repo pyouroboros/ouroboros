@@ -23,6 +23,7 @@ A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
   - [Options](#options)
   - [Config File](#config-file)
   - [Private Registries](#private-registries)
+  - [Scheduling](#scheduling)
 - [Examples](#examples)
   - [Monitor for updates for original tag](#monitor-for-updates-for-original-tag)
   - [Update containers on a remote host](#update-containers-on-a-remote-host)
@@ -173,6 +174,31 @@ docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
   circa10a/ouroboros
 ```
+### Scheduling
+
+Ouroboros does not have a native scheduling implementation other than using `--interval`. This is due to there being more robust/customizable job schedulers being available such as:
+
+- Cron
+  - [Cron Tutorial](https://www.ostechnix.com/a-beginners-guide-to-cron-jobs/)
+  - [Cron Expression Creator](https://crontab.guru/)
+- Systemd Timers
+  - [Documentation](https://wiki.archlinux.org/index.php/Systemd/Timers)
+
+Example using ouroboros to update containers every Monday at 5AM:
+
+**Docker**
+
+```bash
+* 5 * * 1 docker run --rm -d --name ouroboros -v /var/run/docker.sock:/var/run/docker.sock circa10a/ouroboros --interval 1 --runonce
+```
+
+**Pip installed CLI**
+
+```bash
+* 5 * * 1 ouroboros --interval 1 --runonce
+```
+
+Using the [`--runonce`](#update-all-containers-and-quit-ouroboros) arg tells ouroboros to make one pass updating all/specified containers and then exit.
 
 ## Examples
 
