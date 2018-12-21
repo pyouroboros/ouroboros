@@ -4,6 +4,7 @@ import docker
 from ouroboros import container
 from ouroboros import image
 from ouroboros import metrics
+from ouroboros import webhook
 
 
 def main(args, api_client):
@@ -47,6 +48,8 @@ def main(args, api_client):
 
                 metrics.container_updates(label='all')
                 metrics.container_updates(label=container_name)
+                if args.webhook_urls:
+                    webhook.post(urls=args.webhook_urls, container_name=container_name, old_sha=current_image['Id'], new_sha=latest_image['Id'])
 
         log.info(f'{updated_count} container(s) updated')
         if args.run_once:
