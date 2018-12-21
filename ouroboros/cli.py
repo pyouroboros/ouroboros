@@ -80,7 +80,7 @@ def parse(sysargs):
     parser.add_argument('--metrics-port', type=int, default=get_int_env_var(env_var=environ.get('METRICS_PORT')) or defaults.METRICS_PORT, dest='metrics_port',
                         help='Port to run Prometheus exporter on')
 
-    parser.add_argument('-w', '--webhook-urls', nargs='+', default=environ.get('WEBOOK_URLS') or [], dest='webhook_urls',
+    parser.add_argument('-w', '--webhook-urls', nargs='+', default=environ.get('WEBHOOK_URLS') or [], dest='webhook_urls',
                         help='URLs to trigger webook when a container is updated.')
     args = parser.parse_args(sysargs)
 

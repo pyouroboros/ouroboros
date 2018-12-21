@@ -119,10 +119,10 @@ docker run --rm circa10a/ouroboros --help
   - Environment variable: `INTERVAL=60`.
 - `--monitor`, `-m` Only monitor select containers which supports an infinite amount of container names.
   - Default is all containers.
-  - Environment variable: `MONITOR='["container_1", "container_2"]'`
+  - Environment variable: `MONITOR=container_1`
 - `--ignore`, `-n` Ignore the listed container names.
   - Default is none.
-  - Environment variable: `IGNORE='["container_1", "container_2"]'`
+  - Environment variable: `IGNORE=container_1`
   - If a container name is specified to monitor and ignore, ignore takes precedent.
 - `--loglevel`, `-l` The amount of logging details can be supressed or increased.
   - Default is `info`.
@@ -144,7 +144,7 @@ docker run --rm circa10a/ouroboros --help
   - Environment variable: `METRICS_PORT=8000`
 - `-w, --webhook-urls` What URLs for ouroboros to POST when a container is updated.
   - Default is `None`.
-  - Environment variable: `WEBHOOK_URLS='["http://my-webhook-1", "https://my-webhook-2"]'`
+  - Environment variable: `WEBHOOK_URLS=http://my-webhook-1`
 
 ### Config File
 
