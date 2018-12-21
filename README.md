@@ -24,7 +24,11 @@ A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
   - [Config File](#config-file)
   - [Private Registries](#private-registries)
   - [Scheduling](#scheduling)
+<<<<<<< HEAD
   - [Timezone Configuration](#timezone-configuration)
+=======
+  - [Notifications](#notifications)
+>>>>>>> docs
 - [Examples](#examples)
   - [Monitor for updates for original tag](#monitor-for-updates-for-original-tag)
   - [Update containers on a remote host](#update-containers-on-a-remote-host)
@@ -114,10 +118,10 @@ docker run --rm circa10a/ouroboros --help
   - Environment variable: `INTERVAL=60`.
 - `--monitor`, `-m` Only monitor select containers which supports an infinite amount of container names.
   - Default is all containers.
-  - Environment variable: `MONITOR=test_container`
+  - Environment variable: `MONITOR='["container_1", "container_2"]'`
 - `--ignore`, `-n` Ignore the listed container names.
   - Default is none.
-  - Environment variable: `IGNORE=test_container`
+  - Environment variable: `IGNORE='["container_1", "container_2"]'`
   - If a container name is specified to monitor and ignore, ignore takes precedent.
 - `--loglevel`, `-l` The amount of logging details can be supressed or increased.
   - Default is `info`.
@@ -137,6 +141,9 @@ docker run --rm circa10a/ouroboros --help
 - `--metrics-port` What port to run prometheus endpoint on. Running on port `8000` by default if `--metrics-port` is not supplied.
   - Default is `8000`.
   - Environment variable: `METRICS_PORT=8000`
+- `-w, --webhook-urls` What URLs for ouroboros to POST when a container is updated.
+  - Default is `None`.
+  - Environment variable: `WEBHOOK_URLS='["http://my-webhook-1", "https://my-webhook-2"]'`
 
 ### Config File
 
@@ -256,7 +263,7 @@ By default, ouroboros will monitor all running docker containers, but can be ove
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --monitor containerA containerB containerC
+  circa10a/ouroboros --monitor container_1 container_2 container_3
 ```
 
 ### Change loglevel
@@ -303,13 +310,13 @@ Ouroboros keeps track of containers being updated and how many are being monitor
 
 > Default is `8000`
 
-```bash
-docker run -d --name ouroboros \
-  -p 5000:5000 \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --metrics-port 5000
-```
-
+://my-webhook-1 https://my-webhook-2
+://my-webhook-1 https://my-webhook-2
+://my-webhook-1 https://my-webhook-2
+://my-webhook-1 https://my-webhook-2
+://my-webhook-1 https://my-webhook-2
+://my-webhook-1 https://my-webhook-2
+://my-webhook-1 https://my-webhook-2
 You should then be able to see the metrics at http://localhost:5000/
 
 #### Bind Address
@@ -343,6 +350,16 @@ containers_updated_created{container="busybox"} 1542152627.7476819
 # TYPE containers_being_monitored gauge
 containers_being_monitored 2.0
 ```
+
+### Call a single or multiple webhooks when a container is updated
+
+See [notifications](#notifications)
+
+ > Default is `None`
+ ```bash
+docker run -d --name ouroboros \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  circa10a/ouroboros --webhook-urls http://my-webhook-1 https://my-webhook-2
 
 ## Execute Tests
 
