@@ -5,6 +5,7 @@ import ouroboros.defaults as defaults
     (defaults.INTERVAL, 300),
     (defaults.LOCAL_UNIX_SOCKET, 'unix://var/run/docker.sock'),
     (defaults.MONITOR, []),
+    (defaults.IGNORE, []),
     (defaults.LOGLEVEL, 'info'),
     (defaults.RUNONCE, False),
     (defaults.CLEANUP, False),
