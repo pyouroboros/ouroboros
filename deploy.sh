@@ -9,23 +9,23 @@ NAMESPACE=${USER}/${PROJECT}
 echo $docker_password | docker login -u=$USER --password-stdin
 
 # Latest x86
-docker build -t $NAMESPACE:latest .
-docker push $NAMESPACE:latest
+docker build -t $NAMESPACE:latest . && \
+docker push $NAMESPACE:latest && \
 # Versioned x86
-docker tag $NAMESPACE:latest $NAMESPACE:$VERSION
+docker tag $NAMESPACE:latest $NAMESPACE:$VERSION && \
 docker push $NAMESPACE:$VERSION
 
 # prepare qemu for ARM builds
 docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
 # Latest ARM
-docker build -f ./Dockerfile.rpi -t $NAMESPACE:latest-rpi .
-docker push $NAMESPACE:latest-rpi
+docker build -f ./Dockerfile.rpi -t $NAMESPACE:latest-rpi . && \
+docker push $NAMESPACE:latest-rpi && \
 # Versioned ARM
-docker tag $NAMESPACE:latest-rpi $NAMESPACE:$VERSION-rpi
-docker push $NAMESPACE:$VERSION-rpi
+docker tag $NAMESPACE:latest-rpi $NAMESPACE:$VERSION-rpi && \
+docker push $NAMESPACE:$VERSION-rpi && \
 
 # Git tags
-git remote set-url origin https://$USER:$github_api_key@github.com/$USER/$PROJECT.git
-git tag $VERSION
+git remote set-url origin https://$USER:$github_api_key@github.com/$USER/$PROJECT.git && \
+git tag $VERSION && \
 git push --tags
