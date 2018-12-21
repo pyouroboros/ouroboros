@@ -9,7 +9,8 @@ import ouroboros.defaults as defaults
     (defaults.RUNONCE, False),
     (defaults.CLEANUP, False),
     (defaults.METRICS_ADDR, '0.0.0.0'),
-    (defaults.METRICS_PORT, 8000)
+    (defaults.METRICS_PORT, 8000),
+    (defaults.WEBHOOK_URLS, [])
 ])
 def test_defaults(default, result):
     assert default == result
