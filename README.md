@@ -36,6 +36,7 @@ A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
   - [Change loglevel](#change-loglevel)
   - [Update all containers and quit ouroboros](#update-all-containers-and-quit-ouroboros)
   - [Remove old docker images](#remove-old-docker-images)
+  - [Webhook Notifications](#webhook-notifications)
 - [Prometheus metrics](#prometheus-metrics)
 - [Execute Tests](#execute-tests)
 - [Contributing](#contributing)
@@ -102,7 +103,7 @@ $ ouroboros --interval 5 --loglevel debug
 
 ### Options
 
-> All arguments can be ran together without conflication
+> All arguments can be ran together without confliction
 
 > All arguments can be supplemented with environment variables, but command line arguments will take priority
 
@@ -162,6 +163,7 @@ docker run -d --name ouroboros \
 URL=tcp://localhost:2375
 INTERVAL=60
 KEEPTAG=true
+MONITOR='["container_1", "container_2"]'
 ```
 ### Private Registries
 
@@ -213,11 +215,15 @@ Using the [`--runonce`](#update-all-containers-and-quit-ouroboros) arg tells our
 To more closely monitor ouroboros' actions and for accurate log ingestion, you can change the timezone of the container from UTC by setting the [`TZ`](http://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html) environment variable like so:
 
 ```
+<<<<<<< HEAD
 docker run -d --name ouroboros \
   -e TZ=America/Chicago \
   -v /var/run/docker.sock:/var/run/docker.sock \
   circa10a/ouroboros
   ```
+=======
+
+>>>>>>> fix docs
 ## Examples
 
 ### Monitor for updates for original tag
@@ -310,13 +316,13 @@ Ouroboros keeps track of containers being updated and how many are being monitor
 
 > Default is `8000`
 
-://my-webhook-1 https://my-webhook-2
-://my-webhook-1 https://my-webhook-2
-://my-webhook-1 https://my-webhook-2
-://my-webhook-1 https://my-webhook-2
-://my-webhook-1 https://my-webhook-2
-://my-webhook-1 https://my-webhook-2
-://my-webhook-1 https://my-webhook-2
+```bash
+ docker run -d --name ouroboros \	 ://my-webhook-1 https://my-webhook-2
+   -p 5000:5000 \	 ://my-webhook-1 https://my-webhook-2
+   -v /var/run/docker.sock:/var/run/docker.sock \	 ://my-webhook-1 https://my-webhook-2
+   circa10a/ouroboros --metrics-port 5000	 ://my-webhook-1 https://my-webhook-2
+ ```
+
 You should then be able to see the metrics at http://localhost:5000/
 
 #### Bind Address
@@ -351,15 +357,17 @@ containers_updated_created{container="busybox"} 1542152627.7476819
 containers_being_monitored 2.0
 ```
 
-### Call a single or multiple webhooks when a container is updated
+### Webhook Notifications
 
 See [notifications](#notifications)
 
  > Default is `None`
+
  ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
   circa10a/ouroboros --webhook-urls http://my-webhook-1 https://my-webhook-2
+```
 
 ## Execute Tests
 
