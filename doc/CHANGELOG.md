@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.7
+
+Features:
+  - Add support to modify timezone for log output
+
 ## 0.3.6
 
 Features:
