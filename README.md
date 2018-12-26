@@ -24,6 +24,7 @@ A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
   - [Config File](#config-file)
   - [Private Registries](#private-registries)
   - [Scheduling](#scheduling)
+  - [Timezone Configuration](#timezone-configuration)
 - [Examples](#examples)
   - [Monitor for updates for original tag](#monitor-for-updates-for-original-tag)
   - [Update containers on a remote host](#update-containers-on-a-remote-host)
@@ -200,6 +201,16 @@ Example using ouroboros to update containers every Monday at 5AM:
 
 Using the [`--runonce`](#update-all-containers-and-quit-ouroboros) arg tells ouroboros to make one pass updating all/specified containers and then exit.
 
+### Timezone Configuration
+
+To more closely monitor ouroboros' actions and for accurate log ingestion, you can change the timezone of the container from UTC by setting the [`TZ`](http://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html) environment variable like so:
+
+```
+docker run -d --name ouroboros \
+  -e TZ=America/Chicago \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  circa10a/ouroboros --interval 10 --loglevel debug
+  ```
 ## Examples
 
 ### Monitor for updates for original tag
