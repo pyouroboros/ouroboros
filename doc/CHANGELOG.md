@@ -1,9 +1,9 @@
 # Changelog
 
-## 0.3.6
+## 0.3.7
 
 Features:
-  - Print configuration at startup
+  - Add support to modify timezone for log output
 
 ## 0.3.6
 
