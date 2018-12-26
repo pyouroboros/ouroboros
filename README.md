@@ -209,7 +209,7 @@ To more closely monitor ouroboros' actions and for accurate log ingestion, you c
 docker run -d --name ouroboros \
   -e TZ=America/Chicago \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --interval 10 --loglevel debug
+  circa10a/ouroboros
   ```
 ## Examples
 
