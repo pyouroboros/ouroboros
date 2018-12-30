@@ -13,7 +13,7 @@ def read_reqs(requirements):
 
 setup(
     name='ouroboros-cli',
-    version='0.3.7',
+    version='0.4.0',
     description='Automatically update running docker containers',
     long_description=readme(),
     long_description_content_type='text/markdown',
