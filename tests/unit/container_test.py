@@ -5,6 +5,7 @@ import docker
 import ouroboros.defaults
 import logging
 
+
 @pytest.fixture()
 def fake_container():
     return container_object

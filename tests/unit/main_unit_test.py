@@ -36,12 +36,12 @@ def test_main_full(fake_namespace, fake_api, caplog):
     fake_namespace.keep_tag = True
     fake_namespace.webhook_urls = ["http://testurl1"]
 
-    fake_api.inspect_container.return_value = container_object # called twice
-    fake_api.containers.return_value = [container_object] # called twice
+    fake_api.inspect_container.return_value = container_object  # called twice
+    fake_api.containers.return_value = [container_object]  # called twice
     fake_api.inspect_image.side_effect = [{'RepoTags': ["repo:1.1"],
                                            'Id': '1'},
                                           {'RepoTags': ["repo:latest"],
-                                           'Id': '2'}] # called twice
+                                           'Id': '2'}]  # called twice
     fake_api.create_container.return_value = {'Id': '2'}
 
     with pytest.raises(SystemExit) as e:
@@ -71,7 +71,7 @@ def test_main_exception(fake_namespace, fake_api, caplog):
 
     fake_api.inspect_container.return_value = container_object  # called twice
     fake_api.containers.return_value = [container_object]  # called twice
-    fake_api.inspect_image.return_value = {'RepoTags': ["repo:1.1"], 'Id': '1'} # called once
+    fake_api.inspect_image.return_value = {'RepoTags': ["repo:1.1"], 'Id': '1'}  # called once
 
     fake_api.pull.side_effect = docker.errors.APIError("I blew up!!")
     fake_api.create_container.return_value = {'Id': '2'}

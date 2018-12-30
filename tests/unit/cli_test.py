@@ -215,6 +215,7 @@ def test_metrics_port_arg_invalid_value(mocker):
         cli.parse(['--metrics-port', 'test'])
         assert pytest_wrapped_e.type == SystemExit
 
+
 # Webhooks
 @pytest.mark.parametrize('webhook_args, webhook_result', [
     (['-w', 'http://my-webhook-1 ', 'http://my-webhook-2', 'http://my-webhook-3'], ['http://my-webhook-1 ', 'http://my-webhook-2', 'http://my-webhook-3']),

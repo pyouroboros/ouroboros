@@ -1,6 +1,7 @@
 import pytest
 import ouroboros.defaults as defaults
 
+
 @pytest.mark.parametrize('default, result', [
     (defaults.INTERVAL, 300),
     (defaults.LOCAL_UNIX_SOCKET, 'unix://var/run/docker.sock'),
