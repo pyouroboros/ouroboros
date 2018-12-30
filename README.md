@@ -24,11 +24,8 @@ A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
   - [Config File](#config-file)
   - [Private Registries](#private-registries)
   - [Scheduling](#scheduling)
-<<<<<<< HEAD
   - [Timezone Configuration](#timezone-configuration)
-=======
   - [Notifications](#notifications)
->>>>>>> docs
 - [Examples](#examples)
   - [Monitor for updates for original tag](#monitor-for-updates-for-original-tag)
   - [Update containers on a remote host](#update-containers-on-a-remote-host)
@@ -210,6 +207,7 @@ Example using ouroboros to update containers every Monday at 5AM:
 
 Using the [`--runonce`](#update-all-containers-and-quit-ouroboros) arg tells ouroboros to make one pass updating all/specified containers and then exit.
 
+<<<<<<< HEAD
 ### Timezone Configuration
 
 To more closely monitor ouroboros' actions and for accurate log ingestion, you can change the timezone of the container from UTC by setting the [`TZ`](http://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html) environment variable like so:
@@ -224,6 +222,19 @@ docker run -d --name ouroboros \
 =======
 
 >>>>>>> fix docs
+=======
+## Notifications
+
+### Webhooks
+
+Ourboros has the ability to trigger multiple webhooks for slack integration or other automation. Detailed request information can be seen by [enabling the debug loglevel](#change-loglevel). If the appropriate [args/environment variables](#options) are supplied, a POST request will be sent to specified URLs with a slack-compatible JSON payload like so:
+
+
+```
+{"text": "Container: alpine updated from sha256:34ea7509dcad10aa92310f2b41e3afbabed0811ee3a902d6d49cb90f075fe444 to sha256:3f53bb00af943dfdf815650be70c0fa7b426e56a66f5e3362b47a129d57d5991"}
+```
+
+>>>>>>> f84f163b206c2570ca87c55d0fde99c618d0c329
 ## Examples
 
 ### Monitor for updates for original tag
