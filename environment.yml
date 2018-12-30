@@ -4,3 +4,4 @@ dependencies:
       - docker
       - schedule
       - prometheus_client
+      - requests

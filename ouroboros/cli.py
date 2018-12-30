@@ -55,23 +55,23 @@ def parse(sysargs):
     parser.add_argument('-i', '--interval', type=int, default=get_int_env_var(env_var=environ.get('INTERVAL')) or defaults.INTERVAL, dest='interval',
                         help='Interval in seconds between checking for updates (defaults to 300s)')
 
-    parser.add_argument('-m', '--monitor', nargs='+', default=environ.get('MONITOR') or [], dest='monitor',
+    parser.add_argument('-m', '--monitor', nargs='+', default=environ.get('MONITOR') or defaults.MONITOR, dest='monitor',
                         help='Which container to monitor (defaults to all running).')
 
-    parser.add_argument('-n', '--ignore', nargs='+', default=environ.get('IGNORE') or [], dest='ignore',
+    parser.add_argument('-n', '--ignore', nargs='+', default=environ.get('IGNORE') or defaults.IGNORE, dest='ignore',
                         help='Which container(s) to ignore.')
 
     parser.add_argument('-l', '--loglevel', choices=['notset', 'debug', 'info', 'warn', 'error', 'critical'],
-                        dest='loglevel', default=environ.get('LOGLEVEL') or 'info',
+                        dest='loglevel', default=environ.get('LOGLEVEL') or defaults.LOGLEVEL,
                         help='Change logger mode (defaults to info)')
 
-    parser.add_argument('-r', '--runonce', default=environ.get('RUNONCE') or False, dest='run_once',
+    parser.add_argument('-r', '--runonce', default=environ.get('RUNONCE') or defaults.RUNONCE, dest='run_once',
                         help='Only run ouroboros once then exit', action='store_true')
 
-    parser.add_argument('-c', '--cleanup', default=environ.get('CLEANUP') or False, dest='cleanup',
+    parser.add_argument('-c', '--cleanup', default=environ.get('CLEANUP') or defaults.CLEANUP, dest='cleanup',
                         help='Remove old images after updating', action='store_true')
 
-    parser.add_argument('-k', '--keep-tag', default=environ.get('KEEPTAG') or False, dest='keep_tag',
+    parser.add_argument('-k', '--keep-tag', default=environ.get('KEEPTAG') or defaults.KEEPTAG, dest='keep_tag',
                         help='Check for image updates of the same tag instead of pulling latest', action='store_true')
 
     parser.add_argument('--metrics-addr', default=environ.get('METRICS_ADDR') or defaults.METRICS_ADDR, dest='metrics_addr',
@@ -79,6 +79,9 @@ def parse(sysargs):
 
     parser.add_argument('--metrics-port', type=int, default=get_int_env_var(env_var=environ.get('METRICS_PORT')) or defaults.METRICS_PORT, dest='metrics_port',
                         help='Port to run Prometheus exporter on')
+
+    parser.add_argument('-w', '--webhook-urls', nargs='+', default=environ.get('WEBHOOK_URLS') or defaults.WEBHOOK_URLS, dest='webhook_urls',
+                        help='URLs to trigger webook when a container is updated.')
     args = parser.parse_args(sysargs)
 
     if not args.url:

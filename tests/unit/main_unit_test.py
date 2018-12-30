@@ -34,6 +34,7 @@ def test_main_full(fake_namespace, fake_api, caplog):
     fake_namespace.ignore = ["derp"]
     fake_namespace.cleanup = True
     fake_namespace.keep_tag = True
+    fake_namespace.webhook_urls = ["http://testurl1"]
 
     fake_api.inspect_container.return_value = container_object # called twice
     fake_api.containers.return_value = [container_object] # called twice
@@ -66,6 +67,7 @@ def test_main_exception(fake_namespace, fake_api, caplog):
     fake_namespace.ignore = ["derp"]
     fake_namespace.cleanup = True
     fake_namespace.keep_tag = True
+    fake_namespace.webhook_urls = ["http://testurl1"]
 
     fake_api.inspect_container.return_value = container_object  # called twice
     fake_api.containers.return_value = [container_object]  # called twice
