@@ -214,3 +214,15 @@ def test_metrics_port_arg_invalid_value(mocker):
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         cli.parse(['--metrics-port', 'test'])
         assert pytest_wrapped_e.type == SystemExit
+
+# Webhooks
+@pytest.mark.parametrize('webhook_args, webhook_result', [
+    (['-w', 'http://my-webhook-1 ', 'http://my-webhook-2', 'http://my-webhook-3'], ['http://my-webhook-1 ', 'http://my-webhook-2', 'http://my-webhook-3']),
+    (['--webhook-urls', 'http://my-webhook-1 ', 'http://my-webhook-2', 'http://my-webhook-3'], ['http://my-webhook-1 ', 'http://my-webhook-2', 'http://my-webhook-3']),
+    (['-w', ''], ['']),
+    (['--webhook-urls', ''], [''])
+])
+def test_webhook_args(mocker, webhook_args, webhook_result):
+    mocker.patch('ouroboros.cli')
+    args = cli.parse(webhook_args)
+    assert args.webhook_urls == webhook_result
