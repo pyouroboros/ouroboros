@@ -1,4 +1,3 @@
-
 ![alt text](https://i.imgur.com/kYbI9Hi.png)
 
 [![Travis](https://img.shields.io/travis/circa10a/ouroboros/master.svg?style=flat-square)](https://travis-ci.org/circa10a/ouroboros)
