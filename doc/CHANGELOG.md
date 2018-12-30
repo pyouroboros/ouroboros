@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0
+
+Features:
+  - Add support for webhook notifications
+  
 ## 0.3.7
 
 Features:
