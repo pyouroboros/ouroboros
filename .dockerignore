@@ -7,3 +7,4 @@ tests/
 .coveragerc
 .travis.yml
 doc/
+.flake8

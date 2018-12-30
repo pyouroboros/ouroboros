@@ -1,4 +1,3 @@
-import pytest
 import ouroboros.image as image
 import docker
 

@@ -1,6 +1,6 @@
 import pytest
-import requests
 import ouroboros.webhook as webhook
+
 
 def test_webook_schema_error():
     with pytest.raises(Exception):

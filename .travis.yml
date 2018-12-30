@@ -6,6 +6,7 @@ services:
 
 script:
   - ./run_tests.sh
+  - flake8
 
 after_script:
   - codecov

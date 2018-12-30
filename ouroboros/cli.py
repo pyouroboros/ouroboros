@@ -6,7 +6,7 @@ from . import defaults
 
 def checkURI(uri):
     """Validate tcp:// regex"""
-    regex = re.compile( r"""(?xi) # "verbose" mode & case-insensitive
+    regex = re.compile(r"""(?xi) # "verbose" mode & case-insensitive
         \A                        # in the beginning...
         tcps?://                  # tcp or tcps protocol
         (?:                       # hostname / IP address
@@ -46,8 +46,7 @@ def get_int_env_var(env_var):
 def parse(sysargs):
     """Declare command line options"""
     parser = argparse.ArgumentParser(description='ouroboros',
-                                     epilog='Example: ouroboros -u tcp://1.2.3.4:5678'
-                                     + '-i 20 -m container1 container2 -l warn')
+                                     epilog='Example: ouroboros -u tcp://1.2.3.4:5678 -i 20 -m container1 container2 -l warn')
 
     parser.add_argument('-u', '--url', default=defaults.LOCAL_UNIX_SOCKET,
                         help='Url for tcp host (defaults to "unix://var/run/docker.sock")')
