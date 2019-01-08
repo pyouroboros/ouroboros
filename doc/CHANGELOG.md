@@ -1,10 +1,20 @@
 # Changelog
 
+## 0.4.2
+
+Features:
+  - Fix Pip install
+
+## 0.4.1
+
+Features:
+  - Pre merge quality checks added
+
 ## 0.4.0
 
 Features:
   - Add support for webhook notifications
-  
+
 ## 0.3.7
 
 Features:
