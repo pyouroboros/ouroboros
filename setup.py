@@ -7,8 +7,12 @@ def readme():
 
 
 def read_reqs(requirements):
-    with open(requirements) as f:
-        return f.read().splitlines()
+    try:
+        with open(requirements) as f:
+            return f.read().splitlines()
+    except:
+        with open('ouroboros-cli/requirements.txt') as f:
+            return f.read().splitlines()
 
 
 setup(
@@ -22,7 +26,7 @@ setup(
     classifiers=['Programming Language :: Python'],
     packages=find_packages(exclude=['doc', 'tests']),
     scripts=['ouroboros/ouroboros'],
-    install_requires=read_reqs(requirements='requirements.txt'),
-    tests_require=read_reqs(requirements='requirements-dev.txt'),
+    install_requires=read_reqs(requirements='./requirements.txt'),
+    tests_require=read_reqs(requirements='./requirements-dev.txt'),
     python_requires='>=3.0'
 )
