@@ -2,7 +2,7 @@ docker
 schedule
 prometheus_client
 requests
-pytest
+pytest>=3.6
 pytest-cov
 pytest-mock
 codecov
