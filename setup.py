@@ -9,7 +9,7 @@ requirements_dev = ['docker',
                     'schedule',
                     'prometheus_client',
                     'requests',
-                    'pytest >= 3.6')'
+                    'pytest >= 3.6',
                     'pytest-cov',
                     'pytest-mock',
                     'codecov',
