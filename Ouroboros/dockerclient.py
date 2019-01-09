@@ -12,6 +12,7 @@ from Ouroboros.notifiers import NotificationManager
 class Docker(object):
     def __init__(self, config):
         self.config = config
+        print(self.config.docker_socket)
         self.client = DockerClient(base_url=self.config.docker_socket)
         self.data_manager = DataManager(self.config)
 
@@ -61,7 +62,6 @@ class Docker(object):
         self.logger.debug('Pulling tag: %s', tag)
         try:
             if self.config.auth_json:
-                print(self.config.auth_json)
                 return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
             else:
                 return_image = self.client.images.pull(tag)
@@ -72,7 +72,7 @@ class Docker(object):
             self.logger.critical("Exiting.")
             schedule.clear('update-containers')
             exit(1)
-
+        
     def update_containers(self):
         updated_count = 0
         updated_container_tuples = []
