@@ -18,14 +18,17 @@ docker push $NAMESPACE:$VERSION
 # prepare qemu for ARM builds
 docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
-# Latest ARM
-docker build -f ./Dockerfile.rpi -t $NAMESPACE:latest-rpi . && \
-docker push $NAMESPACE:latest-rpi && \
-# Versioned ARM
-docker tag $NAMESPACE:latest-rpi $NAMESPACE:$VERSION-rpi && \
-docker push $NAMESPACE:$VERSION-rpi && \
+for i in $(ls *.rpi); do
+  arch="$(echo ${i} | cut -d- -f2 | cut -d. -f1)"
+  # Latest
+  docker build -f "./Dockerfile-${arch}.rpi" -t "$NAMESPACE:latest-${arch}-rpi" . && \
+  docker push "$NAMESPACE:latest-${arch}-rpi" && \
+  # Versioned
+  docker tag "$NAMESPACE:latest-${arch}-rpi" "$NAMESPACE:${VERSION}-${arch}-rpi" && \
+  docker push "$NAMESPACE:${VERSION}-${arch}-rpi" && \
+done
 
 # Git tags
-git remote set-url origin https://$USER:$github_api_key@github.com/$USER/$PROJECT.git && \
-git tag $VERSION && \
+git remote set-url origin "https://${USER}:${github_api_key}@github.com/${USER}/${PROJECT}.git" && \
+git tag "$VERSION" && \
 git push --tags

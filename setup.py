@@ -23,7 +23,7 @@ def readme():
 
 setup(
     name='ouroboros-cli',
-    version='0.4.2',
+    version='0.4.3',
     description='Automatically update running docker containers',
     long_description=readme(),
     long_description_content_type='text/markdown',
