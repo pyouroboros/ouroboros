@@ -1,5 +1,5 @@
 import pytest
-import Ouroboros.container as container
+import Ouroboros.dockerclient as container
 from container_object import container_object
 import docker
 import Ouroboros.defaults
