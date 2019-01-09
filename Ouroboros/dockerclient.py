@@ -1,3 +1,5 @@
+import schedule
+
 from logging import getLogger
 from docker import DockerClient
 from docker.errors import DockerException, APIError
@@ -10,13 +12,13 @@ from Ouroboros.notifiers import NotificationManager
 class Docker(object):
     def __init__(self, config):
         self.config = config
-
+        print(self.config.docker_socket)
         self.client = DockerClient(base_url=self.config.docker_socket)
+        self.data_manager = DataManager(self.config)
 
         self.logger = getLogger()
         self.monitored = self.monitor_filter()
 
-        self.data_manager = DataManager(self.config)
         self.notification_manager = NotificationManager(self.config, len(self.monitored))
 
     def get_running(self):
@@ -58,13 +60,19 @@ class Docker(object):
             tag = tag.split(':')[0] + ':latest'
 
         self.logger.debug('Pulling tag: %s', tag)
-        if self.config.auth_json:
-            return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
-        else:
-            return_image = self.client.images.pull(tag)
+        try:
+            if self.config.auth_json:
+                return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
+            else:
+                return_image = self.client.images.pull(tag)
+            return return_image
 
-        return return_image
-
+        except APIError as e:
+            self.logger.critical(e)
+            self.logger.critical("Exiting.")
+            schedule.clear('update-containers')
+            exit(1)
+        
     def update_containers(self):
         updated_count = 0
         updated_container_tuples = []
