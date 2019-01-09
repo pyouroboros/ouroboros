@@ -3,21 +3,17 @@ from docker import DockerClient
 from docker.errors import DockerException, APIError
 
 from Ouroboros.helpers import set_properties
-from Ouroboros.dataexporters import DataManager
-from Ouroboros.notifiers import NotificationManager
 
 
 class Docker(object):
-    def __init__(self, config):
+    def __init__(self, config, data_manager):
         self.config = config
+        self.data_manager = data_manager
 
         self.client = DockerClient(base_url=self.config.docker_socket)
 
         self.logger = getLogger()
         self.monitored = self.monitor_filter()
-
-        self.data_manager = DataManager(self.config)
-        self.notification_manager = NotificationManager(self.config, len(self.monitored))
 
     def get_running(self):
         """Return running container objects list, except ouroboros itself"""
@@ -67,7 +63,6 @@ class Docker(object):
 
     def update_containers(self):
         updated_count = 0
-        updated_container_tuples = []
 
         for container in self.monitored:
             current_image = container.image
@@ -80,9 +75,6 @@ class Docker(object):
 
             # If current running container is running latest image
             if current_image.id != latest_image.id:
-                updated_container_tuples.append(
-                    (container, current_image, latest_image)
-                )
                 self.logger.info('%s will be updated', container.name)
 
                 # new container dict to create new container from
@@ -106,5 +98,5 @@ class Docker(object):
                 self.data_manager.add(label='all')
                 self.data_manager.add(label=container.name)
 
-        if updated_count > 0:
-            self.notification_manager.send(updated_count=updated_count, container_tuples=updated_container_tuples)
+                if self.config.webhook_urls:
+                    webhook.post(urls=args.webhook_urls, container_name=container_name, old_sha=current_image['Id'], new_sha=latest_image['Id'])

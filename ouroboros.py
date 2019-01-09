@@ -7,6 +7,7 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from Ouroboros.config import Config
 from Ouroboros.dockerclient import Docker
 from Ouroboros.logger import OuroborosLogger
+from Ouroboros.dataexporters import DataManager
 
 
 def main(environment_vars=None, args=None):
@@ -18,7 +19,9 @@ def main(environment_vars=None, args=None):
     ol = OuroborosLogger(level=loglevel)
     ol.logger.info("Ouroboros configuration: %S", vars(args))
     config = Config(environment_vars=environment_vars, cli_args=args)
-    docker = Docker(config)
+    data_manager = DataManager(config)
+    docker = Docker(config, data_manager)
+    
 
     if docker.monitored:
         schedule.every(config.interval).seconds.do(docker.update_containers).tag('update-containers')
