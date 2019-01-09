@@ -1,7 +1,7 @@
 import schedule
+
 from time import sleep
 from os import environ
-
 from argparse import ArgumentParser, RawTextHelpFormatter
 
 from Ouroboros.config import Config
@@ -16,7 +16,7 @@ def main(environment_vars=None, args=None):
     else:
         loglevel = args.LOGLEVEL
     ol = OuroborosLogger(level=loglevel)
-    ol.logger.info("Ouroboros configuration: %s", vars(args))
+    ol.logger.info("Ouroboros configuration: %S", vars(args))
     config = Config(environment_vars=environment_vars, cli_args=args)
     docker = Docker(config)
 
@@ -31,7 +31,7 @@ def main(environment_vars=None, args=None):
     if args.run_once:
         schedule.clear('update-containers')
 
-    while schedule.jobs:
+    while True:
         schedule.run_pending()
         sleep(1)
 
@@ -61,16 +61,16 @@ if __name__ == "__main__":
                         dest='LOGLEVEL', default=Config.loglevel, help='Set logging level\n'
                                                                        'DEFAULT: info')
 
-    parser.add_argument('-o', '--runonce', default=False, action='store_true', dest='RUNONCE',
+    parser.add_argument('-o', '--runonce', default=False, type=bool, action='store_true', dest='RUNONCE',
                         help='Single run')
 
-    parser.add_argument('-c', '--cleanup', default=False, dest='CLEANUP', action='store_true',
+    parser.add_argument('-c', '--cleanup', default=False, dest='CLEANUP', action='store_true', type=bool,
                         help='Remove old images after updating')
 
-    parser.add_argument('-L', '--latest', default=False, dest='LATEST', action='store_true',
+    parser.add_argument('-L', '--latest', default=False, dest='LATEST', type=bool, action='store_true',
                         help='Check for latest image instead of pulling current tag')
 
-    parser.add_argument('-P', '--prometheus', default=False, dest='PROMETHEUS', action='store_true',
+    parser.add_argument('-P', '--prometheus', default=False, dest='PROMETHEUS', type=bool, action='store_true',
                         help='Enable Prometheus exporter')
 
     parser.add_argument('-a', '--prometheus-exporter-addr', default=Config.prometheus_exporter_addr,
