@@ -66,7 +66,7 @@ docker run -d --name ouroboros \
   circa10a/ouroboros:latest-aarch64-rpi
 ```
 
-**All other RPI's**
+**All other Rpi's**
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
