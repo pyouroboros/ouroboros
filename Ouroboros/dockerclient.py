@@ -6,10 +6,8 @@ from Ouroboros.helpers import set_properties
 
 
 class Docker(object):
-    def __init__(self, config, data_manager):
+    def __init__(self, config):
         self.config = config
-        self.data_manager = data_manager
-
         self.client = DockerClient(base_url=self.config.docker_socket)
 
         self.logger = getLogger()
@@ -42,8 +40,6 @@ class Docker(object):
             running_containers = [container for container in running_containers
                                   if container.name not in self.config.ignore]
 
-        self.data_manager.set(monitored_count=len(running_containers))
-
         return running_containers
 
     def pull(self, image_object):
@@ -63,6 +59,7 @@ class Docker(object):
 
     def update_containers(self):
         updated_count = 0
+        metrics.monitored_containers(num=len(self.monitored))
 
         for container in self.monitored:
             current_image = container.image
@@ -95,8 +92,8 @@ class Docker(object):
 
                 updated_count += 1
 
-                self.data_manager.add(label='all')
-                self.data_manager.add(label=container.name)
+                metrics.container_updates(label='all')
+                metrics.container_updates(label=container.name)
 
                 if self.config.webhook_urls:
                     webhook.post(urls=args.webhook_urls, container_name=container_name, old_sha=current_image['Id'], new_sha=latest_image['Id'])

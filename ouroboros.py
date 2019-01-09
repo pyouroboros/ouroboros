@@ -1,33 +1,26 @@
-import schedule
-
+#!/usr/bin/env python3
 from time import sleep
 from os import environ
+from Ouroboros.logger import set_logger
+from Ouroboros.dockerclient import Docker
 from argparse import ArgumentParser, RawTextHelpFormatter
 
+import schedule
+import logging
 from Ouroboros.config import Config
-from Ouroboros.dockerclient import Docker
-from Ouroboros.logger import OuroborosLogger
-from Ouroboros.dataexporters import DataManager
 
 
-def main(environment_vars=None, args=None):
+def main():
 
-    if environment_vars.get('LOGLEVEL'):
-        loglevel = environment_vars.get('LOGLEVEL')
-    else:
-        loglevel = args.LOGLEVEL
-    ol = OuroborosLogger(level=loglevel)
-    ol.logger.info("Ouroboros configuration: %S", vars(args))
-    config = Config(environment_vars=environment_vars, cli_args=args)
-    data_manager = DataManager(config)
-    docker = Docker(config, data_manager)
-    
+    config = Config(environ, args)
+    docker = Docker(config)
 
     if docker.monitored:
         schedule.every(config.interval).seconds.do(docker.update_containers).tag('update-containers')
     else:
-        ol.logger.info('No containers are running or monitored')
+        log.info('No containers are running or monitored')
         exit(1)
+    # log.info(f"Ouroboros configuration: {vars(args)}")
 
     schedule.run_all()
 
@@ -96,6 +89,8 @@ if __name__ == "__main__":
                         help='Private docker repository password\n'
                               'DEFAULT: 127.0.0.1')
 
-    ARGS = parser.parse_args()
+    args = parser.parse_args()
 
-    main(environment_vars=environ, args=ARGS)
+    log = logging.getLogger()
+
+    main()
