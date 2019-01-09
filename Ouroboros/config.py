@@ -1,5 +1,4 @@
 import prometheus_client
-from logging import getLogger
 
 from Ouroboros.helpers import checkuri
 from Ouroboros.logger import BlacklistFilter
@@ -33,7 +32,6 @@ class Config(object):
         self.environment_vars = environment_vars
         self.filtered_strings = None
 
-        self.logger = getLogger()
         self.parse()
         self.initialize()
 
@@ -47,7 +45,7 @@ class Config(object):
         # Added matching for domains that use :port. ConnectionPool splits the domain/ip from the port
         without_port = [string.split(':')[0] for string in filtered_strings if ':' in string]
         self.filtered_strings.extend(without_port)
-
+        
         for handler in self.logger.handlers:
             handler.addFilter(BlacklistFilter(set(self.filtered_strings)))
 

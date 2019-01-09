@@ -32,6 +32,11 @@ def checkuri(uri):
     return re.match(regex, uri)
 
 
+def clean_name(container):
+    clean = container['Name'].replace('/', '')
+    return clean
+
+
 def set_properties(old, new):
     """Store object for spawning new container in place of the one with outdated image"""
     properties = {
