@@ -35,8 +35,8 @@ for i in $(ls *.rpi); do
 done
 
 # Support multiple architectures with same image
-docker manifest create "${USER}/${PROJECT}:latest ${USER}/${PROJECT}:latest-aarch64-rpi"
-docker manifest create "${USER}/${PROJECT}:latest ${USER}/${PROJECT}:latest-arm-rpi"
-docker manifest annotate "${USER}/${PROJECT}:latest ${USER}/${PROJECT}:latest-aarch64-rpi --os linux --arch arm64"
-docker manifest annotate "${USER}/${PROJECT}:latest ${USER}/${PROJECT}:latest-arm-rpi --os linux --arch arm"
-docker manifest push circa10a/ouroboros:latest
+docker manifest create "${USER}/${PROJECT}:latest" "${USER}/${PROJECT}:latest-aarch64-rpi"
+docker manifest create "${USER}/${PROJECT}:latest" "${USER}/${PROJECT}:latest-arm-rpi"
+docker manifest annotate "${USER}/${PROJECT}:latest" "${USER}/${PROJECT}:latest-aarch64-rpi --os linux --arch arm64"
+docker manifest annotate "${USER}/${PROJECT}:latest" "${USER}/${PROJECT}:latest-arm-rpi --os linux --arch arm"
+docker manifest push "${USER}/${PROJECT}:latest"
