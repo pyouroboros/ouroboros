@@ -1,4 +1,3 @@
-import prometheus_client
 from logging import getLogger
 
 from Ouroboros.helpers import checkuri
@@ -35,7 +34,6 @@ class Config(object):
 
         self.logger = getLogger()
         self.parse()
-        self.initialize()
 
     def config_blacklist(self):
         filtered_strings = [getattr(self, value.lower()) for value in Config.options
@@ -69,7 +67,3 @@ class Config(object):
 
         if self.repo_user and self.repo_pass:
             self.auth_json = {'username': self.repo_user, 'password': self.repo_pass}
-
-    def initialize(self):
-        if self.prometheus:
-            prometheus_client.start_http_server(self.prometheus_exporter_port, addr=self.prometheus_exporter_addr)
