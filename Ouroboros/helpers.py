@@ -45,4 +45,3 @@ def set_properties(old, new):
     }
 
     return properties
-
