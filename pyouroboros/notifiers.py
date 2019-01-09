@@ -35,7 +35,7 @@ class NotificationManager(object):
             json = {
                 "embeds": [
                     {
-                        "title": "Ouroboros has updated containers!",
+                        "title": "pyouroboros has updated containers!",
                         "description": "Breakdown:",
                         "color": 316712,
                         "timestamp": now,

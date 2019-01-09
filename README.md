@@ -39,7 +39,7 @@ A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
 
 ## Overview
 
-Ouroboros will monitor all running docker containers or those you specify and update said containers to the latest available image in the remote registry using the `latest` tag with the same parameters that were used when the container was first created such as volume/bind mounts, docker network connections, environment variables, restart policies, entrypoints, commands, etc. While ouroboros updates images to `latest` by default, that can be [overridden](#Options) to only monitor updates of a specific tag. Similar to [watchtower](https://github.com/v2tec/watchtower).
+pyouroboros will monitor all running docker containers or those you specify and update said containers to the latest available image in the remote registry using the `latest` tag with the same parameters that were used when the container was first created such as volume/bind mounts, docker network connections, environment variables, restart policies, entrypoints, commands, etc. While ouroboros updates images to `latest` by default, that can be [overridden](#Options) to only monitor updates of a specific tag. Similar to [watchtower](https://github.com/v2tec/watchtower).
 
 - Push your image to your registry and simply wait a couple of minutes for ouroboros to find the new image and redeploy your container autonomously.
 - Limit your server ssh access
@@ -50,7 +50,7 @@ Ouroboros will monitor all running docker containers or those you specify and up
 
 ### Docker
 
-Ouroboros is deployed via docker image like so:
+pyouroboros is deployed via docker image like so:
 
 **x86**
 ```bash
@@ -83,7 +83,7 @@ services:
 ```
 
 ### Pip
-Ouroboros can also be installed via `pip`:
+pyouroboros can also be installed via `pip`:
 
 ```bash
 pip install ouroboros-cli
@@ -182,7 +182,7 @@ docker run -d --name ouroboros \
 ```
 ### Scheduling
 
-Ouroboros does not have a native scheduling implementation other than using `--interval`. This is due to there being more robust/customizable job schedulers being available such as:
+pyouroboros does not have a native scheduling implementation other than using `--interval`. This is due to there being more robust/customizable job schedulers being available such as:
 
 - Cron
   - [Cron Tutorial](https://www.ostechnix.com/a-beginners-guide-to-cron-jobs/)
@@ -231,7 +231,7 @@ Ourboros has the ability to trigger multiple webhooks for slack integration or o
 ## Examples
 
 ### Monitor for updates for original tag
- Instead of always updating to `latest` you can specify if you would like Ouroboros to only check for updates for your original container's image tag.
+ Instead of always updating to `latest` you can specify if you would like pyouroboros to only check for updates for your original container's image tag.
  e.g. If your container was started with `nginx:1.14-alpine` using `--keep-tag` will poll the docker registry and compare digests. If there is a new image for `nginx:1.14-alpine`, ouroboros will update your container using the newly patched version.
  > Default is `False`
  ```bash
@@ -242,7 +242,7 @@ docker run -d --name ouroboros \
 
 ### Update containers on a remote host
 
-Ouroboros can monitor things other than just local, pass the `--url` argument to update a system with the Docker API exposed.
+pyouroboros can monitor things other than just local, pass the `--url` argument to update a system with the Docker API exposed.
 
 > Default is unix://var/run/docker.sock
 
@@ -302,7 +302,7 @@ docker run -d --name ouroboros \
 
 ### Remove old docker images
 
-Ouroboros has the option to remove the older docker image if a new one is found and the container is then updated. To tidy up after updates, pass the `cleanup` argument.
+pyouroboros has the option to remove the older docker image if a new one is found and the container is then updated. To tidy up after updates, pass the `cleanup` argument.
 
 > Default is `False`
 
@@ -314,7 +314,7 @@ docker run -d --name ouroboros \
 
 ### Prometheus metrics
 
-Ouroboros keeps track of containers being updated and how many are being monitored. Said metrics are exported using [prometheus](https://prometheus.io/). Metrics are collected by ouroboros with or without this flag, it is up to you if you would like to expose the port or not. You can also bind the http server to a different interface for systems using multiple networks. `--metrics-port` and `--metrics-addr` can run independently of each other without issue.
+pyouroboros keeps track of containers being updated and how many are being monitored. Said metrics are exported using [prometheus](https://prometheus.io/). Metrics are collected by ouroboros with or without this flag, it is up to you if you would like to expose the port or not. You can also bind the http server to a different interface for systems using multiple networks. `--metrics-port` and `--metrics-addr` can run independently of each other without issue.
 
 #### Port
 
@@ -331,7 +331,7 @@ You should then be able to see the metrics at http://localhost:5000/
 
 #### Bind Address
 
-Ouroboros allows you to bind the exporter to a different interface using the `--metrics-addr` argument. This works better for the CLI since docker networks always use `172.*.*.*` addresses, unless you have a very specific config.
+pyouroboros allows you to bind the exporter to a different interface using the `--metrics-addr` argument. This works better for the CLI since docker networks always use `172.*.*.*` addresses, unless you have a very specific config.
 
 > Default is `0.0.0.0`
 

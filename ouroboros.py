@@ -4,39 +4,12 @@ from os import environ
 
 from argparse import ArgumentParser, RawTextHelpFormatter
 
-from Ouroboros.config import Config
-from Ouroboros.dockerclient import Docker
-from Ouroboros.logger import OuroborosLogger
+from pyouroboros.config import Config
+from pyouroboros.dockerclient import Docker
+from pyouroboros.logger import OuroborosLogger
 
 
-def main(environment_vars=None, args=None):
-
-    if environment_vars.get('LOGLEVEL'):
-        loglevel = environment_vars.get('LOGLEVEL')
-    else:
-        loglevel = args.LOGLEVEL
-    ol = OuroborosLogger(level=loglevel)
-    ol.logger.info("Ouroboros configuration: %s", vars(args))
-    config = Config(environment_vars=environment_vars, cli_args=args)
-    docker = Docker(config)
-
-    if docker.monitored:
-        schedule.every(config.interval).seconds.do(docker.update_containers).tag('update-containers')
-    else:
-        ol.logger.info('No containers are running or monitored')
-        exit(1)
-
-    schedule.run_all()
-
-    if args.RUNONCE:
-        schedule.clear('update-containers')
-
-    while schedule.jobs:
-        schedule.run_pending()
-        sleep(1)
-
-
-if __name__ == "__main__":
+def main():
     """Declare command line options"""
     parser = ArgumentParser(description='ouroboros', formatter_class=RawTextHelpFormatter,
                             epilog='EXAMPLE: ouroboros -d tcp://1.2.3.4:5678 -i 20 -m container1 container2 -l warn',)
@@ -97,6 +70,32 @@ if __name__ == "__main__":
                         help='Private docker repository password\n'
                               'DEFAULT: 127.0.0.1')
 
-    ARGS = parser.parse_args()
+    args = parser.parse_args()
 
-    main(environment_vars=environ, args=ARGS)
+    if environ.get('LOGLEVEL'):
+        loglevel = environ.get('LOGLEVEL')
+    else:
+        loglevel = args.LOGLEVEL
+    ol = OuroborosLogger(level=loglevel)
+    ol.logger.info("pyouroboros configuration: %s", vars(args))
+    config = Config(environment_vars=environ, cli_args=args)
+    docker = Docker(config)
+
+    if docker.monitored:
+        schedule.every(config.interval).seconds.do(docker.update_containers).tag('update-containers')
+    else:
+        ol.logger.info('No containers are running or monitored')
+        exit(1)
+
+    schedule.run_all()
+
+    if args.RUNONCE:
+        schedule.clear('update-containers')
+
+    while schedule.jobs:
+        schedule.run_pending()
+        sleep(1)
+
+
+if __name__ == "__main__":
+    main()

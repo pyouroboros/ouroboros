@@ -1,7 +1,7 @@
 from logging import getLogger
 
-from Ouroboros.helpers import checkuri
-from Ouroboros.logger import BlacklistFilter
+from pyouroboros.helpers import checkuri
+from pyouroboros.logger import BlacklistFilter
 
 
 class Config(object):

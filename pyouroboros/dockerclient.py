@@ -4,9 +4,9 @@ from logging import getLogger
 from docker import DockerClient
 from docker.errors import DockerException, APIError
 
-from Ouroboros.helpers import set_properties
-from Ouroboros.dataexporters import DataManager
-from Ouroboros.notifiers import NotificationManager
+from pyouroboros.helpers import set_properties
+from pyouroboros.dataexporters import DataManager
+from pyouroboros.notifiers import NotificationManager
 
 
 class Docker(object):
