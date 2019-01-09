@@ -1,0 +1,7 @@
+FROM resin/raspberry-pi-alpine-python:3-slim
+
+COPY . /app
+WORKDIR /app
+RUN apk add --no-cache tzdata && \
+    pip install --no-cache-dir .
+ENTRYPOINT ["ouroboros"]

@@ -1,4 +1,4 @@
-FROM resin/raspberry-pi-alpine-python:3.6-slim-20181218
+FROM resin/generic-aarch64-alpine-python:3-slim
 
 COPY . /app
 WORKDIR /app

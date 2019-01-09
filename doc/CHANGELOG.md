@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.3
+
+Features:
+  - aarch64 rpi docker image
+
 ## 0.4.2
 
 Features:
