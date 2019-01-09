@@ -1,8 +1,8 @@
 import pytest
-import ouroboros.container as container
+import Ouroboros.container as container
 from container_object import container_object
 import docker
-import ouroboros.defaults
+import Ouroboros.defaults
 import logging
 
 
@@ -29,7 +29,7 @@ def test_get_name(fake_container):
 
 def test_to_monitor(mocker, caplog):
     mock_client = mocker.Mock(spec=docker.APIClient)
-    mock_client.base_url = ouroboros.defaults.LOCAL_UNIX_SOCKET
+    mock_client.base_url = Ouroboros.defaults.LOCAL_UNIX_SOCKET
     mock_client.containers.return_value = []
     caplog.set_level(logging.INFO)
     result = container.to_monitor(monitor=['test'], ignore=['boop'], api_client=mock_client)
@@ -40,7 +40,7 @@ def test_to_monitor(mocker, caplog):
 
 def test_to_monitor_exception(mocker, caplog):
     mock_client = mocker.Mock(spec=docker.APIClient)
-    mock_client.base_url = ouroboros.defaults.LOCAL_UNIX_SOCKET
+    mock_client.base_url = Ouroboros.defaults.LOCAL_UNIX_SOCKET
     mock_client.containers.side_effect = docker.errors.DockerException('I blew up!!')
 
     container.to_monitor(monitor='test', api_client=mock_client)
@@ -49,7 +49,7 @@ def test_to_monitor_exception(mocker, caplog):
 
 def test_running_exception(mocker, caplog):
     mock_client = mocker.Mock(spec=docker.APIClient)
-    mock_client.base_url = ouroboros.defaults.LOCAL_UNIX_SOCKET
+    mock_client.base_url = Ouroboros.defaults.LOCAL_UNIX_SOCKET
     mock_client.containers.side_effect = docker.errors.DockerException("I'm blasting off again!")
 
     container.running(mock_client)

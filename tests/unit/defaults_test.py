@@ -1,5 +1,5 @@
 import pytest
-import ouroboros.defaults as defaults
+import Ouroboros.defaults as defaults
 
 
 @pytest.mark.parametrize('default, result', [

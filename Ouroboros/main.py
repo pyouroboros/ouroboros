@@ -1,10 +1,10 @@
 from sys import exit
 import logging
 import docker
-from ouroboros import container
-from ouroboros import image
-from ouroboros import metrics
-from ouroboros import webhook
+from Ouroboros import container
+from Ouroboros import image
+from Ouroboros import metrics
+from Ouroboros import webhook
 
 
 def main(args, api_client):

@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
+import sys
+import Ouroboros.cli as cli
+from Ouroboros.logger import set_logger
+from prometheus_client import start_http_server
+import docker
+import schedule
+import logging
+from Ouroboros.main import main
+
 
 if __name__ == "__main__":
-    import sys
-    import ouroboros.cli as cli
-    from ouroboros.logger import set_logger
-    from prometheus_client import start_http_server
-    import docker
-    import schedule
-    import logging
-    from ouroboros.main import main
-    import time
-
     log = logging.getLogger(__name__)
     args = cli.parse(sys.argv[1:])
     start_http_server(args.metrics_port, addr=args.metrics_addr)

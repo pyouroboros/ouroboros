@@ -1,5 +1,5 @@
 import pytest
-import ouroboros.logger as log
+import Ouroboros.logger as log
 
 
 @pytest.mark.parametrize('level_string, level_code', [

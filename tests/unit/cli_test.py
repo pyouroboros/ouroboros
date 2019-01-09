@@ -1,7 +1,7 @@
 from os import environ
 import pytest
-import ouroboros.cli as cli
-import ouroboros.defaults as defaults
+import Ouroboros.cli as cli
+import Ouroboros.defaults as defaults
 
 
 def test_checkURI():

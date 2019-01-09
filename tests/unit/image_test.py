@@ -1,4 +1,4 @@
-import ouroboros.image as image
+import Ouroboros.image as image
 import docker
 
 
