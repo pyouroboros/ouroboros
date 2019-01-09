@@ -6,7 +6,7 @@ from Ouroboros.logger import BlacklistFilter
 
 class Config(object):
     options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKET', 'MONITOR', 'IGNORE', 'LOGLEVEL', 'PROMETHEUS_EXPORTER_ADDR'
-               'PROMETHEUS_EXPORTER_PORT', 'WEBHOOK_URLS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUNONCE', 'KEEP_TAG']
+               'PROMETHEUS_EXPORTER_PORT', 'WEBHOOK_URLS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUNONCE', 'LATEST']
 
     interval = 300
     docker_socket = 'unix://var/run/docker.sock'
@@ -15,7 +15,7 @@ class Config(object):
     webhook_urls = []
 
     loglevel = 'info'
-    keep_tag = False
+    latest = False
     cleanup = False
     runonce = False
 

@@ -55,5 +55,3 @@ class OuroborosLogger(object):
 
         # Add the Handler to the Logger
         self.logger.addHandler(console_logger)
-
-

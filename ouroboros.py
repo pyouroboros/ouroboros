@@ -57,13 +57,14 @@ if __name__ == "__main__":
                         dest='LOGLEVEL', default=Config.loglevel, help='Set logging level\n'
                                                                        'DEFAULT: info')
 
-    parser.add_argument('-o', '--runonce', default=False, type=bool, action='store_true', help='Single run')
+    parser.add_argument('-o', '--runonce', default=False, type=bool, action='store_true', dest='RUNONCE',
+                        help='Single run')
 
-    parser.add_argument('-c', '--cleanup', default=False, dest='cleanup', action='store_true', type=bool,
+    parser.add_argument('-c', '--cleanup', default=False, dest='CLEANUP', action='store_true', type=bool,
                         help='Remove old images after updating')
 
-    parser.add_argument('-k', '--keep-tag', default=False, dest='keep_tag', type=bool, action='store_true',
-                        help='Check for image updates of the same tag instead of pulling latest')
+    parser.add_argument('-L', '--latest', default=False, dest='LATEST', type=bool, action='store_true',
+                        help='Check for latest image instead of pulling current tag')
 
     parser.add_argument('-P', '--prometheus', default=False, dest='PROMETHEUS', type=bool, action='store_true',
                         help='Enable Prometheus exporter')
@@ -90,6 +91,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    log = logging.getLogger(__name__)
+    log = logging.getLogger()
 
     main()

@@ -48,7 +48,7 @@ class Docker(object):
         """Docker pull image tag/latest"""
         image = image_object
         tag = image.tags[0]
-        if not self.config.keep_tag and image.tags[0][-6:] != 'latest':
+        if self.config.latest and image.tags[0][-6:] != 'latest':
             tag = tag.split(':')[0] + ':latest'
 
         log.debug('Pulling tag: %s', tag)
