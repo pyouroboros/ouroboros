@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 from time import sleep
-import sys
 from os import environ
-import Ouroboros.cli as cli
 from Ouroboros.logger import set_logger
 from Ouroboros.dockerclient import Docker
 from argparse import ArgumentParser, RawTextHelpFormatter
@@ -22,7 +20,7 @@ def main():
     else:
         log.info('No containers are running or monitored')
         exit(1)
-    #log.info(f"Ouroboros configuration: {vars(args)}")
+    # log.info(f"Ouroboros configuration: {vars(args)}")
 
     schedule.run_all()
 
@@ -55,7 +53,7 @@ if __name__ == "__main__":
                         help='Container(s) to ignore\n'
                              'EXAMPLE: -n container1 container2')
 
-    parser.add_argument('-l', '--loglevel', choices=['notset', 'debug', 'info', 'warn', 'error', 'critical'],
+    parser.add_argument('-l', '--loglevel', choices=['debug', 'info', 'warn', 'error', 'critical'],
                         dest='LOGLEVEL', default=Config.loglevel, help='Set logging level\n'
                                                                        'DEFAULT: info')
 
