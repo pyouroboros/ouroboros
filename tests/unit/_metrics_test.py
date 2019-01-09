@@ -1,5 +1,5 @@
 from prometheus_client import REGISTRY
-import Ouroboros.metrics as metrics
+import Ouroboros.dataexporters as metrics
 
 
 def test_container_updates():
