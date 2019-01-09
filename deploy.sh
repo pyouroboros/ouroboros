@@ -5,6 +5,12 @@ VERSION=$(grep -i version ./setup.py | awk -F= '{gsub("\047",""); gsub(",",""); 
 USER='circa10a'
 PROJECT='ouroboros'
 NAMESPACE=${USER}/${PROJECT}
+# Docker experimental config
+echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+[ -d ~/.docker ] || mkdir ~/.docker
+[ -f ~/.docker/config.json ] || touch ~/.docker/config.json
+echo '{"experimental":"enabled"}' | sudo tee ~/.docker/config.json
+sudo service docker restart
 # Auth
 echo $docker_password | docker login -u=$USER --password-stdin
 
@@ -27,6 +33,13 @@ for i in $(ls *.rpi); do
   docker tag "$NAMESPACE:latest-${arch}-rpi" "$NAMESPACE:${VERSION}-${arch}-rpi" && \
   docker push "$NAMESPACE:${VERSION}-${arch}-rpi"
 done
+
+# Support multiple architectures with same image
+docker manifest create "${USER}/${PROJECT}:latest ${USER}/${PROJECT}:latest-aarch64-rpi"
+docker manifest create "${USER}/${PROJECT}:latest ${USER}/${PROJECT}:latest-arm-rpi"
+docker manifest annotate "${USER}/${PROJECT}:latest ${USER}/${PROJECT}:latest-aarch64-rpi --os linux --arch arm64 --variant armv8"
+docker manifest annotate "${USER}/${PROJECT}:latest ${USER}/${PROJECT}:latest-arm-rpi --os linux --arch arm"
+docker manifest push circa10a/ouroboros:latest
 
 # Git tags
 git remote set-url origin "https://${USER}:${github_api_key}@github.com/${USER}/${PROJECT}.git" && \
