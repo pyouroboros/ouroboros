@@ -29,6 +29,13 @@ for i in $(ls *.rpi); do
   docker push "${NAMESPACE}:${VERSION}-${ARCH}-rpi"
 done
 
+# Support multiple architectures with same image
+docker manifest create "${USER}/${PROJECT}:latest ${USER}/${PROJECT}:latest-aarch64-rpi"
+docker manifest create "${USER}/${PROJECT}:latest ${USER}/${PROJECT}:latest-arm-rpi"
+docker manifest annotate "${USER}/${PROJECT}:latest ${USER}/${PROJECT}:latest-aarch64-rpi --os linux --arch arm64 --variant armv8"
+docker manifest annotate "${USER}/${PROJECT}:latest ${USER}/${PROJECT}:latest-arm-rpi --os linux --arch arm"
+docker manifest push circa10a/ouroboros:latest
+
 # Git tags
 git remote set-url origin "https://${GITHUB_USER}:${GITHUB_API_KEY}@github.com/${NAMESPACE}.git" && \
 git tag "${VERSION}" && \
