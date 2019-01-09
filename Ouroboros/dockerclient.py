@@ -1,11 +1,8 @@
-import logging
+from logging import getLogger
 from docker import DockerClient
 from docker.errors import DockerException, APIError
 
-from Ouroboros.helpers import clean_name, set_properties
-
-
-log = logging.getLogger(__name__)
+from Ouroboros.helpers import set_properties
 
 
 class Docker(object):
@@ -13,6 +10,7 @@ class Docker(object):
         self.config = config
         self.client = DockerClient(base_url=self.config.docker_socket)
 
+        self.logger = getLogger()
         self.monitored = self.monitor_filter()
 
     def get_running(self):
@@ -24,7 +22,7 @@ class Docker(object):
                     running_containers.append(container)
 
         except DockerException:
-            log.critical("Can't connect to Docker API at %s", self.config.docker_socket)
+            self.logger.critical("Can't connect to Docker API at %s", self.config.docker_socket)
             exit(1)
 
         return running_containers
@@ -38,7 +36,7 @@ class Docker(object):
                                   if container.name in self.config.monitor]
 
         if self.config.ignore:
-            log.info("Ignoring container(s): %s", ", ".join(self.config.ignore))
+            self.logger.info("Ignoring container(s): %s", ", ".join(self.config.ignore))
             running_containers = [container for container in running_containers
                                   if container.name not in self.config.ignore]
 
@@ -51,7 +49,7 @@ class Docker(object):
         if self.config.latest and image.tags[0][-6:] != 'latest':
             tag = tag.split(':')[0] + ':latest'
 
-        log.debug('Pulling tag: %s', tag)
+        self.logger.debug('Pulling tag: %s', tag)
         if self.config.auth_json:
             return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
         else:
@@ -69,20 +67,20 @@ class Docker(object):
             try:
                 latest_image = self.pull(current_image)
             except APIError as e:
-                log.error(e)
+                self.logger.error(e)
                 continue
 
             # If current running container is running latest image
             if current_image.id != latest_image.id:
-                log.info('%s will be updated', container.name)
+                self.logger.info('%s will be updated', container.name)
 
                 # new container dict to create new container from
                 new_config = set_properties(old=container, new=latest_image)
 
-                log.debug('Stopping container: %s', container.name)
+                self.logger.debug('Stopping container: %s', container.name)
                 container.stop(container)
 
-                log.debug('Removing container: %s', container.name)
+                self.logger.debug('Removing container: %s', container.name)
                 container.remove(container)
 
                 created = self.client.api.create_container(**new_config)
@@ -95,7 +93,7 @@ class Docker(object):
                 updated_count += 1
 
                 metrics.container_updates(label='all')
-                metrics.container_updates(label=container_name)
+                metrics.container_updates(label=container.name)
 
                 if self.config.webhook_urls:
                     webhook.post(urls=args.webhook_urls, container_name=container_name, old_sha=current_image['Id'], new_sha=latest_image['Id'])
