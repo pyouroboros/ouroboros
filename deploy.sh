@@ -25,7 +25,7 @@ for i in $(ls *.rpi); do
   docker push "$NAMESPACE:latest-${arch}-rpi" && \
   # Versioned
   docker tag "$NAMESPACE:latest-${arch}-rpi" "$NAMESPACE:${VERSION}-${arch}-rpi" && \
-  docker push "$NAMESPACE:${VERSION}-${arch}-rpi" && \
+  docker push "$NAMESPACE:${VERSION}-${arch}-rpi"
 done
 
 # Git tags
