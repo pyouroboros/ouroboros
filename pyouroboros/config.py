@@ -67,3 +67,6 @@ class Config(object):
 
         if self.repo_user and self.repo_pass:
             self.auth_json = {'username': self.repo_user, 'password': self.repo_pass}
+
+        if self.interval < 30:
+            self.interval = 30

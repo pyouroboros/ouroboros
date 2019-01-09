@@ -77,6 +77,8 @@ class Docker(object):
         updated_count = 0
         updated_container_tuples = []
 
+        self.monitored = self.monitor_filter()
+
         for container in self.monitored:
             current_image = container.image
 
@@ -97,17 +99,17 @@ class Docker(object):
                 new_config = set_properties(old=container, new=latest_image)
 
                 self.logger.debug('Stopping container: %s', container.name)
-                container.stop(container)
+                container.stop()
 
                 self.logger.debug('Removing container: %s', container.name)
-                container.remove(container)
+                container.remove()
 
                 created = self.client.api.create_container(**new_config)
                 new_container = self.client.containers.get(created.get("Id"))
                 new_container.start()
 
                 if self.config.cleanup:
-                    current_image.remove()
+                    self.client.images.remove(current_image.id)
 
                 updated_count += 1
 
