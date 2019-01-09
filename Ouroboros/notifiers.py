@@ -76,6 +76,5 @@ class NotificationManager(object):
             try:
                 headers = {'Content-Type': 'application/json', 'user-agent': 'ouroboros'}
                 p = requests.post(url, json=json, headers=headers)
-                self.logger.debug("Sent webhook successfully to %s | status code %s", url, p)
             except RequestException as e:
-                self.logger.error("Error Posting to Webhook url %s | error %s", url, e)
+                self.logger.error("Error Posting to Webhook url %s | status code %s | error %s", url, p.status_code, e)
