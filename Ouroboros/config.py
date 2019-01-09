@@ -1,7 +1,6 @@
 import prometheus_client
 
 from Ouroboros.helpers import checkuri
-from Ouroboros.logger import BlacklistFilter
 
 
 class Config(object):
@@ -30,24 +29,9 @@ class Config(object):
     def __init__(self, environment_vars, cli_args):
         self.cli_args = cli_args
         self.environment_vars = environment_vars
-        self.filtered_strings = None
 
         self.parse()
         self.initialize()
-
-    def config_blacklist(self):
-        filtered_strings = [getattr(self, value.lower()) for value in Config.options
-                            if value in BlacklistFilter.blacklisted_strings]
-        self.filtered_strings = list(filter(None, filtered_strings))
-        # Added matching for domains that use /locations. ConnectionPool ignores the location in logs
-        domains_only = [string.split('/')[0] for string in filtered_strings if '/' in string]
-        self.filtered_strings.extend(domains_only)
-        # Added matching for domains that use :port. ConnectionPool splits the domain/ip from the port
-        without_port = [string.split(':')[0] for string in filtered_strings if ':' in string]
-        self.filtered_strings.extend(without_port)
-        
-        for handler in self.logger.handlers:
-            handler.addFilter(BlacklistFilter(set(self.filtered_strings)))
 
     def parse(self):
         for option in Config.options:
