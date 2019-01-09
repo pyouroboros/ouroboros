@@ -4,6 +4,10 @@ python:
   - 3.6
 services:
   - docker
+addons:
+  apt:
+    packages:
+      - docker-ce
 
 script:
   - pip install flake8 && flake8 *.py pyouroboros/
