@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
-mkdir ~/.docker && touch ~/.docker/config.jsonc && echo '{"experimental":"enabled"}' | sudo tee ./docker/config.json
+mkdir ~/.docker && touch ~/.docker/config.jsonc && echo '{"experimental":"enabled"}' | sudo tee ~/.docker/config.json
 sudo service docker restart
 docker manifest create circa10a/ouroboros:latest circa10a/ouroboros:amd64-latest circa10a/ouroboros:arm32v6-latest circa10a/ouroboros:arm64v8-latest
 docker manifest annotate circa10a/ouroboros:latest circa10a/ouroboros:arm32v6-latest --os linux --arch arm
