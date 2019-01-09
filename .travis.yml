@@ -4,11 +4,15 @@ python:
   - 3.6
 services:
   - docker
+addons:
+  apt:
+    packages:
+      - docker-ce
 
 script:
   - ./test_manifest.sh
   #- ./run_tests.sh
-  - flake8
+  #- flake8
 
 after_script:
   - codecov
