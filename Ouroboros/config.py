@@ -52,7 +52,6 @@ class Config(object):
             handler.addFilter(BlacklistFilter(set(self.filtered_strings)))
 
     def parse(self):
-        print(vars(self.cli_args))
         for option in Config.options:
             if self.environment_vars.get(option):
                 if option == 'INTERVAL' or option == 'PROMETHEUS_EXPORTER_PORT':
@@ -65,6 +64,6 @@ class Config(object):
                     setattr(self, option, self.environment_vars[option])
             elif vars(self.cli_args).get(option):
                 setattr(self, option.lower(), vars(self.cli_args).get(option))
-        print(self.__dict__)
+
         if self.repo_user and self.repo_pass:
             self.auth_json = {'username': self.repo_user, 'password': self.repo_pass}

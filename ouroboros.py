@@ -28,7 +28,7 @@ def main(environment_vars=None, args=None):
 
     schedule.run_all()
 
-    if args.run_once:
+    if args.RUNONCE:
         schedule.clear('update-containers')
 
     while schedule.jobs:
@@ -85,11 +85,15 @@ if __name__ == "__main__":
                         help='Webhook POST urls\n'
                              'EXAMPLE: -w https://domain.tld/1234/asdf http://123.123.123.123:4040/re235')
 
-    parser.add_argument('-r', '--repo-user', default=Config.prometheus_exporter_addr, dest='REPO_USER',
+    parser.add_argument('-T', '--webhook-type', choices=['slack', 'discord'], default=Config.webhook_type,
+                        dest='WEBHOOK_TYPE', help='Webhook POST urls\n'
+                                                  'DEFAULT: slack')
+
+    parser.add_argument('-r', '--repo-user', default=None, dest='REPO_USER',
                         help='Private docker repository username\n'
                               'EXAMPLE: foo@bar.baz')
 
-    parser.add_argument('-R', '--repo-pass', default=Config.prometheus_exporter_addr, dest='REPO_PASS',
+    parser.add_argument('-R', '--repo-pass', default=None, dest='REPO_PASS',
                         help='Private docker repository password\n'
                               'DEFAULT: 127.0.0.1')
 
