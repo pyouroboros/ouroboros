@@ -49,7 +49,6 @@ class Config(object):
         self.filtered_strings = list(filter(None, filtered_strings))
         for index, value in enumerate(self.filtered_strings, 0):
             if isinstance(value, list):
-                print('yep')
                 self.filtered_strings.extend(self.filtered_strings.pop(index))
 
         # Added matching for domains that use /locations. ConnectionPool ignores the location in logs
@@ -72,7 +71,7 @@ class Config(object):
                     except ValueError as e:
                         print(e)
                 else:
-                    setattr(self, option, self.environment_vars[option])
+                    setattr(self, option.lower(), self.environment_vars[option])
             elif vars(self.cli_args).get(option):
                 setattr(self, option.lower(), vars(self.cli_args).get(option))
 
