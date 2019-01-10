@@ -76,10 +76,14 @@ class Config(object):
             elif vars(self.cli_args).get(option):
                 setattr(self, option.lower(), vars(self.cli_args).get(option))
 
+        # Specific var changes
         if self.repo_user and self.repo_pass:
             self.auth_json = {'Username': self.repo_user, 'Password': self.repo_pass}
 
         if self.interval < 30:
             self.interval = 30
+
+        if isinstance(self.webhook_urls, str):
+            self.webhook_urls = [webhook.strip(' ') for webhook in self.webhook_urls.split(' ')]
 
         self.config_blacklist()
