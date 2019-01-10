@@ -67,7 +67,7 @@ class Config(object):
                 if option in ['INTERVAL', 'PROMETHEUS_EXPORTER_PORT', 'INFLUX_PORT']:
                     try:
                         opt = int(self.environment_vars[option])
-                        setattr(self, option, opt)
+                        setattr(self, option.lower(), opt)
                     except ValueError as e:
                         print(e)
                 else:
