@@ -9,25 +9,27 @@ class DataManager(object):
     def __init__(self, config):
         self.config = config
         self.logger = getLogger()
+        self.enabled = True
 
         self.prometheus_exporter = PrometheusExporter(config) if self.config.data_export == "prometheus" else None
-        self.influx = InfluxClient(config) if self.config.data_export == "influxdb" else None
+        self.influx = InfluxClient(self, config) if self.config.data_export == "influxdb" else None
 
     def add(self, label):
-        if self.config.data_export == "prometheus":
+        if self.config.data_export == "prometheus" and self.enabled:
             self.prometheus_exporter.update(label)
 
-        elif self.config.data_export == "influxdb":
+        elif self.config.data_export == "influxdb" and self.enabled:
             if label == "all":
                 self.influx.total_updated += 1
+                self.logger.debug("Total containers updated now %s", self.influx.total_updated)
             else:
                 self.influx.write_points(label)
 
     def set(self, monitored_count):
-        if self.config.data_export == "prometheus":
+        if self.config.data_export == "prometheus" and self.enabled:
             self.prometheus_exporter.set_monitored(monitored_count)
 
-        elif self.config.data_export == "influxdb":
+        elif self.config.data_export == "influxdb" and self.enabled:
             self.influx.monitored_containers = monitored_count
 
 
@@ -62,8 +64,10 @@ class PrometheusExporter(object):
 
 
 class InfluxClient(object):
-    def __init__(self, config):
+    def __init__(self, data_manger, config):
+        self.data_manager = data_manger
         self.config = config
+        self.logger = getLogger()
         self.influx = InfluxDBClient(
             self.config.influx_url,
             self.config.influx_port,
@@ -71,23 +75,32 @@ class InfluxClient(object):
             self.config.influx_password,
             self.config.influx_database
         )
-
+        self.db_check()
         self.monitored_containers = 0
         self.total_updated = 0
 
+    def db_check(self):
+        database_dicts = self.influx.get_list_database()
+        databases = [d['name'] for d in database_dicts]
+        if self.config.influx_database in databases:
+            self.logger.debug("Influxdb database existence check passed for %s", self.config.influx_database)
+        else:
+            self.logger.debug("Influxdb database existence failed for %s. Disabling exports.",
+                              self.config.influx_database)
+            self.data_manager.enabled = False
+
     def write_points(self, label):
         now = datetime.now(timezone.utc).astimezone().isoformat()
-        influx_payload = [
-            {
-                "measurement": "Ouroboros",
-                "tags": {
-                    "type": "container_update",
-                    "container": label
-                },
-                "time": now,
-                "fields": {
-                    "count": 1
-                }
+        influx_payload = {
+            "measurement": "Ouroboros",
+            "tags": {
+                "type": "container_update",
+                "container": label
+            },
+            "time": now,
+            "fields": {
+                "count": 1
             }
-        ]
-        self.influx.write_points(influx_payload)
+        }
+        self.logger.debug("Writing data to influxdb: %s", influx_payload)
+        self.influx.write(influx_payload)
