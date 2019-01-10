@@ -73,6 +73,9 @@ class Docker(object):
             elif 'unauthorized' in str(e):
                 self.logger.critical("Invalid Credentials. Exiting")
                 exit(1)
+            elif 'Client.Timeout' in str(e):
+                self.logger.critical("Could'nt find an image on docker.com for %s. Local Build?", image.tags[0])
+                raise ConnectionError
 
     def update_containers(self):
         updated_count = 0
@@ -85,8 +88,7 @@ class Docker(object):
 
             try:
                 latest_image = self.pull(current_image)
-            except APIError as e:
-                self.logger.error(e)
+            except ConnectionError:
                 continue
 
             # If current running container is running latest image
