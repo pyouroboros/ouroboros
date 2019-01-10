@@ -1,6 +1,5 @@
 from logging import getLogger
 
-from pyouroboros.helpers import checkuri
 from pyouroboros.logger import BlacklistFilter
 
 
@@ -15,7 +14,7 @@ class Config(object):
     ignore = []
     webhook_urls = []
     webhook_type = 'slack'
-
+    data_export = None
     loglevel = 'info'
     latest = False
     cleanup = False
