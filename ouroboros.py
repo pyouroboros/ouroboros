@@ -110,8 +110,9 @@ def main():
     else:
         log_level = args.LOG_LEVEL
     ol = OuroborosLogger(level=log_level)
-    ol.logger.info("Ouroboros configuration: %s", vars(args))
     config = Config(environment_vars=environ, cli_args=args)
+    config_dict = {key: value for key, value in vars(config).items() if key.upper() in config.options}
+    ol.logger.debug("Ouroboros configuration: %s", config_dict)
     docker = Docker(config)
 
     if docker.monitored:

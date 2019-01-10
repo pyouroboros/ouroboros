@@ -6,7 +6,7 @@ from pyouroboros.logger import BlacklistFilter
 class Config(object):
     options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKET', 'MONITOR', 'IGNORE', 'LOGLEVEL', 'PROMETHEUS_EXPORTER_ADDR'
                'PROMETHEUS_EXPORTER_PORT', 'WEBHOOK_URLS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUNONCE', 'LATEST',
-               'WEBHOOK_TYPE']
+               'WEBHOOK_TYPE', 'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE']
 
     interval = 300
     docker_socket = 'unix://var/run/docker.sock'
@@ -45,12 +45,18 @@ class Config(object):
     def config_blacklist(self):
         filtered_strings = [getattr(self, value.lower()) for value in Config.options
                             if value in BlacklistFilter.blacklisted_strings]
+        # take lists inside of list and append to list
         self.filtered_strings = list(filter(None, filtered_strings))
+        for index, value in enumerate(self.filtered_strings, 0):
+            if isinstance(value, list):
+                print('yep')
+                self.filtered_strings.extend(self.filtered_strings.pop(index))
+
         # Added matching for domains that use /locations. ConnectionPool ignores the location in logs
-        domains_only = [string.split('/')[0] for string in filtered_strings if '/' in string]
+        domains_only = [string.split('/')[2] for string in self.filtered_strings if '/' in string]
         self.filtered_strings.extend(domains_only)
         # Added matching for domains that use :port. ConnectionPool splits the domain/ip from the port
-        without_port = [string.split(':')[0] for string in filtered_strings if ':' in string]
+        without_port = [string.split(':')[0] for string in self.filtered_strings if ':' in string]
         self.filtered_strings.extend(without_port)
 
         for handler in self.logger.handlers:
@@ -75,3 +81,5 @@ class Config(object):
 
         if self.interval < 30:
             self.interval = 30
+
+        self.config_blacklist()
