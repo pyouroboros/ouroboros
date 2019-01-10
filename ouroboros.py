@@ -114,7 +114,7 @@ def main():
     config = Config(environment_vars=environ, cli_args=args)
     config_dict = {key: value for key, value in vars(config).items() if key.upper() in config.options}
     ol.logger.debug("Ouroboros configuration: %s", config_dict)
-    exit(1)
+
     for socket in config.docker_sockets:
         docker = Docker(socket, config)
         if docker.monitored:
