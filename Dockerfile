@@ -1,10 +1,10 @@
 FROM python:3.7-alpine
 
-WORKDIR /app
-
 COPY / /app
+
+WORKDIR /app
 
 RUN apk add --no-cache tzdata && \
     pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT ["ouroboros.py"]
+ENTRYPOINT ["python3", "ouroboros.py"]
