@@ -3,11 +3,13 @@ from setuptools import setup, find_packages
 requirements = ['docker',
                 'schedule',
                 'prometheus_client',
-                'requests']
+                'requests',
+                'influxdb']
 
 requirements_dev = ['docker',
                     'schedule',
                     'prometheus_client',
+                    'influxdb',
                     'requests',
                     'pytest >= 3.6',
                     'pytest-cov',

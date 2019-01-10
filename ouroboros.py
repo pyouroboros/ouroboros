@@ -66,6 +66,27 @@ def main():
                                                                   'Has no effect without --data-export prometheus\n'
                                                                   'DEFAULT: 8000')
 
+    data_group.add_argument('-I', '--influx-url', default=Config.influx_url,  dest='INFLUX_URL',
+                            help='URL for influxdb, Has no effect without --data-export influxdb\n'
+                                  'DEFAULT: 127.0.0.1')
+
+    data_group.add_argument('-P', '--influx-port', type=int, default=Config.influx_port,  dest='INFLUX_PORT',
+                            help='PORT for influxdb, Has no effect without --data-export influxdb\n'
+                                  'DEFAULT: 8086')
+
+    data_group.add_argument('-U', '--influx-username', default=Config.influx_username,  dest='INFLUX_USERNAME',
+                            help='Username for influxdb, Has no effect without --data-export influxdb\n'
+                                  'DEFAULT: root')
+
+    data_group.add_argument('-x', '--influx-password', default=Config.influx_password,  dest='INFLUX_PASSWORD',
+                            help='Password for influxdb, Has no effect without --data-export influxdb\n'
+                                  'DEFAULT: root')
+
+    data_group.add_argument('-X', '--influx-database', default=Config.influx_password,  dest='INFLUX_DATABASE',
+                            help='Database for influxdb, Required if using influxdb. Has no effect without '
+                                 '--data-export influxdb.\n'
+                                  'DEFAULT: root')
+
     data_group.add_argument('-w', '--webhook-urls', nargs='+', default=Config.webhook_urls, dest='WEBHOOK_URLS',
                             help='Webhook POST urls\n'
                                  'EXAMPLE: -w https://domain.tld/1234/asdf http://123.123.123.123:4040/re235')
@@ -75,6 +96,14 @@ def main():
                                                       'DEFAULT: slack')
 
     args = parser.parse_args()
+
+    if environ.get('DATA_EXPORT'):
+        data_export = environ['DATA_EXPORT']
+    else:
+        data_export = args.DATA_EXPORT
+
+    if data_export == 'influxdb' and not (environ.get('INFLUX_DATABASE') or args.INFLUX_DATABASE):
+        exit("You need to specify an influx database if you want to export to influxdb")
 
     if environ.get('LOG_LEVEL'):
         log_level = environ.get('LOG_LEVEL')
@@ -93,7 +122,7 @@ def main():
 
     schedule.run_all()
 
-    if args.RUNONCE:
+    if args.RUN_ONCE:
         schedule.clear('update-containers')
 
     while schedule.jobs:

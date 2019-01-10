@@ -1,7 +1,7 @@
 import requests
 
-from datetime import datetime
 from logging import getLogger
+from datetime import datetime, timezone
 from requests.exceptions import RequestException
 
 
@@ -17,7 +17,7 @@ class NotificationManager(object):
             self.post(formatted_json)
 
     def format(self, updated_count, container_tuples):
-        now = str(datetime.now()).replace(" ", "T")
+        now = str(datetime.now(timezone.utc)).replace(" ", "T")
         if self.config.webhook_type == 'slack':
             text = "Containers Monitored: {}\n".format(self.monitored_count)
             text += "Containers Updated: {}\n".format(updated_count)

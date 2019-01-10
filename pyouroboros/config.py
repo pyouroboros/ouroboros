@@ -28,6 +28,12 @@ class Config(object):
     prometheus_exporter_addr = '127.0.0.1'
     prometheus_exporter_port = 8000
 
+    influx_url = '127.0.0.1'
+    influx_port = 8086
+    influx_username = 'root'
+    influx_password = 'root'
+    influx_database = None
+
     def __init__(self, environment_vars, cli_args):
         self.cli_args = cli_args
         self.environment_vars = environment_vars

@@ -2,3 +2,4 @@ docker
 schedule
 prometheus_client
 requests
+influxdb

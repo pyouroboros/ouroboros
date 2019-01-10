@@ -7,7 +7,7 @@ class BlacklistFilter(Filter):
     """
 
     blacklisted_strings = ['REPO_USER',  'REPO_PASS',  'AUTH_JSON', 'WEBHOOK_URLS', 'DOCKER_SOCKET'
-                           'PROMETHEUS_EXPORTER_ADDR']
+                           'PROMETHEUS_EXPORTER_ADDR', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_URL']
 
     def __init__(self, filteredstrings):
         super().__init__()
