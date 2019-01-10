@@ -6,8 +6,9 @@ from requests.exceptions import RequestException
 
 
 class NotificationManager(object):
-    def __init__(self, config, monitored_count):
+    def __init__(self, config, monitored_count, socket):
         self.config = config
+        self.socket = socket.split("//")[1]
         self.monitored_count = monitored_count
         self.logger = getLogger()
 
@@ -19,7 +20,8 @@ class NotificationManager(object):
     def format(self, updated_count, container_tuples):
         now = str(datetime.now(timezone.utc)).replace(" ", "T")
         if self.config.webhook_type == 'slack':
-            text = "Containers Monitored: {}\n".format(self.monitored_count)
+            text = "Host Socket: {}\n".format(self.socket)
+            text += "Containers Monitored: {}\n".format(self.monitored_count)
             text += "Containers Updated: {}\n".format(updated_count)
             for container, old_image, new_image in container_tuples:
                 text += "{} updated from {} to {}\n".format(
@@ -44,6 +46,10 @@ class NotificationManager(object):
                                    "747470733a2f2f692e696d6775722e636f6d2f6b5962493948692e706e67"
                         },
                         "fields": [
+                            {
+                                "name": "Socket:",
+                                "value": f"{self.socket}"
+                            },
                             {
                                 "name": "Containers Monitored",
                                 "value": f"{self.monitored_count}",

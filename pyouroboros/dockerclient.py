@@ -16,7 +16,7 @@ class Docker(object):
         self.logger = getLogger()
         self.monitored = self.monitor_filter()
 
-        self.notification_manager = NotificationManager(self.config, len(self.monitored))
+        self.notification_manager = NotificationManager(self.config, len(self.monitored), socket)
 
     def get_running(self):
         """Return running container objects list, except ouroboros itself"""
@@ -114,6 +114,7 @@ class Docker(object):
 
                 updated_count += 1
 
+                self.logger.debug("Incrementing total container updated count")
                 self.data_manager.add(label='all')
                 self.data_manager.add(label=container.name)
 
