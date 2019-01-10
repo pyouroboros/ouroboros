@@ -43,20 +43,22 @@ class Config(object):
         self.parse()
 
     def config_blacklist(self):
-        filtered_strings = [getattr(self, value.lower()) for value in Config.options
-                            if value in BlacklistFilter.blacklisted_strings]
+        filtered_strings = [getattr(self, key.lower()) for key in Config.options
+                            if key.lower() in BlacklistFilter.blacklisted_keys]
         # take lists inside of list and append to list
         self.filtered_strings = list(filter(None, filtered_strings))
+
         for index, value in enumerate(self.filtered_strings, 0):
             if isinstance(value, list):
                 self.filtered_strings.extend(self.filtered_strings.pop(index))
+                self.filtered_strings.insert(index, self.filtered_strings[-1:][0])
 
-        # Added matching for domains that use /locations. ConnectionPool ignores the location in logs
-        domains_only = [string.split('/')[2] for string in self.filtered_strings if '/' in string]
-        self.filtered_strings.extend(domains_only)
-        # Added matching for domains that use :port. ConnectionPool splits the domain/ip from the port
-        without_port = [string.split(':')[0] for string in self.filtered_strings if ':' in string]
-        self.filtered_strings.extend(without_port)
+        # Added matching for ports
+        ports = [string.split(':')[0] for string in self.filtered_strings if ':' in string]
+        self.filtered_strings.extend(ports)
+        # Added matching for tcp sockets. ConnectionPool ignores the tcp://
+        tcp_sockets = [string.split('//')[1] for string in self.filtered_strings if '//' in string]
+        self.filtered_strings.extend(tcp_sockets)
 
         for handler in self.logger.handlers:
             handler.addFilter(BlacklistFilter(set(self.filtered_strings)))
