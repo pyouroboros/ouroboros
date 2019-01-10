@@ -23,11 +23,11 @@ def main():
                             help='Interval in seconds between checking for updates\n'
                                  'DEFAULT: 300')
 
-    core_group.add_argument('-l', '--loglevel', choices=['debug', 'info', 'warn', 'error', 'critical'],
-                            dest='LOGLEVEL', default=Config.loglevel, help='Set logging level\n'
-                                                                           'DEFAULT: info')
+    core_group.add_argument('-l', '--log-level', choices=['debug', 'info', 'warn', 'error', 'critical'],
+                            dest='LOG_LEVEL', default=Config.log_level, help='Set logging level\n'
+                                                                             'DEFAULT: info')
 
-    core_group.add_argument('-o', '--runonce', default=False, action='store_true', dest='RUNONCE', help='Single run')
+    core_group.add_argument('-o', '--run-once', default=False, action='store_true', dest='RUN_ONCE', help='Single run')
 
     docker_group = parser.add_argument_group("Docker", "Configuration of docker functionality")
     docker_group.add_argument('-m', '--monitor', nargs='+', default=Config.monitor, dest='MONITOR',
@@ -76,12 +76,12 @@ def main():
 
     args = parser.parse_args()
 
-    if environ.get('LOGLEVEL'):
-        loglevel = environ.get('LOGLEVEL')
+    if environ.get('LOG_LEVEL'):
+        log_level = environ.get('LOG_LEVEL')
     else:
-        loglevel = args.LOGLEVEL
-    ol = OuroborosLogger(level=loglevel)
-    ol.logger.info("pyouroboros configuration: %s", vars(args))
+        log_level = args.LOG_LEVEL
+    ol = OuroborosLogger(level=log_level)
+    ol.logger.info("Ouroboros configuration: %s", vars(args))
     config = Config(environment_vars=environ, cli_args=args)
     docker = Docker(config)
 

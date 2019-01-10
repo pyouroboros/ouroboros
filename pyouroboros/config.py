@@ -15,10 +15,10 @@ class Config(object):
     webhook_urls = []
     webhook_type = 'slack'
     data_export = None
-    loglevel = 'info'
+    log_level = 'info'
     latest = False
     cleanup = False
-    runonce = False
+    run_once = False
 
     repo_user = None
     repo_pass = None
