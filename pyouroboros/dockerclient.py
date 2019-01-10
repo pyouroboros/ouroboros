@@ -61,7 +61,6 @@ class Docker(object):
         self.logger.debug('Pulling tag: %s', tag)
         try:
             if self.config.auth_json:
-                print(self.config.auth_json)
                 return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
             else:
                 return_image = self.client.images.pull(tag)
@@ -69,9 +68,11 @@ class Docker(object):
 
         except APIError as e:
             self.logger.critical(e)
-            self.logger.critical("Exiting.")
-            schedule.clear('update-containers')
-            exit(1)
+            if '<html>' in str(e):
+                self.logger.debug("Docker api issue. Ignoring")
+            elif 'unauthorized' in str(e):
+                self.logger.critical("Invalid Credentials. Exiting")
+                exit(1)
 
     def update_containers(self):
         updated_count = 0

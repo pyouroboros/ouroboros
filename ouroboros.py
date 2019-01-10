@@ -50,7 +50,7 @@ def main():
 
     docker_group.add_argument('-R', '--repo-pass', default=None, dest='REPO_PASS',
                               help='Private docker repository password\n'
-                                   'DEFAULT: 127.0.0.1')
+                                   'EXAMPLE: MyPa$$w0rd')
 
     data_group = parser.add_argument_group('Data Export', 'Configuration of data export functionality')
     data_group.add_argument('-D', '--data-export', choices=['prometheus', 'influxdb'], default=None, dest='DATA_EXPORT',
