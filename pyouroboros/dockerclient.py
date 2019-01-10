@@ -1,5 +1,3 @@
-import schedule
-
 from logging import getLogger
 from docker import DockerClient
 from docker.errors import DockerException, APIError

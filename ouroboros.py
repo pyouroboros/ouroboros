@@ -12,7 +12,7 @@ from pyouroboros.logger import OuroborosLogger
 def main():
     """Declare command line options"""
     parser = ArgumentParser(description='ouroboros', formatter_class=RawTextHelpFormatter,
-                            epilog='EXAMPLE: ouroboros -d tcp://1.2.3.4:5678 -i 20 -m container1 container2 -l warn',)
+                            epilog='EXAMPLE: ouroboros -d tcp://1.2.3.4:5678 -i 20 -m container1 container2 -l warn')
 
     core_group = parser.add_argument_group("Core", "Configuration of core functionality")
     core_group.add_argument('-d', '--docker-sockets', nargs='+', default=Config.docker_sockets, dest='DOCKER_SOCKETS',
@@ -67,23 +67,23 @@ def main():
                                                                   'Has no effect without --data-export prometheus\n'
                                                                   'DEFAULT: 8000')
 
-    data_group.add_argument('-I', '--influx-url', default=Config.influx_url,  dest='INFLUX_URL',
+    data_group.add_argument('-I', '--influx-url', default=Config.influx_url, dest='INFLUX_URL',
                             help='URL for influxdb, Has no effect without --data-export influxdb\n'
                                   'DEFAULT: 127.0.0.1')
 
-    data_group.add_argument('-P', '--influx-port', type=int, default=Config.influx_port,  dest='INFLUX_PORT',
+    data_group.add_argument('-P', '--influx-port', type=int, default=Config.influx_port, dest='INFLUX_PORT',
                             help='PORT for influxdb, Has no effect without --data-export influxdb\n'
                                   'DEFAULT: 8086')
 
-    data_group.add_argument('-U', '--influx-username', default=Config.influx_username,  dest='INFLUX_USERNAME',
+    data_group.add_argument('-U', '--influx-username', default=Config.influx_username, dest='INFLUX_USERNAME',
                             help='Username for influxdb, Has no effect without --data-export influxdb\n'
                                   'DEFAULT: root')
 
-    data_group.add_argument('-x', '--influx-password', default=Config.influx_password,  dest='INFLUX_PASSWORD',
+    data_group.add_argument('-x', '--influx-password', default=Config.influx_password, dest='INFLUX_PASSWORD',
                             help='Password for influxdb, Has no effect without --data-export influxdb\n'
                                   'DEFAULT: root')
 
-    data_group.add_argument('-X', '--influx-database', default=Config.influx_password,  dest='INFLUX_DATABASE',
+    data_group.add_argument('-X', '--influx-database', default=Config.influx_password, dest='INFLUX_DATABASE',
                             help='Database for influxdb, Required if using influxdb. Has no effect without '
                                  '--data-export influxdb.\n'
                                   'DEFAULT: root')
