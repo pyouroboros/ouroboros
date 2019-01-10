@@ -4,12 +4,12 @@ from pyouroboros.logger import BlacklistFilter
 
 
 class Config(object):
-    options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKET', 'MONITOR', 'IGNORE', 'LOGLEVEL', 'PROMETHEUS_EXPORTER_ADDR'
+    options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKETS', 'MONITOR', 'IGNORE', 'LOGLEVEL', 'PROMETHEUS_EXPORTER_ADDR'
                'PROMETHEUS_EXPORTER_PORT', 'WEBHOOK_URLS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUNONCE', 'LATEST',
                'WEBHOOK_TYPE', 'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE']
 
     interval = 300
-    docker_socket = 'unix://var/run/docker.sock'
+    docker_sockets = 'unix://var/run/docker.sock'
     monitor = []
     ignore = []
     webhook_urls = []
@@ -65,7 +65,7 @@ class Config(object):
     def parse(self):
         for option in Config.options:
             if self.environment_vars.get(option):
-                if option == 'INTERVAL' or option == 'PROMETHEUS_EXPORTER_PORT':
+                if option in ['INTERVAL', 'PROMETHEUS_EXPORTER_PORT', 'INFLUX_PORT']:
                     try:
                         opt = int(self.environment_vars[option])
                         setattr(self, option, opt)
@@ -83,7 +83,9 @@ class Config(object):
         if self.interval < 30:
             self.interval = 30
 
-        if isinstance(self.webhook_urls, str):
-            self.webhook_urls = [webhook.strip(' ') for webhook in self.webhook_urls.split(' ')]
+        for option in ['docker_sockets', 'webhook_urls']:
+            if isinstance(getattr(self, option), str):
+                string_list = getattr(self, option)
+                setattr(self, option, [string.strip(' ') for string in string_list.split(' ')])
 
         self.config_blacklist()

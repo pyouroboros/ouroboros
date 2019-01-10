@@ -15,9 +15,10 @@ def main():
                             epilog='EXAMPLE: ouroboros -d tcp://1.2.3.4:5678 -i 20 -m container1 container2 -l warn',)
 
     core_group = parser.add_argument_group("Core", "Configuration of core functionality")
-    core_group.add_argument('-d', '--docker-socket', default=Config.docker_socket, dest='DOCKER_SOCKET',
-                            help='Socket for docker management\n'
-                                 'DEFAULT: "unix://var/run/docker.sock"')
+    core_group.add_argument('-d', '--docker-sockets', nargs='+', default=Config.docker_sockets, dest='DOCKER_SOCKETS',
+                            help='Sockets for docker management\n'
+                                 'DEFAULT: "unix://var/run/docker.sock"\n'
+                                 'EXAMPLE: -d unix://var/run/docker.sock tcp://192.168.1.100:2376')
 
     core_group.add_argument('-i', '--interval', type=int, default=Config.interval, dest='INTERVAL',
                             help='Interval in seconds between checking for updates\n'
@@ -113,13 +114,14 @@ def main():
     config = Config(environment_vars=environ, cli_args=args)
     config_dict = {key: value for key, value in vars(config).items() if key.upper() in config.options}
     ol.logger.debug("Ouroboros configuration: %s", config_dict)
-    docker = Docker(config)
 
-    if docker.monitored:
-        schedule.every(config.interval).seconds.do(docker.update_containers).tag('update-containers')
-    else:
-        ol.logger.info('No containers are running or monitored')
-        exit(1)
+    for socket in config.docker_sockets:
+        docker = Docker(socket, config)
+        if docker.monitored:
+            schedule.every(config.interval).seconds.do(docker.update_containers).tag(f'update-containers-{socket}')
+        else:
+            ol.logger.info('No containers are running or monitored on %s', socket)
+            exit(1)
 
     schedule.run_all()
 

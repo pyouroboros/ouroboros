@@ -10,9 +10,9 @@ from pyouroboros.notifiers import NotificationManager
 
 
 class Docker(object):
-    def __init__(self, config):
+    def __init__(self, socket, config):
         self.config = config
-        self.client = DockerClient(base_url=self.config.docker_socket)
+        self.client = DockerClient(base_url=socket)
         self.data_manager = DataManager(self.config)
 
         self.logger = getLogger()
