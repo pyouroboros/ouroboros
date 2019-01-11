@@ -10,13 +10,14 @@ from pyouroboros.notifiers import NotificationManager
 class Docker(object):
     def __init__(self, socket, config):
         self.config = config
+        self.socket = socket
         self.client = DockerClient(base_url=socket)
         self.data_manager = DataManager(self.config)
 
         self.logger = getLogger()
         self.monitored = self.monitor_filter()
 
-        self.notification_manager = NotificationManager(self.config, len(self.monitored), socket)
+        self.notification_manager = NotificationManager(self.config, len(self.monitored), self.socket)
 
     def get_running(self):
         """Return running container objects list, except ouroboros itself"""
@@ -81,6 +82,9 @@ class Docker(object):
 
         self.monitored = self.monitor_filter()
 
+        if not self.monitored:
+            self.logger.info('No containers are running or monitored on %s', self.socket)
+
         for container in self.monitored:
             current_image = container.image
 
@@ -115,8 +119,10 @@ class Docker(object):
                 updated_count += 1
 
                 self.logger.debug("Incrementing total container updated count")
-                self.data_manager.add(label='all')
+                self.data_manager.influx.total_updated += 1
                 self.data_manager.add(label=container.name)
+
+        self.data_manager.add(label='all')
 
         if updated_count > 0:
             self.notification_manager.send(updated_count=updated_count, container_tuples=updated_container_tuples)

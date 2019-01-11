@@ -20,8 +20,8 @@ class DataManager(object):
 
         elif self.config.data_export == "influxdb" and self.enabled:
             if label == "all":
-                self.influx.total_updated += 1
                 self.logger.debug("Total containers updated now %s", self.influx.total_updated)
+                self.influx.write_points(label)
             else:
                 self.influx.write_points(label)
 
@@ -93,14 +93,22 @@ class InfluxClient(object):
         now = datetime.now(timezone.utc).astimezone().isoformat()
         influx_payload = {
             "measurement": "Ouroboros",
-            "tags": {
+            "tags": {},
+            "time": now,
+            "fields": {}
+        }
+        if label == "all":
+            influx_payload['tags'] = {"type": "stats"}
+            influx_payload['fields'] = {
+                "monitored_containers": self.monitored_containers,
+                "updated_count": self.total_updated
+            }
+        else:
+            influx_payload['tags'] = {
                 "type": "container_update",
                 "container": label
-            },
-            "time": now,
-            "fields": {
-                "count": 1
             }
-        }
+            influx_payload['fields'] = {"count": 1}
+
         self.logger.debug("Writing data to influxdb: %s", influx_payload)
         self.influx.write(influx_payload)

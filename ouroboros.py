@@ -117,16 +117,13 @@ def main():
 
     for socket in config.docker_sockets:
         docker = Docker(socket, config)
-        if docker.monitored:
-            schedule.every(config.interval).seconds.do(docker.update_containers).tag(f'update-containers-{socket}')
-        else:
-            ol.logger.info('No containers are running or monitored on %s', socket)
-            exit(1)
+        schedule.every(config.interval).seconds.do(docker.update_containers).tag(f'update-containers-{socket}')
 
     schedule.run_all()
 
     if args.RUN_ONCE:
-        schedule.clear('update-containers')
+        for socket in config.docker_sockets:
+            schedule.clear(f'update-containers-{socket}')
 
     while schedule.jobs:
         schedule.run_pending()
