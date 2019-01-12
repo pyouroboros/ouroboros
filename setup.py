@@ -11,10 +11,6 @@ requirements_dev = ['docker',
                     'prometheus_client',
                     'influxdb',
                     'requests',
-                    'pytest >= 3.6',
-                    'pytest-cov',
-                    'pytest-mock',
-                    'codecov',
                     'flake8']
 
 
@@ -25,11 +21,11 @@ def readme():
 
 setup(
     name='ouroboros-cli',
-    version='0.4.3',
+    version='0.5.0',
     description='Automatically update running docker containers',
     long_description=readme(),
     long_description_content_type='text/markdown',
-    url='https://github.com/circa10a/ouroboros',
+    url='https://github.com/pyouroboros/ouroboros',
     license='MIT',
     classifiers=['Programming Language :: Python'],
     packages=find_packages(exclude=['doc', 'tests']),

@@ -1,10 +1,10 @@
 ![alt text](https://i.imgur.com/kYbI9Hi.png)
 
-[![Travis](https://img.shields.io/travis/circa10a/ouroboros/master.svg?style=flat-square)](https://travis-ci.org/circa10a/ouroboros)
-[![Codecov](https://img.shields.io/codecov/c/github/circa10a/ouroboros.svg?style=flat-square)](https://codecov.io/gh/circa10a/ouroboros)
-[![Docker Pulls](https://img.shields.io/docker/pulls/circa10a/ouroboros.svg?style=flat-square)](https://hub.docker.com/r/circa10a/ouroboros/)
-[![Layers](https://images.microbadger.com/badges/image/circa10a/ouroboros.svg)](https://microbadger.com/images/circa10a/ouroboros)
-[![Image Version](https://images.microbadger.com/badges/version/circa10a/ouroboros.svg)](https://hub.docker.com/r/circa10a/ouroboros/)
+[![Travis](https://img.shields.io/travis/pyouroboros/ouroboros/master.svg?style=flat-square)](https://travis-ci.org/pyouroboros/ouroboros)
+[![Codecov](https://img.shields.io/codecov/c/github/pyouroboros/ouroboros.svg?style=flat-square)](https://codecov.io/gh/pyouroboros/ouroboros)
+[![Docker Pulls](https://img.shields.io/docker/pulls/pyouroboros/ouroboros.svg?style=flat-square)](https://hub.docker.com/r/pyouroboros/ouroboros/)
+[![Layers](https://images.microbadger.com/badges/image/pyouroboros/ouroboros.svg)](https://microbadger.com/images/pyouroboros/ouroboros)
+[![Image Version](https://images.microbadger.com/badges/version/pyouroboros/ouroboros.svg)](https://hub.docker.com/r/pyouroboros/ouroboros/)
 [![Pypi Version](https://img.shields.io/pypi/v/ouroboros-cli.svg?style=flat-square)](https://pypi.org/project/ouroboros-cli/)
 [![Pypi Downloads](https://img.shields.io/pypi/dm/ouroboros-cli.svg?style=flat-square)](https://pypi.org/project/ouroboros-cli/)
 
@@ -56,21 +56,21 @@ Ouroboros is deployed via docker image like so:
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros
+  pyouroboros/ouroboros
 ```
 
 **Rpi 3 B+**
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros:latest-aarch64-rpi
+  pyouroboros/ouroboros:latest-aarch64-rpi
 ```
 
 **All other Rpi's**
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros:latest-arm-rpi
+  pyouroboros/ouroboros:latest-arm-rpi
 ```
 
 or via `docker-compose`:
@@ -83,7 +83,7 @@ services:
     ports:
      - 80:80
   ouroboros:
-    image: circa10a/ouroboros
+    image: pyouroboros/ouroboros
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 60 --loglevel debug
@@ -111,7 +111,7 @@ $ ouroboros --interval 5 --loglevel debug
 > All arguments can be supplemented with environment variables, but command line arguments will take priority
 
 ```
-docker run --rm circa10a/ouroboros --help
+docker run --rm pyouroboros/ouroboros --help
 ```
 
 - `--url`, `-u` Monitor and update containers on a remote system by providing the `url` argument.
@@ -157,7 +157,7 @@ You can provide a [docker env file](https://docs.docker.com/engine/reference/com
 docker run -d --name ouroboros \
   --env-file env.list \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros
+  pyouroboros/ouroboros
 ```
 
 **Sample env.list**
@@ -176,7 +176,7 @@ If your running containers' docker images are stored in a secure registry that r
 docker run -d --name ouroboros \
   -e REPO_USER=myUser -e REPO_PASS=myPassword \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros
+  pyouroboros/ouroboros
 ```
 
 You can alternatively bind mount `~/.docker/config.json` which won't require the above environment variables.
@@ -185,7 +185,7 @@ You can alternatively bind mount `~/.docker/config.json` which won't require the
 docker run -d --name ouroboros \
   -v $HOME/.docker/config.json:/root/.docker/config.json \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros
+  pyouroboros/ouroboros
 ```
 ### Scheduling
 
@@ -202,7 +202,7 @@ Example using ouroboros to update containers every Monday at 5AM:
 **Docker**
 
 ```bash
-* 5 * * 1 docker run --rm -d --name ouroboros -v /var/run/docker.sock:/var/run/docker.sock circa10a/ouroboros --interval 1 --runonce
+* 5 * * 1 docker run --rm -d --name ouroboros -v /var/run/docker.sock:/var/run/docker.sock pyouroboros/ouroboros --interval 1 --runonce
 ```
 
 **Pip installed CLI**
@@ -221,7 +221,7 @@ To more closely monitor ouroboros' actions and for accurate log ingestion, you c
 docker run -d --name ouroboros \
   -e TZ=America/Chicago \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros
+  pyouroboros/ouroboros
   ```
 
 ## Notifications
@@ -244,7 +244,7 @@ Ourboros has the ability to trigger multiple webhooks for slack integration or o
  ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --keep-tag
+  pyouroboros/ouroboros --keep-tag
 ```
 
 ### Update containers on a remote host
@@ -256,7 +256,7 @@ Ouroboros can monitor things other than just local, pass the `--url` argument to
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --url tcp://my-remote-docker-server:2375
+  pyouroboros/ouroboros --url tcp://my-remote-docker-server:2375
 ```
 
 ### Change update frequency
@@ -268,7 +268,7 @@ An `interval` argument can be supplied to change how often ouroboros checks the 
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --interval 600
+  pyouroboros/ouroboros --interval 600
 ```
 
 ### Monitor select containers
@@ -280,7 +280,7 @@ By default, ouroboros will monitor all running docker containers, but can be ove
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --monitor container_1 container_2 container_3
+  pyouroboros/ouroboros --monitor container_1 container_2 container_3
 ```
 
 ### Change loglevel
@@ -292,7 +292,7 @@ The amount of logging details can be supressed by providing a `loglevel` argumen
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --loglevel debug
+  pyouroboros/ouroboros --loglevel debug
 ```
 
 ### Update all containers and quit ouroboros
@@ -304,7 +304,7 @@ If you prefer ouroboros didn't run all the time and only update all of your runn
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --runonce
+  pyouroboros/ouroboros --runonce
 ```
 
 ### Remove old docker images
@@ -316,7 +316,7 @@ Ouroboros has the option to remove the older docker image if a new one is found 
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --cleanup
+  pyouroboros/ouroboros --cleanup
 ```
 
 ### Prometheus metrics
@@ -331,7 +331,7 @@ Ouroboros keeps track of containers being updated and how many are being monitor
  docker run -d --name ouroboros \	 ://my-webhook-1 https://my-webhook-2
    -p 5000:5000 \	 ://my-webhook-1 https://my-webhook-2
    -v /var/run/docker.sock:/var/run/docker.sock \	 ://my-webhook-1 https://my-webhook-2
-   circa10a/ouroboros --metrics-port 5000	 ://my-webhook-1 https://my-webhook-2
+   pyouroboros/ouroboros --metrics-port 5000	 ://my-webhook-1 https://my-webhook-2
  ```
 
 You should then be able to see the metrics at http://localhost:5000/
@@ -346,7 +346,7 @@ Ouroboros allows you to bind the exporter to a different interface using the `--
 docker run -d --name ouroboros \
   -p 8000:8000 \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --metrics-addr 10.0.0.1
+  pyouroboros/ouroboros --metrics-addr 10.0.0.1
 ```
 
 Then access via http://10.0.0.1:8000/
@@ -377,7 +377,7 @@ See [notifications](#notifications)
  ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  circa10a/ouroboros --webhook-urls http://my-webhook-1 https://my-webhook-2
+  pyouroboros/ouroboros --webhook-urls http://my-webhook-1 https://my-webhook-2
 ```
 
 ## Execute Tests
