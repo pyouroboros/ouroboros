@@ -1,6 +1,6 @@
 from logging import getLogger
 from docker import DockerClient
-from docker.errors import DockerException, APIError
+from docker.errors import DockerException, APIError, NotFound
 
 from pyouroboros.helpers import set_properties
 
@@ -109,7 +109,10 @@ class Docker(object):
                 container.stop()
 
                 self.logger.debug('Removing container: %s', container.name)
-                container.remove()
+                try:
+                    container.remove()
+                except NotFound as e:
+                    self.logger.error("Could not remove container. Error: %s", e)
 
                 created = self.client.api.create_container(**new_config)
                 new_container = self.client.containers.get(created.get("Id"))

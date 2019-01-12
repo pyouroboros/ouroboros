@@ -61,13 +61,13 @@ def main():
 
     data_group.add_argument('-a', '--prometheus-addr', default=Config.prometheus_addr,
                             dest='PROMETHEUS_ADDR', help='Bind address to run Prometheus exporter on. '
-                                                                  'Has no effect without --data-export prometheus\n'
-                                                                  'DEFAULT: 127.0.0.1')
+                                                         'Has no effect without --data-export prometheus\n'
+                                                         'DEFAULT: 127.0.0.1')
 
     data_group.add_argument('-p', '--prometheus-port', type=int, default=Config.prometheus_port,
                             dest='PROMETHEUS_PORT', help='Port to run Prometheus exporter on. '
-                                                                  'Has no effect without --data-export prometheus\n'
-                                                                  'DEFAULT: 8000')
+                                                         'Has no effect without --data-export prometheus\n'
+                                                         'DEFAULT: 8000')
 
     data_group.add_argument('-I', '--influx-url', default=Config.influx_url, dest='INFLUX_URL',
                             help='URL for influxdb, Has no effect without --data-export influxdb\n'
