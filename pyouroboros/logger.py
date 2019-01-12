@@ -27,23 +27,14 @@ class BlacklistFilter(Filter):
 
 
 class OuroborosLogger(object):
-    mappings = {
-        'debug': DEBUG,
-        'info': INFO,
-        'warn': WARN,
-        'error': ERROR,
-        'critical': CRITICAL
-    }
-
-    def __init__(self, level=None):
-        if level and OuroborosLogger.mappings.get(level):
-            self.log_level = OuroborosLogger.mappings.get(level)
-        else:
-            self.log_level = OuroborosLogger.mappings['info']
-
+    def __init__(self, level='info'):
         # Create the Logger
         self.logger = getLogger()
-        self.logger.setLevel(self.log_level)
+        try:
+            self.logger.setLevel(level)
+        except ValueError:
+            level = "info"
+            self.logger.setLevel(level)
 
         # Create a Formatter for formatting the log messages
         logger_formatter = Formatter('%(asctime)s : %(levelname)s : %(module)s : %(message)s', '%Y-%m-%d %H:%M:%S')
@@ -51,7 +42,8 @@ class OuroborosLogger(object):
         # Add the console logger
         console_logger = StreamHandler()
         console_logger.setFormatter(logger_formatter)
-        console_logger.setLevel(self.log_level)
+
+        console_logger.setLevel(level)
 
         # Add the Handler to the Logger
         self.logger.addHandler(console_logger)
