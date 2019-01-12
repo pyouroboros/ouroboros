@@ -1,11 +1,10 @@
 from logging import getLogger
-
 from pyouroboros.logger import BlacklistFilter
 
 
 class Config(object):
-    options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKETS', 'MONITOR', 'IGNORE', 'LOG_LEVEL', 'PROMETHEUS_EXPORTER_ADDR'
-               'PROMETHEUS_EXPORTER_PORT', 'WEBHOOK_URLS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUNONCE', 'LATEST',
+    options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKETS', 'MONITOR', 'IGNORE', 'LOG_LEVEL', 'PROMETHEUS_ADDR'
+               'PROMETHEUS_PORT', 'WEBHOOK_URLS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUNONCE', 'LATEST',
                'WEBHOOK_TYPE', 'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE',
                'INFLUX_SSL', 'INFLUX_VERIFY_SSL', 'DATA_EXPORT']
 
@@ -26,8 +25,8 @@ class Config(object):
     auth_json = None
 
     prometheus = False
-    prometheus_exporter_addr = '127.0.0.1'
-    prometheus_exporter_port = 8000
+    prometheus_addr = '127.0.0.1'
+    prometheus_port = 8000
 
     influx_url = '127.0.0.1'
     influx_port = 8086
@@ -71,7 +70,7 @@ class Config(object):
     def parse(self):
         for option in Config.options:
             if self.environment_vars.get(option):
-                if option in ['INTERVAL', 'PROMETHEUS_EXPORTER_PORT', 'INFLUX_PORT']:
+                if option in ['INTERVAL', 'PROMETHEUS_PORT', 'INFLUX_PORT']:
                     try:
                         opt = int(self.environment_vars[option])
                         setattr(self, option.lower(), opt)

@@ -59,13 +59,13 @@ def main():
     data_group.add_argument('-D', '--data-export', choices=['prometheus', 'influxdb'], default=None, dest='DATA_EXPORT',
                             help='Enable exporting of data for chosen option')
 
-    data_group.add_argument('-a', '--prometheus-exporter-addr', default=Config.prometheus_exporter_addr,
-                            dest='PROMETHEUS_EXPORTER_ADDR', help='Bind address to run Prometheus exporter on. '
+    data_group.add_argument('-a', '--prometheus-addr', default=Config.prometheus_addr,
+                            dest='PROMETHEUS_ADDR', help='Bind address to run Prometheus exporter on. '
                                                                   'Has no effect without --data-export prometheus\n'
                                                                   'DEFAULT: 127.0.0.1')
 
-    data_group.add_argument('-p', '--prometheus-exporter-port', type=int, default=Config.prometheus_exporter_port,
-                            dest='PROMETHEUS_EXPORTER_PORT', help='Port to run Prometheus exporter on. '
+    data_group.add_argument('-p', '--prometheus-port', type=int, default=Config.prometheus_port,
+                            dest='PROMETHEUS_PORT', help='Port to run Prometheus exporter on. '
                                                                   'Has no effect without --data-export prometheus\n'
                                                                   'DEFAULT: 8000')
 

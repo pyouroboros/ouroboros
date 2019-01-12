@@ -2,7 +2,7 @@
 VERSION=$(grep -i version ./setup.py | awk -F= '{gsub("\047",""); gsub(",",""); print $2}')
 
 # Docker
-USER='circa10a'
+USER='pyouroboros'
 PROJECT='ouroboros'
 NAMESPACE=${USER}/${PROJECT}
 # Auth

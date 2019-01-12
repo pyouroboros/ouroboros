@@ -14,12 +14,12 @@ class DataManager(object):
         self.monitored_containers = {}
         self.total_updated = {}
 
-        self.prometheus_exporter = PrometheusExporter(self, config) if self.config.data_export == "prometheus" else None
+        self.prometheus = PrometheusExporter(self, config) if self.config.data_export == "prometheus" else None
         self.influx = InfluxClient(self, config) if self.config.data_export == "influxdb" else None
 
     def add(self, label, socket):
         if self.config.data_export == "prometheus" and self.enabled:
-            self.prometheus_exporter.update(label, socket)
+            self.prometheus.update(label, socket)
 
         elif self.config.data_export == "influxdb" and self.enabled:
             if label == "all":
@@ -30,7 +30,7 @@ class DataManager(object):
 
     def set(self, socket):
         if self.config.data_export == "prometheus" and self.enabled:
-            self.prometheus_exporter.set_monitored(socket)
+            self.prometheus.set_monitored(socket)
 
 
 class PrometheusExporter(object):
@@ -38,8 +38,8 @@ class PrometheusExporter(object):
         self.config = config
         self.data_manager = data_manager
         self.http_server = prometheus_client.start_http_server(
-            addr=self.config.prometheus_exporter_addr,
-            port=self.config.prometheus_exporter_port
+            self.config.prometheus_port,
+            addr=self.config.prometheus_addr
         )
         self.updated_containers_counter = prometheus_client.Counter(
             'containers_updated',
