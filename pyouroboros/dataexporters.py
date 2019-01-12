@@ -71,11 +71,13 @@ class InfluxClient(object):
         self.config = config
         self.logger = getLogger()
         self.influx = InfluxDBClient(
-            self.config.influx_url,
-            self.config.influx_port,
-            self.config.influx_username,
-            self.config.influx_password,
-            self.config.influx_database
+            host=self.config.influx_url,
+            port=self.config.influx_port,
+            username=self.config.influx_username,
+            password=self.config.influx_password,
+            database=self.config.influx_database,
+            ssl=self.config.influx_ssl,
+            verify_ssl=self.config.influx_verify_ssl
         )
         self.db_check()
 

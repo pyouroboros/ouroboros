@@ -7,7 +7,7 @@ class Config(object):
     options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKETS', 'MONITOR', 'IGNORE', 'LOG_LEVEL', 'PROMETHEUS_EXPORTER_ADDR'
                'PROMETHEUS_EXPORTER_PORT', 'WEBHOOK_URLS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUNONCE', 'LATEST',
                'WEBHOOK_TYPE', 'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE',
-               'DATA_EXPORT']
+               'INFLUX_SSL', 'INFLUX_VERIFY_SSL', 'DATA_EXPORT']
 
     interval = 300
     docker_sockets = 'unix://var/run/docker.sock'
@@ -31,6 +31,8 @@ class Config(object):
 
     influx_url = '127.0.0.1'
     influx_port = 8086
+    influx_ssl = False
+    influx_verify_ssl = False
     influx_username = 'root'
     influx_password = 'root'
     influx_database = None

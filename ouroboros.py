@@ -90,6 +90,12 @@ def main():
                                  '--data-export influxdb.\n'
                                   'DEFAULT: root')
 
+    data_group.add_argument('-s', '--influx-ssl', default=False, dest='INFLUX_SSL', action='store_true',
+                            help='Use SSL when connecting to influxdb')
+
+    data_group.add_argument('-V', '--influx-verify-ssl', default=False, dest='INFLUX_VERIFY_SSL', action='store_true',
+                            help='Verify SSL certificate when connecting to influxdb')
+
     data_group.add_argument('-w', '--webhook-urls', nargs='+', default=Config.webhook_urls, dest='WEBHOOK_URLS',
                             help='Webhook POST urls\n'
                                  'EXAMPLE: -w https://domain.tld/1234/asdf http://123.123.123.123:4040/re235')
