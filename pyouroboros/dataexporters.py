@@ -18,16 +18,15 @@ class DataManager(object):
         self.influx = InfluxClient(self, config) if self.config.data_export == "influxdb" else None
 
     def add(self, label, socket):
-        clean_socket = socket.split("//")[1]
         if self.config.data_export == "prometheus" and self.enabled:
             self.prometheus_exporter.update(label)
 
         elif self.config.data_export == "influxdb" and self.enabled:
             if label == "all":
-                self.logger.debug("Total containers updated %s", self.total_updated)
-                self.influx.write_points(label, clean_socket)
+                self.logger.debug("Total containers updated %s", self.total_updated[socket])
+                self.influx.write_points(label, socket)
             else:
-                self.influx.write_points(label, clean_socket)
+                self.influx.write_points(label, socket)
 
     def set(self, socket):
         if self.config.data_export == "prometheus" and self.enabled:
@@ -93,23 +92,21 @@ class InfluxClient(object):
             self.data_manager.enabled = False
 
     def write_points(self, label, socket):
+        clean_socket = socket.split("//")[1]
         now = datetime.now(timezone.utc).astimezone().isoformat()
         influx_payload = [
             {
                 "measurement": "Ouroboros",
-                "tags": {'socket': socket},
+                "tags": {'socket': clean_socket},
                 "time": now,
                 "fields": {}
             }
         ]
         if label == "all":
-            count = 0
-            for socket, num in self.data_manager.monitored_containers.items():
-                count += num
             influx_payload[0]['tags']["type"] = "stats"
             influx_payload[0]['fields'] = {
-                "monitored_containers": count,
-                "updated_count": self.data_manager.total_updated
+                "monitored_containers": self.data_manager.monitored_containers[socket],
+                "updated_count": self.data_manager.total_updated[socket]
             }
         else:
             influx_payload[0]['tags'].update(

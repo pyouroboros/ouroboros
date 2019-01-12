@@ -12,7 +12,7 @@ class Docker(object):
         self.socket = socket
         self.client = DockerClient(base_url=socket)
         self.data_manager = data_manager
-
+        self.data_manager.total_updated[self.socket] = 0
         self.logger = getLogger()
         self.monitored = self.monitor_filter()
 
@@ -124,6 +124,7 @@ class Docker(object):
                 updated_count += 1
 
                 self.logger.debug("Incrementing total container updated count")
+
                 self.data_manager.total_updated[self.socket] += 1
                 self.data_manager.add(label=container.name, socket=self.socket)
 
