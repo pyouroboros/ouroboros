@@ -116,3 +116,4 @@ dmypy.json
 # JetBrains
 .idea/
 *.iml
+.DS_Store

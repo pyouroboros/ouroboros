@@ -81,6 +81,22 @@ def parse(sysargs):
 
     parser.add_argument('-w', '--webhook-urls', nargs='+', default=environ.get('WEBHOOK_URLS') or defaults.WEBHOOK_URLS, dest='webhook_urls',
                         help='URLs to trigger webook when a container is updated.')
+
+    parser.add_argument('-hc', '--healthcheck-url', nargs='+', default=environ.get('HEALTHCHECK_URL') or defaults.HEALTHCHECK_URL, dest='healthcheck_url',
+                        help='HealthCheck server URL to update status every time Ouroboros runs')
+
+    parser.add_argument('-pot', '--pushover-token', nargs='+', default=environ.get('PUSHOVER_TOKEN') or defaults.PUSHOVER_TOKEN, dest='pushover_token',
+                        help='Pushover token')
+
+    parser.add_argument('-pou', '--pushover-user', nargs='+', default=environ.get('PUSHOVER_USER') or defaults.PUSHOVER_USER, dest='pushover_user',
+                        help='Pushover user')
+
+    parser.add_argument('-pod', '--pushover-devices', nargs='+', default=environ.get('PUSHOVER_DEVICES') or defaults.PUSHOVER_DEVICES, dest='pushover_devices',
+                        help='Pushover devices')
+
+    parser.add_argument('-pos', '--pushover-title', nargs='+', default=environ.get('PUSHOVER_TITLE') or defaults.PUSHOVER_TITLE, dest='pushover_title',
+                        help='Pushover title')
+
     args = parser.parse_args(sysargs)
 
     if not args.url:

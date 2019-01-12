@@ -1,10 +1,12 @@
 from sys import exit
 import logging
 import docker
+import requests
 from ouroboros import container
 from ouroboros import image
 from ouroboros import metrics
 from ouroboros import webhook
+from ouroboros import pushover
 
 
 def main(args, api_client):
@@ -16,6 +18,9 @@ def main(args, api_client):
         updated_count = 0
         monitored_containers = container.to_monitor(monitor=args.monitor, ignore=args.ignore, api_client=api_client)
         metrics.monitored_containers(num=len(monitored_containers))
+        if args.healthcheck_url:
+            requests.get(args.healthcheck_url)
+
         for running_container in monitored_containers:
             container_name = f'{container.get_name(container_object=running_container)}'
             current_image = api_client.inspect_image(running_container['Config']['Image'])
@@ -50,6 +55,8 @@ def main(args, api_client):
                 metrics.container_updates(label=container_name)
                 if args.webhook_urls:
                     webhook.post(urls=args.webhook_urls, container_name=container_name, old_sha=current_image['Id'], new_sha=latest_image['Id'])
+                if args.pushover_user and args.pushover_token:
+                    pushover.post(token=args.pushover_token, user=args.pushover_user, device=args.pushover_devices, title=args.pushover_title, container=container_name)
 
         log.info(f'{updated_count} container(s) updated')
         if args.run_once:

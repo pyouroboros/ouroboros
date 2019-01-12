@@ -148,6 +148,21 @@ docker run --rm circa10a/ouroboros --help
 - `-w, --webhook-urls` What URLs for ouroboros to POST when a container is updated.
   - Default is `None`.
   - Environment variable: `WEBHOOK_URLS=http://my-webhook-1`
+- `-hc, --healthcheck-url` What HealthCheck URL for ouroboros to POST when ouroboros runs.
+  - Default is `None`.
+  - Environment variable: `HEALTHCHECK_URL=http://my-healthcheck-1`
+- `-pot, --pushover-token` Pushover token.
+  - Default is `None`.
+  - Environment variable: `PUSHOVER_TOKEN=xxxxxxxxxxx`
+- `-pou, --pushover-user` Pushover user.
+  - Default is `None`.
+  - Environment variable: `PUSHOVER_USER=xxxxxxxxxxxx`
+- `-pod, --pushover-devices` List of the devices to sent Pushover message to. Comma separated.
+  - Default is `None`.
+  - Environment variable: `PUSHOVER_DEVICES=Device1,Device2`
+- `-pos, --pushover-title` Pushover message title.
+  - Default is `Docker Container Update`.
+  - Environment variable: `PUSHOVER_TITLE=My Pushover message`
 
 ### Config File
 
@@ -234,6 +249,13 @@ Ourboros has the ability to trigger multiple webhooks for slack integration or o
 ```
 {"text": "Container: alpine updated from sha256:34ea7509dcad10aa92310f2b41e3afbabed0811ee3a902d6d49cb90f075fe444 to sha256:3f53bb00af943dfdf815650be70c0fa7b426e56a66f5e3362b47a129d57d5991"}
 ```
+
+### Pushover
+Ouroboros can send notifications via [Pushover](https://pushover.net). Notification sent when container has been updated only. Pushover username and token parameters must be defined.
+
+### Healthcheck
+Ouroboros can post notification to [HealthChecks](https://healthchecks.io) server for the Ouroboros job monitoring. Notification sent every time Ouroboros runs and therefore equal to the interval defined by the `interval` option.
+
 
 ## Examples
 
