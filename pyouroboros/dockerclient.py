@@ -3,12 +3,11 @@ from docker import DockerClient
 from docker.errors import DockerException, APIError
 
 from pyouroboros.helpers import set_properties
-from pyouroboros.dataexporters import DataManager
 from pyouroboros.notifiers import NotificationManager
 
 
 class Docker(object):
-    def __init__(self, socket, config, data_manager):
+    def __init__(self, socket, config, data_manager, notification_manager):
         self.config = config
         self.socket = socket
         self.client = DockerClient(base_url=socket)
@@ -17,7 +16,7 @@ class Docker(object):
         self.logger = getLogger()
         self.monitored = self.monitor_filter()
 
-        self.notification_manager = NotificationManager(self.config, len(self.monitored), self.socket)
+        self.notification_manager = notification_manager
 
     def get_running(self):
         """Return running container objects list, except ouroboros itself"""
@@ -49,8 +48,8 @@ class Docker(object):
             running_containers = [container for container in running_containers
                                   if container.name not in self.config.ignore]
 
-        self.data_manager.monitored_containers = len(running_containers)
-        self.data_manager.set()
+        self.data_manager.monitored_containers[self.socket] = len(running_containers)
+        self.data_manager.set(self.socket)
 
         return running_containers
 
@@ -125,10 +124,10 @@ class Docker(object):
                 updated_count += 1
 
                 self.logger.debug("Incrementing total container updated count")
-                self.data_manager.total_updated += 1
-                self.data_manager.add(label=container.name)
+                self.data_manager.total_updated[self.socket] += 1
+                self.data_manager.add(label=container.name, socket=self.socket)
 
-        self.data_manager.add(label='all')
+        self.data_manager.add(label='all', socket=self.socket)
 
         if updated_count > 0:
-            self.notification_manager.send(updated_count=updated_count, container_tuples=updated_container_tuples)
+            self.notification_manager.send(container_tuples=updated_container_tuples, socket=self.socket)

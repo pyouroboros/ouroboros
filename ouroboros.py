@@ -8,6 +8,7 @@ from pyouroboros.config import Config
 from pyouroboros.dockerclient import Docker
 from pyouroboros.logger import OuroborosLogger
 from pyouroboros.dataexporters import DataManager
+from pyouroboros.notifiers import NotificationManager
 
 
 def main():
@@ -117,9 +118,10 @@ def main():
     ol.logger.debug("Ouroboros configuration: %s", config_dict)
 
     data_manager = DataManager(config)
+    notification_manager = NotificationManager(config, data_manager)
 
     for socket in config.docker_sockets:
-        docker = Docker(socket, config, data_manager)
+        docker = Docker(socket, config, data_manager, notification_manager)
         schedule.every(config.interval).seconds.do(docker.update_containers).tag(f'update-containers-{socket}')
 
     schedule.run_all()

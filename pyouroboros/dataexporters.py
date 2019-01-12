@@ -11,24 +11,25 @@ class DataManager(object):
         self.logger = getLogger()
         self.enabled = True
 
-        self.monitored_containers = 0
-        self.total_updated = 0
+        self.monitored_containers = {}
+        self.total_updated = {}
 
         self.prometheus_exporter = PrometheusExporter(self, config) if self.config.data_export == "prometheus" else None
         self.influx = InfluxClient(self, config) if self.config.data_export == "influxdb" else None
 
-    def add(self, label):
+    def add(self, label, socket):
+        clean_socket = socket.split("//")[1]
         if self.config.data_export == "prometheus" and self.enabled:
             self.prometheus_exporter.update(label)
 
         elif self.config.data_export == "influxdb" and self.enabled:
             if label == "all":
                 self.logger.debug("Total containers updated %s", self.total_updated)
-                self.influx.write_points(label)
+                self.influx.write_points(label, clean_socket)
             else:
-                self.influx.write_points(label)
+                self.influx.write_points(label, clean_socket)
 
-    def set(self):
+    def set(self, socket):
         if self.config.data_export == "prometheus" and self.enabled:
             self.prometheus_exporter.set_monitored()
 
@@ -55,9 +56,11 @@ class PrometheusExporter(object):
 
     def set_monitored(self):
         """Set number of containers being monitoring with a gauge"""
-        self.monitored_containers_gauge.set(self.data_manager.monitored_containers)
-        self.logger.debug("Prometheus Exporter monitored containers gauge set to %s",
-                          self.data_manager.monitored_containers)
+        count = 0
+        for socket, num in self.data_manager.monitored_containers.items():
+            count += num
+        self.monitored_containers_gauge.set(count)
+        self.logger.debug("Prometheus Exporter monitored containers gauge set to %s", count)
 
     def update(self, label):
         """Set container update count based on label"""
@@ -89,27 +92,32 @@ class InfluxClient(object):
                               self.config.influx_database)
             self.data_manager.enabled = False
 
-    def write_points(self, label):
+    def write_points(self, label, socket):
         now = datetime.now(timezone.utc).astimezone().isoformat()
         influx_payload = [
             {
                 "measurement": "Ouroboros",
-                "tags": {},
+                "tags": {'socket': socket},
                 "time": now,
                 "fields": {}
             }
         ]
         if label == "all":
-            influx_payload[0]['tags'] = {"type": "stats"}
+            count = 0
+            for socket, num in self.data_manager.monitored_containers.items():
+                count += num
+            influx_payload[0]['tags']["type"] = "stats"
             influx_payload[0]['fields'] = {
-                "monitored_containers": self.data_manager.monitored_containers,
+                "monitored_containers": count,
                 "updated_count": self.data_manager.total_updated
             }
         else:
-            influx_payload[0]['tags'] = {
-                "type": "container_update",
-                "container": label
-            }
+            influx_payload[0]['tags'].update(
+                {
+                    "type": "container_update",
+                    "container": label
+                }
+            )
             influx_payload[0]['fields'] = {"count": 1}
 
         self.logger.debug("Writing data to influxdb: %s", influx_payload)

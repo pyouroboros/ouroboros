@@ -6,23 +6,23 @@ from requests.exceptions import RequestException
 
 
 class NotificationManager(object):
-    def __init__(self, config, monitored_count, socket):
+    def __init__(self, config, data_manager):
         self.config = config
-        self.socket = socket.split("//")[1]
-        self.monitored_count = monitored_count
+        self.data_manager = data_manager
         self.logger = getLogger()
 
-    def send(self, updated_count, container_tuples):
+    def send(self, container_tuples, socket):
         if self.config.webhook_urls:
-            formatted_json = self.format(updated_count, container_tuples)
+            formatted_json = self.format(container_tuples, socket)
             self.post(formatted_json)
 
-    def format(self, updated_count, container_tuples):
+    def format(self, container_tuples, socket):
+        clean_socket = socket.split("//")[1]
         now = str(datetime.now(timezone.utc)).replace(" ", "T")
         if self.config.webhook_type == 'slack':
-            text = "Host Socket: {}\n".format(self.socket)
-            text += "Containers Monitored: {}\n".format(self.monitored_count)
-            text += "Containers Updated: {}\n".format(updated_count)
+            text = "Host Socket: {}\n".format(clean_socket)
+            text += "Containers Monitored: {}\n".format(self.data_manager.monitored_containers[socket])
+            text += "Containers Updated: {}\n".format(self.data_manager.total_updated[socket])
             for container, old_image, new_image in container_tuples:
                 text += "{} updated from {} to {}\n".format(
                     container.name,
@@ -48,16 +48,16 @@ class NotificationManager(object):
                         "fields": [
                             {
                                 "name": "Socket:",
-                                "value": f"{self.socket}"
+                                "value": f"{clean_socket}"
                             },
                             {
                                 "name": "Containers Monitored",
-                                "value": f"{self.monitored_count}",
+                                "value": f"{self.data_manager.monitored_containers[socket]}",
                                 "inline": True
                             },
                             {
                                 "name": "Containers Updated",
-                                "value": f"{updated_count}",
+                                "value": f"{self.data_manager.total_updated[socket]}",
                                 "inline": True
                             }
                         ]
