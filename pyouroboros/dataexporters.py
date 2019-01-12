@@ -19,7 +19,7 @@ class DataManager(object):
 
     def add(self, label, socket):
         if self.config.data_export == "prometheus" and self.enabled:
-            self.prometheus_exporter.update(label)
+            self.prometheus_exporter.update(label, socket)
 
         elif self.config.data_export == "influxdb" and self.enabled:
             if label == "all":
@@ -30,7 +30,7 @@ class DataManager(object):
 
     def set(self, socket):
         if self.config.data_export == "prometheus" and self.enabled:
-            self.prometheus_exporter.set_monitored()
+            self.prometheus_exporter.set_monitored(socket)
 
 
 class PrometheusExporter(object):
@@ -44,26 +44,24 @@ class PrometheusExporter(object):
         self.updated_containers_counter = prometheus_client.Counter(
             'containers_updated',
             'Count of containers updated',
-            ['container']
+            ['socket', 'container']
         )
         self.monitored_containers_gauge = prometheus_client.Gauge(
             'containers_being_monitored',
-            'Count of containers being monitored',
-            []
+            'Gauge of containers being monitored',
+            ['socket']
         )
         self.logger = getLogger()
 
-    def set_monitored(self):
+    def set_monitored(self, socket):
         """Set number of containers being monitoring with a gauge"""
-        count = 0
-        for socket, num in self.data_manager.monitored_containers.items():
-            count += num
-        self.monitored_containers_gauge.set(count)
-        self.logger.debug("Prometheus Exporter monitored containers gauge set to %s", count)
+        self.monitored_containers_gauge.labels(socket=socket).set(self.data_manager.monitored_containers[socket])
+        self.logger.debug("Prometheus Exporter monitored containers gauge set to %s",
+                          self.data_manager.monitored_containers[socket])
 
-    def update(self, label):
+    def update(self, label, socket):
         """Set container update count based on label"""
-        self.updated_containers_counter.labels(container=label).inc()
+        self.updated_containers_counter.labels(socket=socket, container=label).inc()
         self.logger.debug("Prometheus Exporter container update counter incremented for %s", label)
 
 

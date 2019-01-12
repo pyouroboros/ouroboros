@@ -3,7 +3,6 @@ from docker import DockerClient
 from docker.errors import DockerException, APIError
 
 from pyouroboros.helpers import set_properties
-from pyouroboros.notifiers import NotificationManager
 
 
 class Docker(object):
@@ -76,7 +75,7 @@ class Docker(object):
                 self.logger.critical("Invalid Credentials. Exiting")
                 exit(1)
             elif 'Client.Timeout' in str(e):
-                self.logger.critical("Could'nt find an image on docker.com for %s. Local Build?", image.tags[0])
+                self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", image.tags[0])
                 raise ConnectionError
 
     def update_containers(self):

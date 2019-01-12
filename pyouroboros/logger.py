@@ -1,4 +1,4 @@
-from logging import Filter, DEBUG, INFO, WARN, ERROR, CRITICAL, getLogger, Formatter, StreamHandler
+from logging import Filter, getLogger, Formatter, StreamHandler
 
 
 class BlacklistFilter(Filter):
