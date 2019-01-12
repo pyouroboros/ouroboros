@@ -46,7 +46,8 @@ class Docker(object):
             running_containers = [container for container in running_containers
                                   if container.name not in self.config.ignore]
 
-        self.data_manager.set(monitored_count=len(running_containers))
+        self.data_manager.monitored_containers = len(running_containers)
+        self.data_manager.set()
 
         return running_containers
 
@@ -119,7 +120,7 @@ class Docker(object):
                 updated_count += 1
 
                 self.logger.debug("Incrementing total container updated count")
-                self.data_manager.influx.total_updated += 1
+                self.data_manager.total_updated += 1
                 self.data_manager.add(label=container.name)
 
         self.data_manager.add(label='all')

@@ -11,7 +11,10 @@ class DataManager(object):
         self.logger = getLogger()
         self.enabled = True
 
-        self.prometheus_exporter = PrometheusExporter(config) if self.config.data_export == "prometheus" else None
+        self.monitored_containers = 0
+        self.total_updated = 0
+
+        self.prometheus_exporter = PrometheusExporter(self, config) if self.config.data_export == "prometheus" else None
         self.influx = InfluxClient(self, config) if self.config.data_export == "influxdb" else None
 
     def add(self, label):
@@ -25,17 +28,15 @@ class DataManager(object):
             else:
                 self.influx.write_points(label)
 
-    def set(self, monitored_count):
+    def set(self):
         if self.config.data_export == "prometheus" and self.enabled:
-            self.prometheus_exporter.set_monitored(monitored_count)
-
-        elif self.config.data_export == "influxdb" and self.enabled:
-            self.influx.monitored_containers = monitored_count
+            self.prometheus_exporter.set_monitored()
 
 
 class PrometheusExporter(object):
-    def __init__(self, config):
+    def __init__(self, data_manager, config):
         self.config = config
+        self.data_manager = data_manager
         self.http_server = prometheus_client.start_http_server(
             addr=self.config.prometheus_exporter_addr,
             port=self.config.prometheus_exporter_port
@@ -52,13 +53,14 @@ class PrometheusExporter(object):
         )
         self.logger = getLogger()
 
-    def set_monitored(self, count):
+    def set_monitored(self):
         """Set number of containers being monitoring with a gauge"""
-        self.monitored_containers_gauge.set(count)
-        self.logger.debug("Prometheus Exporter monitored containers gauge set to %s", count)
+        self.monitored_containers_gauge.set(self.data_manager.monitored_containers)
+        self.logger.debug("Prometheus Exporter monitored containers gauge set to %s",
+                          self.data_manager.monitored_containers)
 
     def update(self, label):
-        """Increment container update count based on label"""
+        """Set container update count based on label"""
         self.updated_containers_counter.labels(container=label).inc()
         self.logger.debug("Prometheus Exporter container update counter incremented for %s", label)
 
@@ -76,8 +78,6 @@ class InfluxClient(object):
             self.config.influx_database
         )
         self.db_check()
-        self.monitored_containers = 0
-        self.total_updated = 0
 
     def db_check(self):
         database_dicts = self.influx.get_list_database()
@@ -100,8 +100,8 @@ class InfluxClient(object):
         if label == "all":
             influx_payload['tags'] = {"type": "stats"}
             influx_payload['fields'] = {
-                "monitored_containers": self.monitored_containers,
-                "updated_count": self.total_updated
+                "monitored_containers": self.data_manager.monitored_containers,
+                "updated_count": self.data_manager.total_updated
             }
         else:
             influx_payload['tags'] = {
