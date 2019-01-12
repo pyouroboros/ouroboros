@@ -19,7 +19,7 @@ class DataManager(object):
 
     def add(self, label, socket):
         if self.config.data_export == "prometheus" and self.enabled:
-            self.prometheus.update(label, socket)
+                self.prometheus.update(label, socket)
 
         elif self.config.data_export == "influxdb" and self.enabled:
             if label == "all":
@@ -51,6 +51,11 @@ class PrometheusExporter(object):
             'Gauge of containers being monitored',
             ['socket']
         )
+        self.updated_all_containers_gauge = prometheus_client.Gauge(
+            'all_containers_updated',
+            'Count of total updated',
+            ['socket']
+        )
         self.logger = getLogger()
 
     def set_monitored(self, socket):
@@ -61,7 +66,11 @@ class PrometheusExporter(object):
 
     def update(self, label, socket):
         """Set container update count based on label"""
-        self.updated_containers_counter.labels(socket=socket, container=label).inc()
+        if label == "all":
+            self.updated_all_containers_gauge.labels(socket=socket).set(self.data_manager.total_updated[socket])
+        else:
+            self.updated_containers_counter.labels(socket=socket, container=label).inc()
+
         self.logger.debug("Prometheus Exporter container update counter incremented for %s", label)
 
 
