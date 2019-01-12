@@ -23,7 +23,7 @@ class DataManager(object):
 
         elif self.config.data_export == "influxdb" and self.enabled:
             if label == "all":
-                self.logger.debug("Total containers updated now %s", self.total_updated)
+                self.logger.debug("Total containers updated %s", self.total_updated)
                 self.influx.write_points(label)
             else:
                 self.influx.write_points(label)

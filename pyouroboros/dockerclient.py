@@ -118,8 +118,10 @@ class Docker(object):
                 new_container.start()
 
                 if self.config.cleanup:
-                    self.client.images.remove(current_image.id)
-
+                    try:
+                        self.client.images.remove(current_image.id)
+                    except APIError as e:
+                        self.logger.error("Could not delete old image for %s, Error: %s", container.name, e)
                 updated_count += 1
 
                 self.logger.debug("Incrementing total container updated count")

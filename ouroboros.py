@@ -116,7 +116,7 @@ def main():
     config_dict = {key: value for key, value in vars(config).items() if key.upper() in config.options}
     ol.logger.debug("Ouroboros configuration: %s", config_dict)
 
-    data_manager = DataManager(self.config)
+    data_manager = DataManager(config)
 
     for socket in config.docker_sockets:
         docker = Docker(socket, config, data_manager)
