@@ -1,7 +1,7 @@
 import docker
 import imp
 import pytest
-import ouroboros.defaults as defaults
+import pyouroboros.defaults as defaults
 
 api_client = docker.APIClient(defaults.LOCAL_UNIX_SOCKET)
 

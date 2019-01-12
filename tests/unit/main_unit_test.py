@@ -1,5 +1,5 @@
 import pytest
-from ouroboros.main import main
+from pyouroboros.main import main
 import docker
 import logging
 import argparse

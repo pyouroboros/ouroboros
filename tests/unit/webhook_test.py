@@ -1,5 +1,5 @@
 import pytest
-import ouroboros.webhook as webhook
+import pyouroboros.notifiers as webhook
 
 
 def test_webook_schema_error():
