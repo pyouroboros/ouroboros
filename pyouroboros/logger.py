@@ -27,13 +27,13 @@ class BlacklistFilter(Filter):
 
 
 class OuroborosLogger(object):
-    def __init__(self, level='info'):
+    def __init__(self, level='INFO'):
         # Create the Logger
         self.logger = getLogger()
         try:
             self.logger.setLevel(level.upper())
         except ValueError:
-            level = "info"
+            level = "INFO"
             self.logger.setLevel(level.upper())
 
         # Create a Formatter for formatting the log messages
