@@ -31,10 +31,10 @@ class OuroborosLogger(object):
         # Create the Logger
         self.logger = getLogger()
         try:
-            self.logger.setLevel(level)
+            self.logger.setLevel(level.upper())
         except ValueError:
             level = "info"
-            self.logger.setLevel(level)
+            self.logger.setLevel(level.upper())
 
         # Create a Formatter for formatting the log messages
         logger_formatter = Formatter('%(asctime)s : %(levelname)s : %(module)s : %(message)s', '%Y-%m-%d %H:%M:%S')
@@ -43,7 +43,7 @@ class OuroborosLogger(object):
         console_logger = StreamHandler()
         console_logger.setFormatter(logger_formatter)
 
-        console_logger.setLevel(level)
+        console_logger.setLevel(level.upper())
 
         # Add the Handler to the Logger
         self.logger.addHandler(console_logger)
