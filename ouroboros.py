@@ -7,6 +7,7 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from pyouroboros.config import Config
 from pyouroboros.dockerclient import Docker
 from pyouroboros.logger import OuroborosLogger
+from pyouroboros.dataexporters import DataManager
 
 
 def main():
@@ -115,8 +116,10 @@ def main():
     config_dict = {key: value for key, value in vars(config).items() if key.upper() in config.options}
     ol.logger.debug("Ouroboros configuration: %s", config_dict)
 
+    data_manager = DataManager(self.config)
+
     for socket in config.docker_sockets:
-        docker = Docker(socket, config)
+        docker = Docker(socket, config, data_manager)
         schedule.every(config.interval).seconds.do(docker.update_containers).tag(f'update-containers-{socket}')
 
     schedule.run_all()

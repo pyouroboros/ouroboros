@@ -8,11 +8,11 @@ from pyouroboros.notifiers import NotificationManager
 
 
 class Docker(object):
-    def __init__(self, socket, config):
+    def __init__(self, socket, config, data_manager):
         self.config = config
         self.socket = socket
         self.client = DockerClient(base_url=socket)
-        self.data_manager = DataManager(self.config)
+        self.data_manager = data_manager
 
         self.logger = getLogger()
         self.monitored = self.monitor_filter()
@@ -24,8 +24,11 @@ class Docker(object):
         running_containers = []
         try:
             for container in self.client.containers.list(filters={'status': 'running'}):
-                if 'ouroboros' not in container.image.tags[0]:
-                    running_containers.append(container)
+                if not container.image.tags:
+                    self.logger.debug("%s has no image tags... not adding to monitored", container.name)
+                else:
+                    if 'ouroboros' not in container.image.tags[0]:
+                        running_containers.append(container)
 
         except DockerException:
             self.logger.critical("Can't connect to Docker API at %s", self.config.docker_socket)
