@@ -80,6 +80,12 @@ class Config(object):
                         setattr(self, option.lower(), opt)
                     except ValueError as e:
                         print(e)
+                elif option in ['LATEST', 'CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL']:
+                    if self.environment_vars[option].lower() == 'true':
+                        setattr(self, option.lower(), True)
+                    else:
+                        self.logger.error('%s is not a valid option for %s. setting to false',
+                                          self.environment_vars[option], option)
                 else:
                     setattr(self, option.lower(), self.environment_vars[option])
             elif vars(self.cli_args).get(option):
