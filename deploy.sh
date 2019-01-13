@@ -30,6 +30,6 @@ for i in $(ls *.rpi); do
 done
 
 # Git tags
-git remote set-url origin "https://${GITHUB_USER:${GITHUB_API_KEY}@github.com/${NAMESPACE}.git" && \
+git remote set-url origin "https://${GITHUB_USER}:${GITHUB_API_KEY}@github.com/${NAMESPACE}.git" && \
 git tag "${VERSION}" && \
 git push --tags
