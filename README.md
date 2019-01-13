@@ -20,8 +20,6 @@ A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
 - [Getting Started](#getting-started)
   - [Docker](#docker)
   - [Pip](#pip)
-  - [Timezone Configuration](#timezone-configuration)
-  - [Notifications](#notifications)
 - [Examples](#examples)
   - [Monitor for updates for original tag](#monitor-for-updates-for-original-tag)
   - [Update containers on a remote host](#update-containers-on-a-remote-host)
@@ -43,7 +41,7 @@ Ouroboros will monitor all running docker containers or those you specify and up
 
 ## Getting Started
 
-More detailed usage and configuration can be found on [the wiki]().
+More detailed usage and configuration can be found on [the wiki](https://github.com/pyouroboros/ouroboros/wiki).
 
 ### Docker
 
