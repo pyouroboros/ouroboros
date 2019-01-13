@@ -1,16 +1,16 @@
 from setuptools import setup, find_packages
 
-requirements = ['docker',
-                'schedule',
-                'prometheus_client',
-                'requests',
-                'influxdb']
+requirements = ['docker>=3.7.0',
+                'schedule>=0.5.0',
+                'prometheus_client>=0.5.0',
+                'requests>=2.21.0',
+                'influxdb>=5.2.1']
 
-requirements_dev = ['docker',
-                    'schedule',
-                    'prometheus_client',
-                    'influxdb',
-                    'requests',
+requirements_dev = ['docker>=3.7.0',
+                    'schedule>=0.5.0',
+                    'prometheus_client>=0.5.0',
+                    'requests>=2.21.0',
+                    'influxdb>=5.2.1',
                     'flake8']
 
 

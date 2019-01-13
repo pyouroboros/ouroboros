@@ -6,6 +6,7 @@ services:
 
 script:
   - flake8
+  - python3 ./ouroboros -i 1 -l debug --run-once
 
 deploy:
   - provider: pypi
