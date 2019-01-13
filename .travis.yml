@@ -5,13 +5,13 @@ services:
   - docker
 
 script:
-  - flake8
+  - pip install flake8 && flake8 *.py pyouroboros/
   - python3 ./ouroboros -i 1 -l debug --run-once
 
 deploy:
   - provider: pypi
     user: circa10a
-    password: $pypi_password
+    password: $PYPI_PASSWORD
     skip_existing: true
     on:
       branch: master

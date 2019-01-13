@@ -2,11 +2,12 @@
 VERSION=$(grep -i version ./setup.py | awk -F= '{gsub("\047",""); gsub(",",""); print $2}')
 
 # Docker
-USER='pyouroboros'
+GITHUB_USER='pyouroboros-bot'
+DOCKER_USER='pyouroborosbot'
 PROJECT='ouroboros'
-NAMESPACE=${USER}/${PROJECT}
+NAMESPACE="pyouroboros/${PROJECT}"
 # Auth
-echo $docker_password | docker login -u=$USER --password-stdin
+echo $DOCKER_PASSWORD | docker login -u="$DOCKER_USER" --password-stdin
 
 # Latest x86
 docker build -t $NAMESPACE:latest . && \
@@ -19,16 +20,16 @@ docker push $NAMESPACE:$VERSION
 docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
 for i in $(ls *.rpi); do
-  arch="$(echo ${i} | cut -d- -f2 | cut -d. -f1)"
+  ARCH="$(echo ${i} | cut -d- -f2 | cut -d. -f1)"
   # Latest
-  docker build -f "./Dockerfile-${arch}.rpi" -t "$NAMESPACE:latest-${arch}-rpi" . && \
-  docker push "$NAMESPACE:latest-${arch}-rpi" && \
+  docker build -f "./Dockerfile-${ARCH}.rpi" -t "${NAMESPACE}:latest-${ARCH}-rpi" . && \
+  docker push "${NAMESPACE}:latest-${ARCH}-rpi" && \
   # Versioned
-  docker tag "$NAMESPACE:latest-${arch}-rpi" "$NAMESPACE:${VERSION}-${arch}-rpi" && \
-  docker push "$NAMESPACE:${VERSION}-${arch}-rpi"
+  docker tag "${NAMESPACE}:latest-${ARCH}-rpi" "${NAMESPACE}:${VERSION}-${ARCH}-rpi" && \
+  docker push "${NAMESPACE}:${VERSION}-${ARCH}-rpi"
 done
 
 # Git tags
-git remote set-url origin "https://${USER}:${github_api_key}@github.com/${USER}/${PROJECT}.git" && \
-git tag "$VERSION" && \
+git remote set-url origin "https://${GITHUB_USER:${GITHUB_API_KEY}@github.com/${NAMESPACE}.git" && \
+git tag "${VERSION}" && \
 git push --tags
