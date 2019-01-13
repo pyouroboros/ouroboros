@@ -48,11 +48,11 @@ def main():
                               help='Check for latest image instead of pulling current tag')
 
     docker_group.add_argument('-r', '--repo-user', default=None, dest='REPO_USER',
-                              help='Private docker repository username\n'
+                              help='Private docker registry username\n'
                                    'EXAMPLE: foo@bar.baz')
 
     docker_group.add_argument('-R', '--repo-pass', default=None, dest='REPO_PASS',
-                              help='Private docker repository password\n'
+                              help='Private docker registry password\n'
                                    'EXAMPLE: MyPa$$w0rd')
 
     data_group = parser.add_argument_group('Data Export', 'Configuration of data export functionality')
