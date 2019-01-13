@@ -5,11 +5,7 @@ services:
   - docker
 
 script:
-  - ./run_tests.sh
   - flake8
-
-after_script:
-  - codecov
 
 deploy:
   - provider: pypi
