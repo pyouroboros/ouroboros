@@ -7,4 +7,4 @@ WORKDIR /app
 RUN apk add --no-cache tzdata && \
     pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT ["python3", "ouroboros.py"]
+ENTRYPOINT ["ouroboros"]
