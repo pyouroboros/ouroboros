@@ -5,11 +5,8 @@ services:
   - docker
 
 script:
-  - ./run_tests.sh
   - flake8
-
-after_script:
-  - codecov
+  - python3 ./ouroboros -i 1 -l debug --run-once
 
 deploy:
   - provider: pypi

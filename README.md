@@ -1,7 +1,6 @@
 ![alt text](https://i.imgur.com/kYbI9Hi.png)
 
 [![Travis](https://img.shields.io/travis/pyouroboros/ouroboros/master.svg?style=flat-square)](https://travis-ci.org/pyouroboros/ouroboros)
-[![Codecov](https://img.shields.io/codecov/c/github/pyouroboros/ouroboros.svg?style=flat-square)](https://codecov.io/gh/pyouroboros/ouroboros)
 [![Docker Pulls](https://img.shields.io/docker/pulls/pyouroboros/ouroboros.svg?style=flat-square)](https://hub.docker.com/r/pyouroboros/ouroboros/)
 [![Layers](https://images.microbadger.com/badges/image/pyouroboros/ouroboros.svg)](https://microbadger.com/images/pyouroboros/ouroboros)
 [![Image Version](https://images.microbadger.com/badges/version/pyouroboros/ouroboros.svg)](https://hub.docker.com/r/pyouroboros/ouroboros/)
@@ -34,7 +33,6 @@ A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
   - [Remove old docker images](#remove-old-docker-images)
   - [Webhook Notifications](#webhook-notifications)
 - [Prometheus metrics](#prometheus-metrics)
-- [Execute Tests](#execute-tests)
 - [Contributing](#contributing)
 
 ## Overview
@@ -46,7 +44,6 @@ Ouroboros will monitor all running docker containers or those you specify and up
 - `ssh -i key server.domainname "docker pull ... && docker run ..."` is for scrubs
 
 ## Usage
-![alt text](https://thumbs.gfycat.com/SerpentineExhaustedHind-size_restricted.gif)
 
 ### Docker
 
@@ -378,28 +375,6 @@ See [notifications](#notifications)
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
   pyouroboros/ouroboros --webhook-urls http://my-webhook-1 https://my-webhook-2
-```
-
-## Execute Tests
-
-> Script will install dependencies from `requirements-dev.txt`
-
-All tests:
-
-```bash
-./run_tests.sh
-```
-
-Unit tests:
-
-```bash
-./run_tests.sh unit
-```
-
-Integration tests:
-
-```bash
-./run_tests.sh integration
 ```
 
 ## Contributing
