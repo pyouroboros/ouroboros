@@ -96,11 +96,16 @@ class Docker(object):
                 continue
 
             # If current running container is running latest image
-            if current_image.id != latest_image.id:
-                updated_container_tuples.append(
-                    (container, current_image, latest_image)
-                )
-                self.logger.info('%s will be updated', container.name)
+            # Try needed if image was built locally and results in 404 error
+            try:
+                if current_image.id != latest_image.id:
+                    updated_container_tuples.append(
+                        (container, current_image, latest_image)
+                    )
+                    self.logger.info('%s will be updated', container.name)
+            except Exception as e:
+                self.logger.error(e)
+                continue
 
                 # new container dict to create new container from
                 new_config = set_properties(old=container, new=latest_image)
