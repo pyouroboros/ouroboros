@@ -109,7 +109,7 @@ def main():
                                     help='Device to receive pushover notification\n'
                                          'EXAMPLE: -Y SamsungGalaxyS8')
 
-    notification_group.add_argument('-y', '--pushover-user', default=Config.pushover_user, dest='PUSHOVER_USER',
+    notification_group.add_argument('-z', '--pushover-user', default=Config.pushover_user, dest='PUSHOVER_USER',
                                     help='Pushover user bound to application\n'
                                          'EXAMPLE: -y johndoe123')
 
