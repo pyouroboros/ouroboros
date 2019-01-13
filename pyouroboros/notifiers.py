@@ -12,14 +12,24 @@ class NotificationManager(object):
         self.logger = getLogger()
 
     def send(self, container_tuples, socket):
+        formatted_webhooks = []
         if self.config.webhook_urls:
-            formatted_json = self.format(container_tuples, socket)
-            self.post(formatted_json)
+            for webhook_url in self.config.webhook_urls:
+                if 'discord' in webhook_url:
+                    format_type = 'discord'
+                elif 'slack' in webhook_url:
+                    format_type = 'slack'
+                else:
+                    format_type = 'default'
 
-    def format(self, container_tuples, socket):
+                formatted_webhooks.append((webhook_url, self.format(container_tuples, socket, format_type)))
+
+            self.post(formatted_webhooks)
+
+    def format(self, container_tuples, socket, format_type):
         clean_socket = socket.split("//")[1]
         now = str(datetime.now(timezone.utc)).replace(" ", "T")
-        if self.config.webhook_type == 'slack':
+        if format_type in ['slack', 'default']:
             text = "Host Socket: {}\n".format(clean_socket)
             text += "Containers Monitored: {}\n".format(self.data_manager.monitored_containers[socket])
             text += "Containers Updated: {}\n".format(self.data_manager.total_updated[socket])
@@ -33,7 +43,7 @@ class NotificationManager(object):
             json = {"text": text}
             return json
 
-        elif self.config.webhook_type == 'discord':
+        elif format_type == 'discord':
             json = {
                 "embeds": [
                     {
@@ -76,9 +86,9 @@ class NotificationManager(object):
                 )
             return json
 
-    def post(self, json):
+    def post(self, webhook_tuples):
         """POST webhook for notifications"""
-        for url in self.config.webhook_urls:
+        for url, json in webhook_tuples:
             try:
                 headers = {'Content-Type': 'application/json', 'user-agent': 'ouroboros'}
                 p = requests.post(url, json=json, headers=headers)
