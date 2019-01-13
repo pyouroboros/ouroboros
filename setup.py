@@ -27,10 +27,12 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/pyouroboros/ouroboros',
     license='MIT',
-    classifiers=['Programming Language :: Python'],
+    classifiers=['Programming Language :: Python',
+                 'Programming Language :: Python :: 3.6',
+                 'Programming Language :: Python :: 3.7'],
     packages=find_packages(exclude=['doc', 'tests']),
     scripts=['ouroboros'],
     install_requires=requirements,
     tests_require=requirements_dev,
-    python_requires='>=3.0'
+    python_requires='>=3.6.2'
 )
