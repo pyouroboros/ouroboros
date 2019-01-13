@@ -5,15 +5,13 @@ from pyouroboros.logger import BlacklistFilter
 class Config(object):
     options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKETS', 'MONITOR', 'IGNORE', 'LOG_LEVEL', 'PROMETHEUS_ADDR',
                'PROMETHEUS_PORT', 'WEBHOOK_URLS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'LATEST',
-               'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE',
-               'INFLUX_SSL', 'INFLUX_VERIFY_SSL', 'DATA_EXPORT']
+               'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
+               'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'PUSHOVER_TOKEN', 'PUSHOVER_USER', 'PUSHOVER_DEVICE']
 
     interval = 300
     docker_sockets = 'unix://var/run/docker.sock'
     monitor = []
     ignore = []
-    webhook_urls = []
-    webhook_type = 'slack'
     data_export = None
     log_level = 'info'
     latest = False
@@ -35,6 +33,12 @@ class Config(object):
     influx_username = 'root'
     influx_password = 'root'
     influx_database = None
+
+    webhook_urls = []
+
+    pushover_token = None
+    pushover_user = None
+    pushover_device = None
 
     def __init__(self, environment_vars, cli_args):
         self.cli_args = cli_args
@@ -92,5 +96,17 @@ class Config(object):
             if isinstance(getattr(self, option), str):
                 string_list = getattr(self, option)
                 setattr(self, option, [string.strip(' ') for string in string_list.split(' ')])
+
+        # Config sanity checks
+        if self.data_export == 'influxdb' and not self.influx_database:
+            self.logger.error("You need to specify an influx database if you want to export to influxdb. Disabling "
+                              "influxdb data export.")
+
+        pushover_config = [self.pushover_token, self.pushover_device, self.pushover_user]
+        if any(pushover_config) and not all(pushover_config):
+            self.logger.error('You must specify a pushover user, token, and device to use pushover. Disabling '
+                              'pushover notifications')
+        elif all(pushover_config):
+            self.webhook_urls.append('https://api.pushover.net/1/messages.json')
 
         self.config_blacklist()

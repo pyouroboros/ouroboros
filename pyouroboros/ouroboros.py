@@ -96,19 +96,24 @@ def main():
     data_group.add_argument('-V', '--influx-verify-ssl', default=False, dest='INFLUX_VERIFY_SSL', action='store_true',
                             help='Verify SSL certificate when connecting to influxdb')
 
-    data_group.add_argument('-w', '--webhook-urls', nargs='+', default=Config.webhook_urls, dest='WEBHOOK_URLS',
-                            help='Webhook POST urls\n'
-                                 'EXAMPLE: -w https://domain.tld/1234/asdf http://123.123.123.123:4040/re235')
+    notification_group = parser.add_argument_group('Notifications', 'Configuration of notification functionality')
+    notification_group.add_argument('-w', '--webhook-urls', nargs='+', default=Config.webhook_urls, dest='WEBHOOK_URLS',
+                                    help='Webhook POST urls\n'
+                                         'EXAMPLE: -w https://domain.tld/1234/asdf http://123.123.123.123:4040/re235')
+
+    notification_group.add_argument('-y', '--pushover-token', default=Config.pushover_token, dest='PUSHOVER_TOKEN',
+                                    help='Pushover token to authenticate against application\n'
+                                         'EXAMPLE: -y af2r52352asd')
+
+    notification_group.add_argument('-Y', '--pushover-device', default=Config.pushover_device, dest='PUSHOVER_DEVICE',
+                                    help='Device to receive pushover notification\n'
+                                         'EXAMPLE: -Y SamsungGalaxyS8')
+
+    notification_group.add_argument('-y', '--pushover-user', default=Config.pushover_user, dest='PUSHOVER_USER',
+                                    help='Pushover user bound to application\n'
+                                         'EXAMPLE: -y johndoe123')
 
     args = parser.parse_args()
-
-    if environ.get('DATA_EXPORT'):
-        data_export = environ['DATA_EXPORT']
-    else:
-        data_export = args.DATA_EXPORT
-
-    if data_export == 'influxdb' and not (environ.get('INFLUX_DATABASE') or args.INFLUX_DATABASE):
-        exit("You need to specify an influx database if you want to export to influxdb")
 
     if environ.get('LOG_LEVEL'):
         log_level = environ.get('LOG_LEVEL')

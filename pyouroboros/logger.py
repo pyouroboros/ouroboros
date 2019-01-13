@@ -6,8 +6,9 @@ class BlacklistFilter(Filter):
     Log filter for blacklisted tokens and passwords
     """
 
-    blacklisted_keys = ['repo_user', 'repo_pass', 'auth_json', 'webhook_urls', 'docker_sockets',
-                        'prometheus_exporter_addr', 'influx_username', 'influx_password', 'influx_url']
+    blacklisted_keys = ['repo_user', 'repo_pass', 'auth_json', 'webhook_urls', 'docker_sockets', 'pushover_user',
+                        'prometheus_addr', 'influx_username', 'influx_password', 'influx_url', 'pushover_token',
+                        'pushover_device']
 
     def __init__(self, filteredstrings):
         super().__init__()
