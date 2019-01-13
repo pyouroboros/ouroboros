@@ -1,7 +1,7 @@
 import requests
 
 from email.message import EmailMessage
-from smtplib import SMTP, SMTPConnectError, SMTPAuthenticationError
+from smtplib import SMTP, SMTPConnectError, SMTPAuthenticationError, SMTPServerDisconnected
 from logging import getLogger
 from datetime import datetime, timezone
 from requests.exceptions import RequestException
@@ -32,9 +32,12 @@ class Email(object):
         self.data_manager = data_manager
 
         self.logger = getLogger()
-        self.server = self.initialize()
+        if self.config.smtp_host:
+            self.server = True
+        else:
+            self.server = False
 
-    def initialize(self):
+    def get_server(self):
         try:
             server = SMTP(
                 host=self.config.smtp_host,
@@ -75,7 +78,13 @@ class Email(object):
                 CONTAINER_UPDATES=container_updates)
 
             msg.set_content(template)
-            self.server.send_message(msg)
+            server = self.get_server()
+            server.set_debuglevel(1)
+            try:
+                server.send_message(msg)
+            except SMTPServerDisconnected as e:
+                self.server = False
+                self.logger.error('Could not properly talk to SMTP server. Disabling SMTP. Error: %s', e)
 
 
 class Webhooks(object):
