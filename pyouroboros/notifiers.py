@@ -25,6 +25,8 @@ class NotificationManager(object):
                         format_type = 'slack'
                     elif 'pushover' in webhook_url:
                         format_type = 'pushover'
+                    elif 'hc-ping' in webhook_url:
+                        continue
                     else:
                         format_type = 'default'
 
