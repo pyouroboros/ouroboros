@@ -87,6 +87,7 @@ services:
 ```
 
 ### Pip
+
 Ouroboros can also be installed via `pip`:
 
 ```bash
@@ -100,29 +101,6 @@ $ ouroboros --interval 5 --loglevel debug
 ```
 
 > This can be useful if you would like to create a `systemd` service or similar daemon that doesn't run in a container
-
-
-### Timezone Configuration
-
-To more closely monitor ouroboros' actions and for accurate log ingestion, you can change the timezone of the container from UTC by setting the [`TZ`](http://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html) environment variable like so:
-
-```
-docker run -d --name ouroboros \
-  -e TZ=America/Chicago \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  pyouroboros/ouroboros
-  ```
-
-## Notifications
-
-### Webhooks
-
-Ourboros has the ability to trigger multiple webhooks for slack integration or other automation. Detailed request information can be seen by [enabling the debug loglevel](#change-loglevel). If the appropriate [args/environment variables](#options) are supplied, a POST request will be sent to specified URLs with a slack-compatible JSON payload like so:
-
-
-```
-{"text": "Container: alpine updated from sha256:34ea7509dcad10aa92310f2b41e3afbabed0811ee3a902d6d49cb90f075fe444 to sha256:3f53bb00af943dfdf815650be70c0fa7b426e56a66f5e3362b47a129d57d5991"}
-```
 
 ## Examples
 
