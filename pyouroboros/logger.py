@@ -8,7 +8,8 @@ class BlacklistFilter(Filter):
 
     blacklisted_keys = ['repo_user', 'repo_pass', 'auth_json', 'webhook_urls', 'docker_sockets', 'pushover_user',
                         'prometheus_addr', 'influx_username', 'influx_password', 'influx_url', 'pushover_token',
-                        'pushover_device']
+                        'pushover_device', 'smtp_host', 'smtp_username', 'smtp_password', 'smtp_recipients',
+                        'smtp_from_email']
 
     def __init__(self, filteredstrings):
         super().__init__()
