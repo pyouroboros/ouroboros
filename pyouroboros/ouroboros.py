@@ -100,10 +100,6 @@ def main():
                             help='Webhook POST urls\n'
                                  'EXAMPLE: -w https://domain.tld/1234/asdf http://123.123.123.123:4040/re235')
 
-    data_group.add_argument('-T', '--webhook-type', choices=['slack', 'discord'], default=Config.webhook_type,
-                            dest='WEBHOOK_TYPE', help='Webhook POST urls\n'
-                                                      'DEFAULT: slack')
-
     args = parser.parse_args()
 
     if environ.get('DATA_EXPORT'):
