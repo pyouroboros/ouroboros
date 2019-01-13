@@ -11,18 +11,24 @@ class NotificationManager(object):
         self.data_manager = data_manager
         self.logger = getLogger()
 
-    def send(self, container_tuples, socket):
+    def send(self, container_tuples=None, socket=None, notification_type='data'):
         formatted_webhooks = []
         if self.config.webhook_urls:
             for webhook_url in self.config.webhook_urls:
-                if 'discord' in webhook_url:
-                    format_type = 'discord'
-                elif 'slack' in webhook_url:
-                    format_type = 'slack'
+                if notification_type == "keep_alive":
+                    if "hc-ping" in webhook_url:
+                        formatted_webhooks.append((webhook_url, {}))
                 else:
-                    format_type = 'default'
+                    if 'discord' in webhook_url:
+                        format_type = 'discord'
+                    elif 'slack' in webhook_url:
+                        format_type = 'slack'
+                    elif 'hc-ping' in webhook_url:
+                        continue
+                    else:
+                        format_type = 'default'
 
-                formatted_webhooks.append((webhook_url, self.format(container_tuples, socket, format_type)))
+                    formatted_webhooks.append((webhook_url, self.format(container_tuples, socket, format_type)))
 
             self.post(formatted_webhooks)
 
