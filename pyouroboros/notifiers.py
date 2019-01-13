@@ -23,6 +23,8 @@ class NotificationManager(object):
                         format_type = 'discord'
                     elif 'slack' in webhook_url:
                         format_type = 'slack'
+                    elif 'pushover' in webhook_url:
+                        format_type = 'pushover'
                     elif 'hc-ping' in webhook_url:
                         continue
                     else:
@@ -35,7 +37,7 @@ class NotificationManager(object):
     def format(self, container_tuples, socket, format_type):
         clean_socket = socket.split("//")[1]
         now = str(datetime.now(timezone.utc)).replace(" ", "T")
-        if format_type in ['slack', 'default']:
+        if format_type in ['slack', 'default', 'pushover']:
             text = "Host Socket: {}\n".format(clean_socket)
             text += "Containers Monitored: {}\n".format(self.data_manager.monitored_containers[socket])
             text += "Containers Updated: {}\n".format(self.data_manager.total_updated[socket])
@@ -46,7 +48,17 @@ class NotificationManager(object):
                     new_image.short_id.split(":")[1]
                 )
             text += now
-            json = {"text": text}
+            if format_type == 'pushover':
+                json = {
+                    "html": 1,
+                    "token": self.config.pushover_token,
+                    "user": self.config.pushover_user,
+                    "device": self.config.pushover_device,
+                    "title": "Ouroboros updated containers:",
+                    "message": text
+                }
+            else:
+                json = {"text": text}
             return json
 
         elif format_type == 'discord':
