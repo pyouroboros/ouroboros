@@ -1,7 +1,7 @@
 import requests
 
 from email.message import EmailMessage
-from smtplib import SMTP, SMTPConnectError, SMTPAuthenticationError, SMTPServerDisconnected
+from smtplib import SMTP, SMTPConnectError, SMTPAuthenticationError, SMTPServerDisconnected, SMTPException
 from logging import getLogger
 from datetime import datetime, timezone
 from requests.exceptions import RequestException
@@ -85,6 +85,9 @@ class Email(object):
             except SMTPServerDisconnected as e:
                 self.server = False
                 self.logger.error('Could not properly talk to SMTP server. Disabling SMTP. Error: %s', e)
+            except SMTPException as e:
+                self.server = False
+                self.logger.error('SMTP Error: %s', e)
 
 
 class Webhooks(object):
