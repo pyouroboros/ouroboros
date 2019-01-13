@@ -1,7 +1,6 @@
 ![alt text](https://i.imgur.com/kYbI9Hi.png)
 
 [![Travis](https://img.shields.io/travis/pyouroboros/ouroboros/master.svg?style=flat-square)](https://travis-ci.org/pyouroboros/ouroboros)
-[![Codecov](https://img.shields.io/codecov/c/github/pyouroboros/ouroboros.svg?style=flat-square)](https://codecov.io/gh/pyouroboros/ouroboros)
 [![Docker Pulls](https://img.shields.io/docker/pulls/pyouroboros/ouroboros.svg?style=flat-square)](https://hub.docker.com/r/pyouroboros/ouroboros/)
 [![Layers](https://images.microbadger.com/badges/image/pyouroboros/ouroboros.svg)](https://microbadger.com/images/pyouroboros/ouroboros)
 [![Image Version](https://images.microbadger.com/badges/version/pyouroboros/ouroboros.svg)](https://hub.docker.com/r/pyouroboros/ouroboros/)
