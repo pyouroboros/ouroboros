@@ -10,7 +10,7 @@ script:
 
 deploy:
   - provider: pypi
-    user: circa10a
+    user: pyouroboros
     password: $PYPI_PASSWORD
     skip_existing: true
     on:
