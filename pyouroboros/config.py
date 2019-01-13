@@ -126,4 +126,10 @@ class Config(object):
         elif all(pushover_config):
             self.webhook_urls.append('https://api.pushover.net/1/messages.json')
 
+        email_config = [self.smtp_host, self.smtp_recipients, self.smtp_from_email]
+        if any(email_config) and not all(email_config):
+            self.logger.error('To use email notifications, you need to specify at least smtp host/recipients/from '
+                              'email. Disabling email notifications')
+            self.smtp_host = None
+
         self.config_blacklist()
