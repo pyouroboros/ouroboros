@@ -132,4 +132,7 @@ class Docker(object):
                 self.data_manager.add(label='all', socket=self.socket)
 
         if updated_count > 0:
-            self.notification_manager.send(container_tuples=updated_container_tuples, socket=self.socket)
+            self.notification_manager.send(container_tuples=updated_container_tuples, socket=self.socket,
+                                           notification_type='data')
+
+        self.notification_manager.send(notification_type='keep_alive')
