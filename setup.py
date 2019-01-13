@@ -29,7 +29,7 @@ setup(
     license='MIT',
     classifiers=['Programming Language :: Python'],
     packages=find_packages(exclude=['doc', 'tests']),
-    scripts=['ouroboros', 'ouroboros.py'],
+    scripts=['ouroboros'],
     install_requires=requirements,
     tests_require=requirements_dev,
     python_requires='>=3.0'

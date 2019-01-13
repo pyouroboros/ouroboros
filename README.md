@@ -34,7 +34,6 @@ A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
   - [Remove old docker images](#remove-old-docker-images)
   - [Webhook Notifications](#webhook-notifications)
 - [Prometheus metrics](#prometheus-metrics)
-- [Execute Tests](#execute-tests)
 - [Contributing](#contributing)
 
 ## Overview
@@ -378,28 +377,6 @@ See [notifications](#notifications)
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
   pyouroboros/ouroboros --webhook-urls http://my-webhook-1 https://my-webhook-2
-```
-
-## Execute Tests
-
-> Script will install dependencies from `requirements-dev.txt`
-
-All tests:
-
-```bash
-./run_tests.sh
-```
-
-Unit tests:
-
-```bash
-./run_tests.sh unit
-```
-
-Integration tests:
-
-```bash
-./run_tests.sh integration
 ```
 
 ## Contributing
