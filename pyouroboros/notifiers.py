@@ -30,7 +30,7 @@ class NotificationManager(object):
                     else:
                         format_type = 'default'
 
-                formatted_webhooks.append((webhook_url, self.format(container_tuples, socket, format_type)))
+                    formatted_webhooks.append((webhook_url, self.format(container_tuples, socket, format_type)))
 
             self.post(formatted_webhooks)
 
