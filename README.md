@@ -15,13 +15,9 @@ A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
 
 - [Overview](#overview)
 - [Changelog](doc/CHANGELOG.md)
-- [Usage](#usage)
+- [Getting Started](#getting-started)
   - [Docker](#docker)
   - [Pip](#pip)
-  - [Options](#options)
-  - [Config File](#config-file)
-  - [Private Registries](#private-registries)
-  - [Scheduling](#scheduling)
   - [Timezone Configuration](#timezone-configuration)
   - [Notifications](#notifications)
 - [Examples](#examples)
@@ -37,13 +33,15 @@ A python-based alternative to [watchtower](https://github.com/v2tec/watchtower)
 
 ## Overview
 
-Ouroboros will monitor all running docker containers or those you specify and update said containers to the latest available image in the remote registry using the `latest` tag with the same parameters that were used when the container was first created such as volume/bind mounts, docker network connections, environment variables, restart policies, entrypoints, commands, etc. While ouroboros updates images to `latest` by default, that can be [overridden](#Options) to only monitor updates of a specific tag. Similar to [watchtower](https://github.com/v2tec/watchtower).
+Ouroboros will monitor all running docker containers or those you specify and update said containers to the latest available image in the remote registry using the same tag and parameters that were used when the container was first created such as volume/bind mounts, docker network connections, environment variables, restart policies, entrypoints, commands, etc.
 
 - Push your image to your registry and simply wait a couple of minutes for ouroboros to find the new image and redeploy your container autonomously.
 - Limit your server ssh access
 - `ssh -i key server.domainname "docker pull ... && docker run ..."` is for scrubs
 
-## Usage
+## Getting Started
+
+More detailed usage and configuration can be found on [the wiki]().
 
 ### Docker
 
@@ -101,114 +99,6 @@ $ ouroboros --interval 5 --loglevel debug
 
 > This can be useful if you would like to create a `systemd` service or similar daemon that doesn't run in a container
 
-### Options
-
-> All arguments can be ran together without confliction
-
-> All arguments can be supplemented with environment variables, but command line arguments will take priority
-
-```
-docker run --rm pyouroboros/ouroboros --help
-```
-
-- `--url`, `-u` Monitor and update containers on a remote system by providing the `url` argument.
-  - Default is `unix://var/run/docker.sock`.
-  - Environment variable: `URL=tcp://localhost:2375`.
-- `--interval`, `-i` Change how often ouroboros checks the remote docker registry for image updates (in seconds).
-  - Default is `300`.
-  - Environment variable: `INTERVAL=60`.
-- `--monitor`, `-m` Only monitor select containers which supports an infinite amount of container names.
-  - Default is all containers.
-  - Environment variable: `MONITOR=container_1`
-- `--ignore`, `-n` Ignore the listed container names.
-  - Default is none.
-  - Environment variable: `IGNORE=container_1`
-  - If a container name is specified to monitor and ignore, ignore takes precedent.
-- `--loglevel`, `-l` The amount of logging details can be supressed or increased.
-  - Default is `info`.
-  - Environment variable: `LOGLEVEL=debug`.
-- `--runonce`, `-r` Update all your running containers in one go and terminate ouroboros.
-  - Default is `False`.
-  - Environment variable: `RUNONCE=true`.
-- `--cleanup`, `-c` Remove the older docker image if a new one is found and updated.
-  - Default is `False`.
-  - Environment variable: `CLEANUP=true`
-- `--keep-tag`, `-k` Only monitor if updates are made to the tag of the image that the container was created with instead of using `latest`. This will enable [watchtower](https://github.com/v2tec/watchtower)-like functionality.
-  - Default is `False`.
-  - Environment variable: `KEEPTAG=true`
-- `--metrics-addr` What address for the prometheus endpoint to bind to. This arg is best suited for `ouroboros-cli`.
-  - Default is `0.0.0.0`.
-  - Environment variable: `METRICS_ADDR=0.0.0.0`
-- `--metrics-port` What port to run prometheus endpoint on. Running on port `8000` by default if `--metrics-port` is not supplied.
-  - Default is `8000`.
-  - Environment variable: `METRICS_PORT=8000`
-- `-w, --webhook-urls` What URLs for ouroboros to POST when a container is updated.
-  - Default is `None`.
-  - Environment variable: `WEBHOOK_URLS=http://my-webhook-1`
-
-### Config File
-
-You can provide a [docker env file](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file) to supplement a config file with all the above listed arguments by utilizing the supported environment variables.
-
-```bash
-docker run -d --name ouroboros \
-  --env-file env.list \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  pyouroboros/ouroboros
-```
-
-**Sample env.list**
-
-```
-URL=tcp://localhost:2375
-INTERVAL=60
-KEEPTAG=true
-MONITOR='["container_1", "container_2"]'
-```
-### Private Registries
-
-If your running containers' docker images are stored in a secure registry that requires a username and password, simply run ouroboros with 2 environment variables(`REPO_USER` and `REPO_PASS`).
-
-```bash
-docker run -d --name ouroboros \
-  -e REPO_USER=myUser -e REPO_PASS=myPassword \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  pyouroboros/ouroboros
-```
-
-You can alternatively bind mount `~/.docker/config.json` which won't require the above environment variables.
-
-```bash
-docker run -d --name ouroboros \
-  -v $HOME/.docker/config.json:/root/.docker/config.json \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  pyouroboros/ouroboros
-```
-### Scheduling
-
-Ouroboros does not have a native scheduling implementation other than using `--interval`. This is due to there being more robust/customizable job schedulers being available such as:
-
-- Cron
-  - [Cron Tutorial](https://www.ostechnix.com/a-beginners-guide-to-cron-jobs/)
-  - [Cron Expression Creator](https://crontab.guru/)
-- Systemd Timers
-  - [Documentation](https://wiki.archlinux.org/index.php/Systemd/Timers)
-
-Example using ouroboros to update containers every Monday at 5AM:
-
-**Docker**
-
-```bash
-* 5 * * 1 docker run --rm -d --name ouroboros -v /var/run/docker.sock:/var/run/docker.sock pyouroboros/ouroboros --interval 1 --runonce
-```
-
-**Pip installed CLI**
-
-```bash
-* 5 * * 1 ouroboros --interval 1 --runonce
-```
-
-Using the [`--runonce`](#update-all-containers-and-quit-ouroboros) arg tells ouroboros to make one pass updating all/specified containers and then exit.
 
 ### Timezone Configuration
 
