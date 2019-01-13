@@ -71,6 +71,7 @@ class Docker(object):
             self.logger.critical(e)
             if '<html>' in str(e):
                 self.logger.debug("Docker api issue. Ignoring")
+                raise ConnectionError
             elif 'unauthorized' in str(e):
                 self.logger.critical("Invalid Credentials. Exiting")
                 exit(1)
