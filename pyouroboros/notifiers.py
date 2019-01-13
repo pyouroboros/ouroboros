@@ -15,7 +15,10 @@ class NotificationManager(object):
         formatted_webhooks = []
         if self.config.webhook_urls:
             for webhook_url in self.config.webhook_urls:
-                if notification_type == "data":
+                if notification_type == "keep_alive":
+                    if "hc-ping" in webhook_url:
+                        formatted_webhooks.append((webhook_url, {}))
+                else:
                     if 'discord' in webhook_url:
                         format_type = 'discord'
                     elif 'slack' in webhook_url:
@@ -26,10 +29,6 @@ class NotificationManager(object):
                         format_type = 'default'
 
                     formatted_webhooks.append((webhook_url, self.format(container_tuples, socket, format_type)))
-
-                elif notification_type == "keep_alive":
-                    if 'hc-ping' in webhook_url:
-                        formatted_webhooks.append((webhook_url, {}))
 
             self.post(formatted_webhooks)
 
