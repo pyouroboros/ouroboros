@@ -77,6 +77,9 @@ class Docker(object):
             elif 'Client.Timeout' in str(e):
                 self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", image.tags[0])
                 raise ConnectionError
+            elif 'pull access' in str(e):
+                self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
+                raise ConnectionError
 
     def update_containers(self):
         updated_count = 0
@@ -96,16 +99,11 @@ class Docker(object):
                 continue
 
             # If current running container is running latest image
-            # Try needed if image was built locally and results in 404 error
-            try:
-                if current_image.id != latest_image.id:
-                    updated_container_tuples.append(
-                        (container, current_image, latest_image)
-                    )
-                    self.logger.info('%s will be updated', container.name)
-            except Exception as e:
-                self.logger.error(e)
-                continue
+            if current_image.id != latest_image.id:
+                updated_container_tuples.append(
+                    (container, current_image, latest_image)
+                )
+                self.logger.info('%s will be updated', container.name)
 
                 # new container dict to create new container from
                 new_config = set_properties(old=container, new=latest_image)
