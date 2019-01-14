@@ -9,6 +9,7 @@ from pyouroboros.dockerclient import Docker
 from pyouroboros.logger import OuroborosLogger
 from pyouroboros.dataexporters import DataManager
 from pyouroboros.notifiers import NotificationManager
+from pyouroboros.__init__ import VERSION
 
 
 def main():
@@ -17,6 +18,8 @@ def main():
                             epilog='EXAMPLE: ouroboros -d tcp://1.2.3.4:5678 -i 20 -m container1 container2 -l warn')
 
     core_group = parser.add_argument_group("Core", "Configuration of core functionality")
+    core_group.add_argument('-v', '--version', action='version', version=VERSION)
+
     core_group.add_argument('-d', '--docker-sockets', nargs='+', default=Config.docker_sockets, dest='DOCKER_SOCKETS',
                             help='Sockets for docker management\n'
                                  'DEFAULT: "unix://var/run/docker.sock"\n'
