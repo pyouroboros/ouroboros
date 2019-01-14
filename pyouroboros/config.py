@@ -109,7 +109,7 @@ class Config(object):
         if self.interval < 30:
             self.interval = 30
 
-        for option in ['docker_sockets', 'webhook_urls']:
+        for option in ['docker_sockets', 'webhook_urls', 'smtp_recipients']:
             if isinstance(getattr(self, option), str):
                 string_list = getattr(self, option)
                 setattr(self, option, [string.strip(' ') for string in string_list.split(' ')])
