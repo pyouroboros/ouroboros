@@ -79,7 +79,6 @@ class Email(object):
 
             msg.set_content(template)
             server = self.get_server()
-            server.set_debuglevel(1)
             try:
                 server.send_message(msg)
             except SMTPServerDisconnected as e:
