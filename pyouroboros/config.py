@@ -6,7 +6,9 @@ class Config(object):
     options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKETS', 'MONITOR', 'IGNORE', 'LOG_LEVEL', 'PROMETHEUS_ADDR',
                'PROMETHEUS_PORT', 'WEBHOOK_URLS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'LATEST',
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
-               'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'PUSHOVER_TOKEN', 'PUSHOVER_USER', 'PUSHOVER_DEVICE']
+               'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'PUSHOVER_TOKEN', 'PUSHOVER_USER', 'PUSHOVER_DEVICE', 'SMTP_HOST',
+               'SMTP_PORT', 'SMTP_STARTTLS', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'SMTP_RECIPIENTS', 'SMTP_FROM_EMAIL',
+               'SMTP_FROM_NAME']
 
     interval = 300
     docker_sockets = 'unix://var/run/docker.sock'
@@ -39,6 +41,15 @@ class Config(object):
     pushover_token = None
     pushover_user = None
     pushover_device = None
+
+    smtp_host = None
+    smtp_port = 587
+    smtp_starttls = False
+    smtp_username = None
+    smtp_password = None
+    smtp_recipients = None
+    smtp_from_email = None
+    smtp_from_name = 'Ouroboros'
 
     def __init__(self, environment_vars, cli_args):
         self.cli_args = cli_args
@@ -74,13 +85,13 @@ class Config(object):
     def parse(self):
         for option in Config.options:
             if self.environment_vars.get(option):
-                if option in ['INTERVAL', 'PROMETHEUS_PORT', 'INFLUX_PORT']:
+                if option in ['INTERVAL', 'PROMETHEUS_PORT', 'INFLUX_PORT', 'SMTP_PORT']:
                     try:
                         opt = int(self.environment_vars[option])
                         setattr(self, option.lower(), opt)
                     except ValueError as e:
                         print(e)
-                elif option in ['LATEST', 'CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL']:
+                elif option in ['LATEST', 'CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL', 'SMTP_STARTTLS']:
                     if self.environment_vars[option].lower() == 'true':
                         setattr(self, option.lower(), True)
                     else:
@@ -98,7 +109,7 @@ class Config(object):
         if self.interval < 30:
             self.interval = 30
 
-        for option in ['docker_sockets', 'webhook_urls']:
+        for option in ['docker_sockets', 'webhook_urls', 'smtp_recipients']:
             if isinstance(getattr(self, option), str):
                 string_list = getattr(self, option)
                 setattr(self, option, [string.strip(' ') for string in string_list.split(' ')])
@@ -114,5 +125,11 @@ class Config(object):
                               'pushover notifications')
         elif all(pushover_config):
             self.webhook_urls.append('https://api.pushover.net/1/messages.json')
+
+        email_config = [self.smtp_host, self.smtp_recipients, self.smtp_from_email]
+        if any(email_config) and not all(email_config):
+            self.logger.error('To use email notifications, you need to specify at least smtp host/recipients/from '
+                              'email. Disabling email notifications')
+            self.smtp_host = None
 
         self.config_blacklist()

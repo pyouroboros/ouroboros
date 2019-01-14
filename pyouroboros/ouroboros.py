@@ -111,7 +111,38 @@ def main():
 
     notification_group.add_argument('-z', '--pushover-user', default=Config.pushover_user, dest='PUSHOVER_USER',
                                     help='Pushover user bound to application\n'
-                                         'EXAMPLE: -y johndoe123')
+                                         'EXAMPLE: -z asdfweawefasdfawef')
+
+    notification_group.add_argument('-e', '--smtp-host', default=Config.smtp_host, dest='SMTP_HOST',
+                                    help='SMTP relay hostname\n'
+                                         'EXAMPLE: -e smtp.gmail.com')
+
+    notification_group.add_argument('-E', '--smtp-port', default=Config.smtp_port, type=int, dest='SMTP_PORT',
+                                    help='SMTP relay port\n'
+                                         'EXAMPLE: -E 587')
+
+    notification_group.add_argument('-f', '--smtp-starttls', default=False, dest='SMTP_HOST', action='store_true',
+                                    help='SMTP relay uses STARTTLS')
+
+    notification_group.add_argument('-F', '--smtp-username', default=Config.smtp_username, dest='SMTP_USERNAME',
+                                    help='SMTP relay username\n'
+                                         'EXAMPLE: -F ouroboros@ouroboros.com')
+
+    notification_group.add_argument('-g', '--smtp-password', default=Config.smtp_password, dest='SMTP_PASSWORD',
+                                    help='SMTP relay password\n'
+                                         'EXAMPLE: -g MyPa$$w0rd')
+
+    notification_group.add_argument('-G', '--smtp-recipients', default=Config.smtp_recipients, dest='SMTP_RECIPIENTS',
+                                    nargs='+', help='SMTP notification recipients\n'
+                                                    'EXAMPLE: -G ouroboros@ouroboros.com ouroboros2@ouroboros.com')
+
+    notification_group.add_argument('-j', '--smtp-from-email', default=Config.smtp_from_email, dest='SMTP_FROM_EMAIL',
+                                    help='SMTP from email\n'
+                                         'EXAMPLE: -g notifications@ouroboros.com')
+
+    notification_group.add_argument('-J', '--smtp-from-name', default=Config.smtp_from_name, dest='SMTP_FROM_NAME',
+                                    help='SMTP from name\n'
+                                         'DEFAULT: Ouroboros')
 
     args = parser.parse_args()
 
