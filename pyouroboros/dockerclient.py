@@ -162,13 +162,20 @@ class Docker(object):
 
             old_me.stop()
             old_me.remove()
+
             self.client.images.remove(old_me_image_id)
             self.logger.debug('Ahhh. All better.')
+
             self.monitored = self.monitor_filter()
         elif count == 1:
             self.logger.debug('I need to update! Starting the ouroboros ;)')
             self_name = 'ouroboros-updated' if old_container.name == 'ouroboros' else 'ouroboros'
             new_config = set_properties(old=old_container, new=new_image, self_name=self_name)
+
+            for network_name, config in old_container.attrs['NetworkSettings']['Networks'].items():
+                network = self.client.networks.get(config['NetworkID'])
+                network.disconnect(old_container)
+
             me_created = self.client.api.create_container(**new_config)
             new_me = self.client.containers.get(me_created.get("Id"))
             new_me.start()
