@@ -25,8 +25,7 @@ class Docker(object):
                 if not container.image.tags:
                     self.logger.debug("%s has no image tags... not adding to monitored", container.name)
                 else:
-                    if 'ouroboros' not in container.image.tags[0]:
-                        running_containers.append(container)
+                    running_containers.append(container)
 
         except DockerException:
             self.logger.critical("Can't connect to Docker API at %s", self.config.docker_socket)
@@ -95,6 +94,10 @@ class Docker(object):
         if not self.monitored:
             self.logger.info('No containers are running or monitored on %s', self.socket)
 
+        me_list = [c for c in self.client.api.containers() if 'ouroboros' in c['Names'][0].strip('/')]
+        if len(me_list) > 1:
+            self.update_self(count=2, me_list=me_list)
+
         for container in self.monitored:
             current_image = container.image
 
@@ -109,6 +112,9 @@ class Docker(object):
 
             # If current running container is running latest image
             if current_image.id != latest_image.id:
+                if container.name in ['ouroboros', 'ouroboros-updated']:
+                    self.update_self(old_container=container, new_image=latest_image, count=1)
+
                 updated_container_tuples.append(
                     (container, current_image, latest_image)
                 )
@@ -148,3 +154,25 @@ class Docker(object):
                                            notification_type='data')
 
         self.notification_manager.send(notification_type='keep_alive')
+
+    def update_self(self, count=None, old_container=None, me_list=None, new_image=None):
+        if count == 2:
+            self.logger.debug('God im messy... cleaning myself up.')
+            old_me_id = me_list[0]['Id'] if me_list[0]['Created'] < me_list[1]['Created'] else me_list[1]['Id']
+            old_me = self.client.containers.get(old_me_id)
+            old_me_image_id = old_me.image.id
+
+            old_me.stop()
+            old_me.remove()
+            self.client.images.remove(old_me_image_id)
+            self.logger.debug('Ahhh. All better.')
+            self.monitored = self.monitor_filter()
+        elif count == 1:
+            self.logger.debug('I need to update! Starting the ouroboros ;)')
+            self_name = 'ouroboros-updated' if old_container.name == 'ouroboros' else 'ouroboros'
+            new_config = set_properties(old=old_container, new=new_image, self_name=self_name)
+            me_created = self.client.api.create_container(**new_config)
+            new_me = self.client.containers.get(me_created.get("Id"))
+            new_me.start()
+            self.logger.debug('If you strike me down, I shall become more powerful than you could possibly imagine')
+            old_container.kill()
