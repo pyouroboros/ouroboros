@@ -31,7 +31,7 @@ def main():
                             dest='LOG_LEVEL', default=Config.log_level, help='Set logging level\n'
                                                                              'DEFAULT: info')
 
-    core_group.add_argument('-v', '--version', default=False, action='store_true', dest='SHOW_VERSION',
+    core_group.add_argument('-v', '--version', action='version', version=f'Version: {VERSION}-{BRANCH}',
                             help='Show version information')
 
     core_group.add_argument('-o', '--run-once', default=False, action='store_true', dest='RUN_ONCE', help='Single run')
@@ -149,10 +149,6 @@ def main():
                                          'DEFAULT: Ouroboros')
 
     args = parser.parse_args()
-
-    if args.SHOW_VERSION:
-        print(f'Version: {VERSION}-{BRANCH}')
-        exit(0)
 
     if environ.get('LOG_LEVEL'):
         log_level = environ.get('LOG_LEVEL')
