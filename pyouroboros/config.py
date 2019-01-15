@@ -6,7 +6,7 @@ class Config(object):
     options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKETS', 'MONITOR', 'IGNORE', 'LOG_LEVEL', 'PROMETHEUS_ADDR',
                'PROMETHEUS_PORT', 'WEBHOOK_URLS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'LATEST',
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
-               'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'PUSHOVER_TOKEN', 'PUSHOVER_USER', 'PUSHOVER_DEVICE', 'SMTP_HOST',
+               'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'PUSHOVER_TOKEN', 'PUSHOVER_USER', 'PUSHOVER_DEVICES', 'SMTP_HOST',
                'SMTP_PORT', 'SMTP_STARTTLS', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'SMTP_RECIPIENTS', 'SMTP_FROM_EMAIL',
                'SMTP_FROM_NAME']
 
@@ -40,7 +40,7 @@ class Config(object):
 
     pushover_token = None
     pushover_user = None
-    pushover_device = None
+    pushover_devices = None
 
     smtp_host = None
     smtp_port = 587
@@ -85,7 +85,7 @@ class Config(object):
     def parse(self):
         for option in Config.options:
             if self.environment_vars.get(option):
-                if option in ['INTERVAL', 'PROMETHEUS_PORT', 'INFLUX_PORT', 'SMTP_PORT']:
+                if option in ['INTERVAL', 'PROMETHEUS_PORT', 'INFLUX_PORT', 'SMTP_PORT', 'PUSHOVER_DEVICES']:
                     try:
                         opt = int(self.environment_vars[option])
                         setattr(self, option.lower(), opt)

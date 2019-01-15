@@ -5,6 +5,7 @@ from os import environ
 from argparse import ArgumentParser, RawTextHelpFormatter
 
 from pyouroboros.config import Config
+from pyouroboros import VERSION, BRANCH
 from pyouroboros.dockerclient import Docker
 from pyouroboros.logger import OuroborosLogger
 from pyouroboros.dataexporters import DataManager
@@ -29,6 +30,9 @@ def main():
     core_group.add_argument('-l', '--log-level', choices=['debug', 'info', 'warn', 'error', 'critical'],
                             dest='LOG_LEVEL', default=Config.log_level, help='Set logging level\n'
                                                                              'DEFAULT: info')
+
+    core_group.add_argument('-v', '--version', default=False, action='store_true', dest='SHOW_VERSION',
+                            help='Show version information')
 
     core_group.add_argument('-o', '--run-once', default=False, action='store_true', dest='RUN_ONCE', help='Single run')
 
@@ -105,9 +109,9 @@ def main():
                                     help='Pushover token to authenticate against application\n'
                                          'EXAMPLE: -y af2r52352asd')
 
-    notification_group.add_argument('-Y', '--pushover-device', default=Config.pushover_device, dest='PUSHOVER_DEVICE',
-                                    help='Device to receive pushover notification\n'
-                                         'EXAMPLE: -Y SamsungGalaxyS8')
+    notification_group.add_argument('-Y', '--pushover-devices', default=Config.pushover_devices,
+                                    dest='PUSHOVER_DEVICES', help='Devices to receive pushover notification\n'
+                                                                  'EXAMPLE: -Y SamsungGalaxyS8 MyiPhone')
 
     notification_group.add_argument('-z', '--pushover-user', default=Config.pushover_user, dest='PUSHOVER_USER',
                                     help='Pushover user bound to application\n'
@@ -146,11 +150,17 @@ def main():
 
     args = parser.parse_args()
 
+    if args.SHOW_VERSION:
+        print(f'Version: {VERSION}-{BRANCH}')
+        exit(0)
+
     if environ.get('LOG_LEVEL'):
         log_level = environ.get('LOG_LEVEL')
     else:
         log_level = args.LOG_LEVEL
     ol = OuroborosLogger(level=log_level)
+    ol.logger.info('Version: %s-%s', VERSION, BRANCH)
+
     config = Config(environment_vars=environ, cli_args=args)
     config_dict = {key: value for key, value in vars(config).items() if key.upper() in config.options}
     ol.logger.debug("Ouroboros configuration: %s", config_dict)

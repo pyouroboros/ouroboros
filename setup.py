@@ -1,3 +1,4 @@
+from pyouroboros import VERSION
 from setuptools import setup, find_packages
 
 requirements = ['docker>=3.7.0',
@@ -21,7 +22,7 @@ def readme():
 
 setup(
     name='ouroboros-cli',
-    version='0.5.0',
+    version=VERSION,
     description='Automatically update running docker containers',
     long_description=readme(),
     long_description_content_type='text/markdown',
