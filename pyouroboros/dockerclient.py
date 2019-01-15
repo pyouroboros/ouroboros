@@ -1,3 +1,4 @@
+from time import sleep
 from logging import getLogger
 from docker import DockerClient
 from docker.errors import DockerException, APIError, NotFound
@@ -172,4 +173,4 @@ class Docker(object):
             new_me = self.client.containers.get(me_created.get("Id"))
             new_me.start()
             self.logger.debug('If you strike me down, I shall become more powerful than you could possibly imagine')
-            old_container.kill()
+            sleep(30)
