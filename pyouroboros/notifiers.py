@@ -59,7 +59,7 @@ class Email(object):
     def send(self, container_tuples, socket):
         for address in self.config.smtp_recipients:
             msg = EmailMessage()
-            msg['Subject'] = 'Ouroboros has updated containers'
+            msg['Subject'] = 'Ouroboros has updated containers!'
             msg['From'] = f"{self.config.smtp_from_name} <{self.config.smtp_from_email}>"
             msg['To'] = address
 
@@ -138,7 +138,7 @@ class Webhooks(object):
                     "token": self.config.pushover_token,
                     "user": self.config.pushover_user,
                     "device": self.config.pushover_device,
-                    "title": "Ouroboros updated containers:",
+                    "title": "Ouroboros has updated containers!",
                     "message": text
                 }
             else:
@@ -154,8 +154,7 @@ class Webhooks(object):
                         "color": 316712,
                         "timestamp": now,
                         "thumbnail": {
-                            "url": "https://camo.githubusercontent.com/1a7eac730761ba836222ccdfd0bfa0e61e63ef34/68"
-                                   "747470733a2f2f692e696d6775722e636f6d2f6b5962493948692e706e67"
+                            "url": "https://bin.cajun.pro/images/ouroboros/ouroboros_logo_primary_cropped.png"
                         },
                         "fields": [
                             {
