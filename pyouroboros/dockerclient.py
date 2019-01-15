@@ -23,7 +23,11 @@ class Docker(object):
         running_containers = []
         try:
             for container in self.client.containers.list(filters={'status': 'running'}):
-                running_containers.append(container)
+                if self.config.self_update:
+                    running_containers.append(container)
+                else:
+                    if 'ouroboros' not in container.image.tags[0]:
+                        running_containers.append(container)
 
         except DockerException:
             self.logger.critical("Can't connect to Docker API at %s", self.config.docker_socket)
@@ -171,13 +175,9 @@ class Docker(object):
             self.logger.debug('I need to update! Starting the ouroboros ;)')
             self_name = 'ouroboros-updated' if old_container.name == 'ouroboros' else 'ouroboros'
             new_config = set_properties(old=old_container, new=new_image, self_name=self_name)
-
-            for network_name, config in old_container.attrs['NetworkSettings']['Networks'].items():
-                network = self.client.networks.get(config['NetworkID'])
-                network.disconnect(old_container)
-
             me_created = self.client.api.create_container(**new_config)
             new_me = self.client.containers.get(me_created.get("Id"))
             new_me.start()
             self.logger.debug('If you strike me down, I shall become more powerful than you could possibly imagine')
+            self.logger.debug('https://bit.ly/2VVY7GH')
             sleep(30)
