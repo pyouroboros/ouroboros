@@ -9,7 +9,7 @@ from pyouroboros.dockerclient import Docker
 from pyouroboros.logger import OuroborosLogger
 from pyouroboros.dataexporters import DataManager
 from pyouroboros.notifiers import NotificationManager
-from pyouroboros.__init__ import VERSION
+from pyouroboros import VERSION, BRANCH
 
 
 def main():
@@ -154,6 +154,7 @@ def main():
     else:
         log_level = args.LOG_LEVEL
     ol = OuroborosLogger(level=log_level)
+    ol.logger.info('Version: %s-%s', VERSION, BRANCH)
     config = Config(environment_vars=environ, cli_args=args)
     config_dict = {key: value for key, value in vars(config).items() if key.upper() in config.options}
     ol.logger.debug("Ouroboros configuration: %s", config_dict)

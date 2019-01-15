@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from pyouroboros.__init__ import VERSION
+from pyouroboros import VERSION
 
 requirements = ['docker>=3.7.0',
                 'schedule>=0.5.0',
