@@ -33,6 +33,9 @@ def main():
                             dest='LOG_LEVEL', default=Config.log_level, help='Set logging level\n'
                                                                              'DEFAULT: info')
 
+    core_group.add_argument('-u', '--self-update', default=False, dest='SELF_UPDATE', action='store_true',
+                            help='Let ouroboros update itself')
+
     core_group.add_argument('-o', '--run-once', default=False, action='store_true', dest='RUN_ONCE', help='Single run')
 
     docker_group = parser.add_argument_group("Docker", "Configuration of docker functionality")

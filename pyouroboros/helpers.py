@@ -1,10 +1,10 @@
 from string import Template
 
 
-def set_properties(old, new):
+def set_properties(old, new, self_name=None):
     """Store object for spawning new container in place of the one with outdated image"""
     properties = {
-        'name': old.name,
+        'name': self_name if self_name else old.name,
         'image': new.tags[0],
         'command': old.attrs['Config']['Cmd'],
         'host_config': old.attrs['HostConfig'],

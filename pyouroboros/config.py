@@ -8,7 +8,7 @@ class Config(object):
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
                'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'PUSHOVER_TOKEN', 'PUSHOVER_USER', 'PUSHOVER_DEVICE', 'SMTP_HOST',
                'SMTP_PORT', 'SMTP_STARTTLS', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'SMTP_RECIPIENTS', 'SMTP_FROM_EMAIL',
-               'SMTP_FROM_NAME']
+               'SMTP_FROM_NAME', 'SELF_UPDATE']
 
     interval = 300
     docker_sockets = 'unix://var/run/docker.sock'
@@ -19,6 +19,7 @@ class Config(object):
     latest = False
     cleanup = False
     run_once = False
+    self_update = False
 
     repo_user = None
     repo_pass = None
@@ -91,7 +92,8 @@ class Config(object):
                         setattr(self, option.lower(), opt)
                     except ValueError as e:
                         print(e)
-                elif option in ['LATEST', 'CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL', 'SMTP_STARTTLS']:
+                elif option in ['LATEST', 'CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL',
+                                'SMTP_STARTTLS', 'SELF_UPDATE']:
                     if self.environment_vars[option].lower() == 'true':
                         setattr(self, option.lower(), True)
                     else:
@@ -118,6 +120,9 @@ class Config(object):
         if self.data_export == 'influxdb' and not self.influx_database:
             self.logger.error("You need to specify an influx database if you want to export to influxdb. Disabling "
                               "influxdb data export.")
+
+        if self.data_export == 'prometheus' and self.self_update:
+            self.logger.warning("If you bind a port to ouroboros, it will be lost when it updates itself.")
 
         pushover_config = [self.pushover_token, self.pushover_device, self.pushover_user]
         if any(pushover_config) and not all(pushover_config):
