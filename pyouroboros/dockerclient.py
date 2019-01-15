@@ -22,10 +22,7 @@ class Docker(object):
         running_containers = []
         try:
             for container in self.client.containers.list(filters={'status': 'running'}):
-                if not container.image.tags:
-                    self.logger.debug("%s has no image tags... not adding to monitored", container.name)
-                else:
-                    running_containers.append(container)
+                running_containers.append(container)
 
         except DockerException:
             self.logger.critical("Can't connect to Docker API at %s", self.config.docker_socket)
