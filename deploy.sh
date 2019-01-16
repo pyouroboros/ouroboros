@@ -19,13 +19,16 @@ echo "$DOCKER_PASSWORD" | docker login -u="$DOCKER_USER" --password-stdin
 
 # Latest x64
 docker build -t "${NAMESPACE}:latest" . && \
-docker push "${NAMESPACE}:latest" && \
-# Versioned x64
-docker tag "${NAMESPACE}:latest" "${NAMESPACE}:${VERSION}" && \
-docker push "${NAMESPACE}:${VERSION}" && \
+docker push "${NAMESPACE}:latest"
 # x64 Arch
 docker tag "${NAMESPACE}:latest" "${NAMESPACE}:latest-amd64" && \
 docker push "${NAMESPACE}:latest-amd64"
+# Versioned x64
+docker tag "${NAMESPACE}:latest" "${NAMESPACE}:${VERSION}" && \
+docker push "${NAMESPACE}:${VERSION}"
+docker tag "${NAMESPACE}:latest" "${NAMESPACE}:${VERSION}-amd64" && \
+docker push "${NAMESPACE}:${VERSION}-amd64"
+
 
 # Prepare QEMU for ARM builds
 docker run --rm --privileged multiarch/qemu-user-static:register --reset
@@ -47,7 +50,7 @@ done
 wget -O manifest-tool https://github.com/estesp/manifest-tool/releases/download/v0.9.0/manifest-tool-linux-amd64 && \
 chmod +x manifest-tool && \
 python3 manifest_generator.py && \
-./manifest-tool --username "$USER" --password "$DOCKER_PASSWORD" push from-spec ".manifest.yaml"
+./manifest-tool --username "$DOCKER_USER" --password "$DOCKER_PASSWORD" push from-spec ".manifest.yaml"
 # Git tags
 git remote set-url origin "https://${GITHUB_USER}:${GITHUB_API_KEY}@github.com/${NAMESPACE}.git" && \
 git tag "${VERSION}" && \

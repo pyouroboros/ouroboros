@@ -4,7 +4,7 @@ from pyouroboros import VERSION
 
 org = 'pyouroboros'
 project = 'ouroboros'
-namespace = f"{org}/{project}"
+namespace = "{}/{}".format(org, project)
 
 yaml_arr = []
 tags = ['latest', VERSION]
@@ -17,12 +17,12 @@ arch_list = [('arm', 'arm', 'v6', 'linux'),
 
 for tag in tags:
     yaml_doc = {
-        'image': f'{namespace}:{tag}',
+        'image': '{}:{}'.format(namespace, tag),
         'manifests': []
     }
     for arch in arch_list:
         info = {
-            'image': f"{namespace}:{tag}-{arch[0]}",
+            'image': "{}:{}-{}".format(namespace, tag, arch[0]),
             'platform': {
                 'architecture': arch[1],
                 'os': arch[3]
