@@ -4,6 +4,8 @@ LABEL maintainers="dirtycajunrice,circa10a,tkdeviant"
 
 COPY / /app
 
+COPY /tmp/qemu-arm-static /usr/bin/qemu-arm-static
+
 WORKDIR /app
 
 RUN apk add --no-cache tzdata && \

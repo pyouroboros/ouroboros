@@ -17,9 +17,6 @@ sudo service docker restart
 # Auth
 echo $DOCKER_PASSWORD | docker login -u="$DOCKER_USER" --password-stdin
 
-# Register qemu binary
-docker run --rm --privileged multiarch/qemu-user-static:register
-
 # Latest x64
 docker build -t "${NAMESPACE}:latest" . && \
 docker push "${NAMESPACE}:latest" && \
@@ -32,6 +29,9 @@ docker push "${NAMESPACE}:latest-amd64"
 
 # Prepare qemu for ARM builds
 docker run --rm --privileged multiarch/qemu-user-static:register --reset
+wget -P tmp/ "https://github.com/multiarch/qemu-user-static/releases/download/v3.1.0-2/qemu-aarch64-static"
+wget -P tmp/ "https://github.com/multiarch/qemu-user-static/releases/download/v3.1.0-2/qemu-arm-static"
+chmod +x tmp/qemu-aarch64-static tmp/qemu-arm-static
 
 # ARM images
 for i in $(ls *arm*); do

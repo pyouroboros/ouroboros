@@ -4,9 +4,10 @@ LABEL maintainers="dirtycajunrice,circa10a,tkdeviant"
 
 COPY / /app
 
+COPY /tmp/qemu-arm-static /usr/bin/qemu-arm-static
+
 WORKDIR /app
 
-RUN apt-get install tzdata && \
-    pip install --no-cache-dir .
+RUN pip install --no-cache-dir .
 
 ENTRYPOINT ["ouroboros"]
