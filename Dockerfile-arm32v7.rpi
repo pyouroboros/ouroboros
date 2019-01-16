@@ -1,4 +1,4 @@
-FROM resin/generic-aarch64-alpine-python:3-slim
+FROM balenalib/raspberry-pi-alpine-python:3.7
 
 COPY . /app
 WORKDIR /app

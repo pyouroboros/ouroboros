@@ -32,26 +32,13 @@ More detailed usage and configuration can be found on [the wiki](https://github.
 
 Ouroboros is deployed via docker image like so:
 
-**x86**
 ```bash
 docker run -d --name ouroboros \
   -v /var/run/docker.sock:/var/run/docker.sock \
   pyouroboros/ouroboros
 ```
 
-**Rpi 3 B+**
-```bash
-docker run -d --name ouroboros \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  pyouroboros/ouroboros:latest-aarch64-rpi
-```
-
-**All other Rpi's**
-```bash
-docker run -d --name ouroboros \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  pyouroboros/ouroboros:latest-arm-rpi
-```
+> This is image is compatible for amd64, arm32v7, and arm64v8 CPU architectures (regular systems and Raspberry Pi's)
 
 or via `docker-compose`:
 
