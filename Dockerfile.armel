@@ -1,7 +1,12 @@
-FROM balenalib/aarch64-alpine-python:3.7
+FROM arm32v6/python:3.7.2-alpine
 
-COPY . /app
+LABEL maintainers="dirtycajunrice,circa10a,tkdeviant"
+
+COPY / /app
+
 WORKDIR /app
+
 RUN apk add --no-cache tzdata && \
     pip install --no-cache-dir .
+
 ENTRYPOINT ["ouroboros"]

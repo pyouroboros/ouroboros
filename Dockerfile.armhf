@@ -1,4 +1,4 @@
-FROM amd64/python:3.7.2-alpine
+FROM arm32v7/python:3.7.2-slim
 
 LABEL maintainers="dirtycajunrice,circa10a,tkdeviant"
 
@@ -6,7 +6,7 @@ COPY / /app
 
 WORKDIR /app
 
-RUN apk add --no-cache tzdata && \
+RUN apt-get install tzdata && \
     pip install --no-cache-dir .
 
 ENTRYPOINT ["ouroboros"]

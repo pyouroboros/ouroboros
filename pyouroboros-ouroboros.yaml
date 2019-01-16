@@ -6,13 +6,18 @@ manifests:
       architecture: amd64
       os: linux
   -
-    image: pyouroboros/ouroboros:latest-arm32v7-rpi
+    image: pyouroboros/ouroboros:latest-arm
+    platform:
+      architecture: arm
+      variant: v6
+      os: linux
+  - image: pyouroboros/ouroboros:latest-armhf
     platform:
       architecture: arm
       variant: v7
       os: linux
   -
-    image: pyouroboros/ouroboros:latest-arm64v8-rpi
+    image: pyouroboros/ouroboros:latest-arm64
     platform:
       architecture: arm64
       variant: v8
