@@ -4,3 +4,4 @@ prometheus_client>=0.5.0
 requests>=2.21.0
 influxdb>=5.2.1
 flake8
+yaml

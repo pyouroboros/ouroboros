@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-VERSION="$(grep -i version ./pyouroboros/__init__.py | cut -d' ' -f3 | tr -d \")"
+VERSION="$(grep -i version pyouroboros/__init__.py | cut -d' ' -f3 | tr -d \")"
 
 # Docker
 GITHUB_USER='pyouroboros-bot'
@@ -15,7 +15,7 @@ echo '{"experimental":"enabled"}' | sudo tee ~/.docker/config.json
 sudo service docker restart
 
 # Auth
-echo $DOCKER_PASSWORD | docker login -u="$DOCKER_USER" --password-stdin
+echo "$DOCKER_PASSWORD" | docker login -u="$DOCKER_USER" --password-stdin
 
 # Latest x64
 docker build -t "${NAMESPACE}:latest" . && \
@@ -27,7 +27,7 @@ docker push "${NAMESPACE}:${VERSION}" && \
 docker tag "${NAMESPACE}:latest" "${NAMESPACE}:latest-amd64" && \
 docker push "${NAMESPACE}:latest-amd64"
 
-# Prepare qemu for ARM builds
+# Prepare QEMU for ARM builds
 docker run --rm --privileged multiarch/qemu-user-static:register --reset
 wget -P tmp/ "https://github.com/multiarch/qemu-user-static/releases/download/v3.1.0-2/qemu-aarch64-static"
 wget -P tmp/ "https://github.com/multiarch/qemu-user-static/releases/download/v3.1.0-2/qemu-arm-static"
@@ -46,7 +46,8 @@ done
 
 wget -O manifest-tool https://github.com/estesp/manifest-tool/releases/download/v0.9.0/manifest-tool-linux-amd64 && \
 chmod +x manifest-tool && \
-./manifest-tool --username "$USER" --password "$DOCKER_PASSWORD" push from-spec "${USER}-${PROJECT}.yaml"
+python3 manifest_generator.py && \
+./manifest-tool --username "$USER" --password "$DOCKER_PASSWORD" push from-spec ".manifest.yaml"
 # Git tags
 git remote set-url origin "https://${GITHUB_USER}:${GITHUB_API_KEY}@github.com/${NAMESPACE}.git" && \
 git tag "${VERSION}" && \
