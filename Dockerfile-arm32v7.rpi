@@ -1,7 +1,0 @@
-FROM balenalib/raspberry-pi-alpine-python:3.7
-
-COPY . /app
-WORKDIR /app
-RUN apk add --no-cache tzdata && \
-    pip install --no-cache-dir .
-ENTRYPOINT ["ouroboros"]

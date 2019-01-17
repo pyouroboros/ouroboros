@@ -78,8 +78,8 @@ class Email(object):
                 CONTAINER_UPDATES=container_updates)
 
             msg.set_content(template)
-            server = self.get_server()
             try:
+                server = self.get_server()
                 server.send_message(msg)
             except SMTPServerDisconnected as e:
                 self.server = False
