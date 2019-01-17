@@ -127,7 +127,7 @@ def main():
                                     help='SMTP relay port\n'
                                          'EXAMPLE: -E 587')
 
-    notification_group.add_argument('-f', '--smtp-starttls', default=False, dest='SMTP_HOST', action='store_true',
+    notification_group.add_argument('-f', '--smtp-starttls', default=False, dest='SMTP_STARTTLS', action='store_true',
                                     help='SMTP relay uses STARTTLS')
 
     notification_group.add_argument('-F', '--smtp-username', default=Config.smtp_username, dest='SMTP_USERNAME',
