@@ -64,19 +64,19 @@ for i in $(ls *arm*); do
         docker manifest create -a "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}"
     fi
     if [[ "$ARCH" == "arm64" ]]; then
-        docker annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${BRANCH}-${ARCH}" --variant v8
+        docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${BRANCH}-${ARCH}" --variant v8
         if [[ "$BRANCH" == "latest" ]]; then
-            docker annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v8
+            docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v8
         fi
     elif [[ "$ARCH" == "armhf" ]]; then
-        docker annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${BRANCH}-${ARCH}" --variant v7
+        docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${BRANCH}-${ARCH}" --variant v7
         if [[ "$BRANCH" == "latest" ]]; then
-            docker annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v7
+            docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v7
         fi
     elif [[ "$ARCH" == "arm" ]]; then
-        docker annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${BRANCH}-${ARCH}" --variant v6
+        docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${BRANCH}-${ARCH}" --variant v6
         if [[ "$BRANCH" == "latest" ]]; then
-            docker annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v6
+            docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v6
         fi
     fi
 done
