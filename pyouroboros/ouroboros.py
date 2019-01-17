@@ -46,7 +46,7 @@ def main():
     docker_group.add_argument('-n', '--ignore', nargs='+', default=Config.ignore, dest='IGNORE',
                               help='Container(s) to ignore\n'
                                    'EXAMPLE: -n container1 container2')
-    
+
     docker_group.add_argument('-k', '--label-enable', default=False, dest='LABEL_ENABLE', action='store_true',
                               help='Only watch ouroboros enable labeled containers\n'
                                    'Note: labels take precedence over monitor/ignore'
