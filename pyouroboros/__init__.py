@@ -1,2 +1,2 @@
-VERSION = "0.5.0"
-BRANCH = "develop"
+VERSION = "0.6.0"
+BRANCH = "master"

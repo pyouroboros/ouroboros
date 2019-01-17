@@ -23,6 +23,11 @@
 - catch index error and account for shared images, x [\#102](https://github.com/pyouroboros/ouroboros/pull/102) ([circa10a](https://github.com/circa10a))
 - add monitor/ignore to list sanity check. Fixes \#98 [\#99](https://github.com/pyouroboros/ouroboros/pull/99) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 
+**Other Pull Requests**
+
+- Merge v0.6.0 [\#116](https://github.com/pyouroboros/ouroboros/pull/116) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- add changelog formatting and fix all labels going back to 1 [\#116](https://github.com/pyouroboros/ouroboros/pull/116) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)] ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
 ## [0.5.0](https://github.com/pyouroboros/ouroboros/tree/0.5.0) (2019-01-13)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/0.4.3...0.5.0)
 
