@@ -48,44 +48,44 @@ docker build -t "${REPOSITORY}:${TAG}-amd64" . && \
 docker push "${REPOSITORY}:${TAG}-amd64"
 
 # Create Initial Manifests
-docker manifest create "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${BRANCH}-amd64"
+docker manifest create "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-amd64"
 if [[ "$BRANCH" == "latest" ]]; then
-    docker manifest create "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-amd64"
+    docker manifest create "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${TAG}-amd64"
 fi
 
 # ARM variants
 for i in $(ls *arm*); do
     ARCH="$(echo ${i} | cut -d. -f2)"
-    docker build -t "${REPOSITORY}:${TAG}-${ARCH}" . && \
+    docker build -f "Dockerfile.${ARCH}" -t "${REPOSITORY}:${TAG}-${ARCH}" . && \
     docker push "${REPOSITORY}:${TAG}-${ARCH}"
     # Add variant to manifest
-    docker manifest create -a "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${BRANCH}-${ARCH}"
+    docker manifest create -a "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}"
     if [[ "$BRANCH" == "latest" ]]; then
-        docker manifest create -a "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}"
+        docker manifest create -a "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${TAG}-${ARCH}"
     fi
     if [[ "$ARCH" == "arm64" ]]; then
-        docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${BRANCH}-${ARCH}" --variant v8 --arch arm64
+        docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v8 --arch arm64
         if [[ "$BRANCH" == "latest" ]]; then
-            docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v8 --arch arm64
+            docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v8 --arch arm64
         fi
     elif [[ "$ARCH" == "armhf" ]]; then
-        docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${BRANCH}-${ARCH}" --variant v7 --arch arm
+        docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v7 --arch arm
         if [[ "$BRANCH" == "latest" ]]; then
-            docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v7 --arch arm
+            docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v7 --arch arm
         fi
     elif [[ "$ARCH" == "arm" ]]; then
-        docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${BRANCH}-${ARCH}" --variant v6 --arch arm
+        docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v6 --arch arm
         if [[ "$BRANCH" == "latest" ]]; then
-            docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v6 --arch arm
+            docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v6 --arch arm
         fi
     fi
 done
 
-docker manifest inspect "${REPOSITORY}:${BRANCH}" && \
-docker manifest push "${REPOSITORY}:${BRANCH}"
+docker manifest inspect "${REPOSITORY}:${TAG}" && \
+docker manifest push "${REPOSITORY}:${TAG}"
 if [[ "$BRANCH" == "latest" ]]; then
-    docker manifest inspect "${REPOSITORY}:${TAG}" && \
-    docker manifest push "${REPOSITORY}:${TAG}"
+    docker manifest inspect "${REPOSITORY}:${BRANCH}" && \
+    docker manifest push "${REPOSITORY}:${BRANCH}"
 fi
 
 # Git tags
