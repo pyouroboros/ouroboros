@@ -38,20 +38,33 @@ class Docker(object):
     def monitor_filter(self):
         """Return filtered running container objects list"""
         running_containers = self.get_running()
+        monitored_containers = []
 
-        if self.config.monitor:
-            running_containers = [container for container in running_containers
-                                  if container.name in self.config.monitor]
+        # Use labels first:
+        for container in running_containers:
+            ouro_label = container.labels.get('com.ouroboros.enable', False)
+            if self.config.label_enable:
+                if ouro_label:
+                    if ouro_label.lower() in ["true", "yes"]:
+                        monitored_containers.append(container)
+            elif ouro_label:
+                if ouro_label.lower() in ["false", "no"]:
+                    continue
+            elif self.config.monitor:
+                if self.config.ignore:
+                    if container.name in self.config.monitor and container.name not in self.config.ignore:
+                        monitored_containers.append(container)
+                elif container.name in self.config.monitor:
+                        monitored_containers.append(container)
+            elif self.config.ignore:
+                continue
+            else:
+                monitored_containers.append(container)
 
-        if self.config.ignore:
-            self.logger.info("Ignoring container(s): %s", ", ".join(self.config.ignore))
-            running_containers = [container for container in running_containers
-                                  if container.name not in self.config.ignore]
-
-        self.data_manager.monitored_containers[self.socket] = len(running_containers)
+        self.data_manager.monitored_containers[self.socket] = len(monitored_containers)
         self.data_manager.set(self.socket)
 
-        return running_containers
+        return monitored_containers
 
     def pull(self, image_object):
         """Docker pull image tag/latest"""
