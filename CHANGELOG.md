@@ -25,7 +25,8 @@
 
 **Other Pull Requests**
 
-- Merge v0.6.0 [\#116](https://github.com/pyouroboros/ouroboros/pull/116) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Master Merge v0.6.0 [\#117](https://github.com/pyouroboros/ouroboros/pull/117) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v0.6.0 to develop [\#118](https://github.com/pyouroboros/ouroboros/pull/118) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - add changelog formatting and fix all labels going back to 1 [\#116](https://github.com/pyouroboros/ouroboros/pull/116) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)] ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 
 ## [0.5.0](https://github.com/pyouroboros/ouroboros/tree/0.5.0) (2019-01-13)
