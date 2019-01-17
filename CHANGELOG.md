@@ -5,6 +5,7 @@
 
 **Implemented enhancements:**
 
+- Support multi-architecture Docker images [\#78](https://github.com/pyouroboros/ouroboros/issues/78)
 - Mail notification [\#59](https://github.com/pyouroboros/ouroboros/issues/59)
 - Multi architecture docker [\#110](https://github.com/pyouroboros/ouroboros/pull/110) ([circa10a](https://github.com/circa10a))
 - added logo to readme [\#109](https://github.com/pyouroboros/ouroboros/pull/109) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
@@ -22,6 +23,12 @@
 - Multiarch/fine tuning [\#111](https://github.com/pyouroboros/ouroboros/pull/111) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - catch index error and account for shared images, x [\#102](https://github.com/pyouroboros/ouroboros/pull/102) ([circa10a](https://github.com/circa10a))
 - add monitor/ignore to list sanity check. Fixes \#98 [\#99](https://github.com/pyouroboros/ouroboros/pull/99) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
+**Other Pull Requests**
+
+- Master Merge v0.6.0 [\#117](https://github.com/pyouroboros/ouroboros/pull/117) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v0.6.0 to develop [\#118](https://github.com/pyouroboros/ouroboros/pull/118) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- add changelog formatting and fix all labels going back to 1 [\#116](https://github.com/pyouroboros/ouroboros/pull/116) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)] ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 
 ## [0.5.0](https://github.com/pyouroboros/ouroboros/tree/0.5.0) (2019-01-13)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/0.4.3...0.5.0)
