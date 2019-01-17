@@ -5,6 +5,7 @@
 
 **Implemented enhancements:**
 
+- Support multi-architecture Docker images [\#78](https://github.com/pyouroboros/ouroboros/issues/78)
 - Mail notification [\#59](https://github.com/pyouroboros/ouroboros/issues/59)
 - Multi architecture docker [\#110](https://github.com/pyouroboros/ouroboros/pull/110) ([circa10a](https://github.com/circa10a))
 - added logo to readme [\#109](https://github.com/pyouroboros/ouroboros/pull/109) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
