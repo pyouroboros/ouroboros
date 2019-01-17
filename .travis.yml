@@ -1,8 +1,14 @@
+sudo: true
+dist: xenial
 language: python
 python:
-  - 3.6
+  - 3.7.2
 services:
   - docker
+addons:
+  apt:
+    packages:
+      - docker-ce
 
 script:
   - pip install flake8 && flake8 *.py pyouroboros/
@@ -15,8 +21,11 @@ deploy:
     skip_existing: true
     on:
       branch: master
-
   - provider: script
-    script: bash ./deploy.sh
+    script: bash deploy.sh
     on:
       branch: master
+  - provider: script
+    script: bash deploy.sh
+    on:
+      branch: develop

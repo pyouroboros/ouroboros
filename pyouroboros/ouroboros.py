@@ -9,6 +9,7 @@ from pyouroboros.dockerclient import Docker
 from pyouroboros.logger import OuroborosLogger
 from pyouroboros.dataexporters import DataManager
 from pyouroboros.notifiers import NotificationManager
+from pyouroboros import VERSION, BRANCH
 
 
 def main():
@@ -17,6 +18,8 @@ def main():
                             epilog='EXAMPLE: ouroboros -d tcp://1.2.3.4:5678 -i 20 -m container1 container2 -l warn')
 
     core_group = parser.add_argument_group("Core", "Configuration of core functionality")
+    core_group.add_argument('-v', '--version', action='version', version=VERSION)
+
     core_group.add_argument('-d', '--docker-sockets', nargs='+', default=Config.docker_sockets, dest='DOCKER_SOCKETS',
                             help='Sockets for docker management\n'
                                  'DEFAULT: "unix://var/run/docker.sock"\n'
@@ -29,6 +32,9 @@ def main():
     core_group.add_argument('-l', '--log-level', choices=['debug', 'info', 'warn', 'error', 'critical'],
                             dest='LOG_LEVEL', default=Config.log_level, help='Set logging level\n'
                                                                              'DEFAULT: info')
+
+    core_group.add_argument('-u', '--self-update', default=False, dest='SELF_UPDATE', action='store_true',
+                            help='Let ouroboros update itself')
 
     core_group.add_argument('-o', '--run-once', default=False, action='store_true', dest='RUN_ONCE', help='Single run')
 
@@ -48,11 +54,11 @@ def main():
                               help='Check for latest image instead of pulling current tag')
 
     docker_group.add_argument('-r', '--repo-user', default=None, dest='REPO_USER',
-                              help='Private docker repository username\n'
+                              help='Private docker registry username\n'
                                    'EXAMPLE: foo@bar.baz')
 
     docker_group.add_argument('-R', '--repo-pass', default=None, dest='REPO_PASS',
-                              help='Private docker repository password\n'
+                              help='Private docker registry password\n'
                                    'EXAMPLE: MyPa$$w0rd')
 
     data_group = parser.add_argument_group('Data Export', 'Configuration of data export functionality')
@@ -111,7 +117,38 @@ def main():
 
     notification_group.add_argument('-z', '--pushover-user', default=Config.pushover_user, dest='PUSHOVER_USER',
                                     help='Pushover user bound to application\n'
-                                         'EXAMPLE: -y johndoe123')
+                                         'EXAMPLE: -z asdfweawefasdfawef')
+
+    notification_group.add_argument('-e', '--smtp-host', default=Config.smtp_host, dest='SMTP_HOST',
+                                    help='SMTP relay hostname\n'
+                                         'EXAMPLE: -e smtp.gmail.com')
+
+    notification_group.add_argument('-E', '--smtp-port', default=Config.smtp_port, type=int, dest='SMTP_PORT',
+                                    help='SMTP relay port\n'
+                                         'EXAMPLE: -E 587')
+
+    notification_group.add_argument('-f', '--smtp-starttls', default=False, dest='SMTP_STARTTLS', action='store_true',
+                                    help='SMTP relay uses STARTTLS')
+
+    notification_group.add_argument('-F', '--smtp-username', default=Config.smtp_username, dest='SMTP_USERNAME',
+                                    help='SMTP relay username\n'
+                                         'EXAMPLE: -F ouroboros@ouroboros.com')
+
+    notification_group.add_argument('-g', '--smtp-password', default=Config.smtp_password, dest='SMTP_PASSWORD',
+                                    help='SMTP relay password\n'
+                                         'EXAMPLE: -g MyPa$$w0rd')
+
+    notification_group.add_argument('-G', '--smtp-recipients', default=Config.smtp_recipients, dest='SMTP_RECIPIENTS',
+                                    nargs='+', help='SMTP notification recipients\n'
+                                                    'EXAMPLE: -G ouroboros@ouroboros.com ouroboros2@ouroboros.com')
+
+    notification_group.add_argument('-j', '--smtp-from-email', default=Config.smtp_from_email, dest='SMTP_FROM_EMAIL',
+                                    help='SMTP from email\n'
+                                         'EXAMPLE: -g notifications@ouroboros.com')
+
+    notification_group.add_argument('-J', '--smtp-from-name', default=Config.smtp_from_name, dest='SMTP_FROM_NAME',
+                                    help='SMTP from name\n'
+                                         'DEFAULT: Ouroboros')
 
     args = parser.parse_args()
 
@@ -120,6 +157,7 @@ def main():
     else:
         log_level = args.LOG_LEVEL
     ol = OuroborosLogger(level=log_level)
+    ol.logger.info('Version: %s-%s', VERSION, BRANCH)
     config = Config(environment_vars=environ, cli_args=args)
     config_dict = {key: value for key, value in vars(config).items() if key.upper() in config.options}
     ol.logger.debug("Ouroboros configuration: %s", config_dict)

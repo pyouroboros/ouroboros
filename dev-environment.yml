@@ -5,4 +5,5 @@ dependencies:
       - schedule
       - prometheus_client
       - requests
+      - influxdb
       - flake8
