@@ -23,15 +23,14 @@ class Docker(object):
         running_containers = []
         try:
             for container in self.client.containers.list(filters={'status': 'running'}):
-                try:
-                    if self.config.self_update:
-                        running_containers.append(container)
-                    else:
+                if self.config.self_update:
+                    running_containers.append(container)
+                else:
+                    try:
                         if 'ouroboros' not in container.image.tags[0]:
                             running_containers.append(container)
-
-                except IndexError:
-                    self.logger.error("No tags found for image: %s. Skipping...", container.image)
+                    except IndexError:
+                        self.logger.error("No tags found for image: %s. Skipping...", container.image)
         except DockerException:
             self.logger.critical("Can't connect to Docker API at %s", self.config.docker_socket)
             exit(1)
