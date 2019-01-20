@@ -26,8 +26,12 @@ class Docker(object):
                 if self.config.self_update:
                     running_containers.append(container)
                 else:
-                    if 'ouroboros' not in container.image.tags[0]:
-                        running_containers.append(container)
+                    try:
+                        if 'ouroboros' not in container.image.tags[0]:
+                            running_containers.append(container)
+                    except IndexError:
+                        self.logger.error("%s has no tags.. you should clean it up! Ignoring.", container.id)
+                        continue
 
         except DockerException:
             self.logger.critical("Can't connect to Docker API at %s", self.config.docker_socket)
