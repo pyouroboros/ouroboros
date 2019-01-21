@@ -32,9 +32,8 @@ echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
 
 # Prepare QEMU for ARM builds
 docker run --rm --privileged multiarch/qemu-user-static:register --reset
-wget -P tmp/ "https://github.com/multiarch/qemu-user-static/releases/download/v3.1.0-2/qemu-aarch64-static"
-wget -P tmp/ "https://github.com/multiarch/qemu-user-static/releases/download/v3.1.0-2/qemu-arm-static"
-chmod +x tmp/qemu-aarch64-static tmp/qemu-arm-static
+cp /usr/bin/qemu-aarch64-static /usr/bin/qemu-arm-static .
+chmod +x qemu-aarch64-static qemu-arm-static
 
 # Set tag based off of branch
 if [[ "$BRANCH" == "latest" ]]; then
