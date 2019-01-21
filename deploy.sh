@@ -32,7 +32,7 @@ echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
 
 # Prepare QEMU for ARM builds
 docker run --rm --privileged multiarch/qemu-user-static:register --reset
-cp /usr/bin/qemu-aarch64-static /usr/bin/qemu-arm-static .
+bash prebuild.sh
 chmod +x qemu-aarch64-static qemu-arm-static
 
 # Set tag based off of branch
