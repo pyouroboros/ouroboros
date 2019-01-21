@@ -75,7 +75,7 @@ docker run -d --name ouroboros \
 
 ### Update containers on a remote host
 
-Ouroboros can monitor things other than just local, pass the `--url` argument to update a system with the Docker API exposed.
+Ouroboros can monitor things other than just local, pass the `--docker-sockets` argument to update a system with the Docker API exposed or alternatively pass the `DOCKER_SOCKETS` environment variable.
 
 > Default is unix://var/run/docker.sock
 
