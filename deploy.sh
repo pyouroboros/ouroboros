@@ -62,22 +62,6 @@ for i in $(ls *arm*); do
     if [[ "$BRANCH" == "latest" ]]; then
         docker manifest create -a "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${TAG}-${ARCH}"
     fi
-    if [[ "$ARCH" == "arm64" ]]; then
-        docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v8 --arch arm64
-        if [[ "$BRANCH" == "latest" ]]; then
-            docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v8 --arch arm64
-        fi
-    elif [[ "$ARCH" == "armhf" ]]; then
-        docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v7 --arch arm
-        if [[ "$BRANCH" == "latest" ]]; then
-            docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v7 --arch arm
-        fi
-    elif [[ "$ARCH" == "arm" ]]; then
-        docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v6 --arch arm
-        if [[ "$BRANCH" == "latest" ]]; then
-            docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v6 --arch arm
-        fi
-    fi
 done
 
 docker manifest inspect "${REPOSITORY}:${TAG}" && \
