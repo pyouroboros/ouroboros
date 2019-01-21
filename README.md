@@ -63,7 +63,7 @@ $ ouroboros --interval 300 --loglevel debug
 ## Examples
 
 ### Monitor for updates for latest tag
- Instead of updating to your original image tag you can specify if you would like Ouroboros to update all containers to `latest`.
+ Instead of updating to your original image tag you can specify if you would like Ouroboros to update all containers to `latest`.  
  e.g. If your container was started with `nginx:1.14-alpine` using `LATEST=true` will poll the docker registry and compare digests. If there is a new image for `nginx:latest`, ouroboros will update your container using the newly patched version.
  > Default is `false`
  ```bash
