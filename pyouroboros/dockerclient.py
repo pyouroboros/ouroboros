@@ -79,7 +79,14 @@ class Docker(object):
             self.logger.error('Malformed or missing tag. Skipping...')
             raise ConnectionError
         if self.config.latest and image.tags[0][-6:] != 'latest':
-            tag = tag.split(':')[0] + ':latest'
+            if ':' in tag:
+                split_tag = tag.split(':')
+                if len(split_tag) == 2:
+                    if '/' not in split_tag[1]:
+                        tag = split_tag[0]
+                else:
+                    tag = ':'.join(split_tag[:-1])
+            tag = tag + ':latest'
 
         self.logger.debug('Pulling tag: %s', tag)
         try:
