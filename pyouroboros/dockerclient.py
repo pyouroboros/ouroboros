@@ -10,7 +10,7 @@ class Docker(object):
     def __init__(self, socket, config, data_manager, notification_manager):
         self.config = config
         self.socket = socket
-        self.client = DockerClient(base_url=socket)
+        self.client = DockerClient(base_url=socket, tls=self.config.docker_tls_verify)
         self.data_manager = data_manager
         self.data_manager.total_updated[self.socket] = 0
         self.logger = getLogger()
