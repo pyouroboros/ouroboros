@@ -38,7 +38,7 @@ docker run -d --name ouroboros \
   pyouroboros/ouroboros
 ```
 
-> This is image is compatible for amd64, arm32v7, and arm64v8 CPU architectures (regular systems and Raspberry Pi's)
+> This is image is compatible for amd64, arm32, and arm64 CPU architectures
 
 or via `docker-compose`:
 

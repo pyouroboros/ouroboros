@@ -32,9 +32,8 @@ echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
 
 # Prepare QEMU for ARM builds
 docker run --rm --privileged multiarch/qemu-user-static:register --reset
-wget -P tmp/ "https://github.com/multiarch/qemu-user-static/releases/download/v3.1.0-2/qemu-aarch64-static"
-wget -P tmp/ "https://github.com/multiarch/qemu-user-static/releases/download/v3.1.0-2/qemu-arm-static"
-chmod +x tmp/qemu-aarch64-static tmp/qemu-arm-static
+bash prebuild.sh
+chmod +x qemu-aarch64-static qemu-arm-static
 
 # Set tag based off of branch
 if [[ "$BRANCH" == "latest" ]]; then
@@ -62,22 +61,6 @@ for i in $(ls *arm*); do
     docker manifest create -a "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}"
     if [[ "$BRANCH" == "latest" ]]; then
         docker manifest create -a "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${TAG}-${ARCH}"
-    fi
-    if [[ "$ARCH" == "arm64" ]]; then
-        docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v8 --arch arm64
-        if [[ "$BRANCH" == "latest" ]]; then
-            docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v8 --arch arm64
-        fi
-    elif [[ "$ARCH" == "armhf" ]]; then
-        docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v7 --arch arm
-        if [[ "$BRANCH" == "latest" ]]; then
-            docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v7 --arch arm
-        fi
-    elif [[ "$ARCH" == "arm" ]]; then
-        docker manifest annotate "${REPOSITORY}:${TAG}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v6 --arch arm
-        if [[ "$BRANCH" == "latest" ]]; then
-            docker manifest annotate "${REPOSITORY}:${BRANCH}" "${REPOSITORY}:${TAG}-${ARCH}" --variant v6 --arch arm
-        fi
     fi
 done
 
