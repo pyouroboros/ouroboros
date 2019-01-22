@@ -79,7 +79,14 @@ class Docker(object):
             self.logger.error('Malformed or missing tag. Skipping...')
             raise ConnectionError
         if self.config.latest and image.tags[0][-6:] != 'latest':
-            tag = tag.split(':')[0] + ':latest'
+            if ':' in tag:
+                split_tag = tag.split(':')
+                if len(split_tag) == 2:
+                    if '/' not in split_tag[1]:
+                        tag = split_tag[0]
+                else:
+                    tag = ':'.join(split_tag[:-1])
+            tag = f'{tag}:latest'
 
         self.logger.debug('Pulling tag: %s', tag)
         try:
@@ -100,7 +107,7 @@ class Docker(object):
             elif 'Client.Timeout' in str(e):
                 self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", image.tags[0])
                 raise ConnectionError
-            elif 'pull access' in str(e):
+            elif ('pull access' or 'TLS handshake') in str(e):
                 self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
                 raise ConnectionError
 
