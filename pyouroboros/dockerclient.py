@@ -150,7 +150,16 @@ class Docker(object):
                 new_config = set_properties(old=container, new=latest_image)
 
                 self.logger.debug('Stopping container: %s', container.name)
-                container.stop()
+                stop_signal = container.labels.get('com.ouroboros.stop-signal', False)
+                if stop_signal:
+                    try:
+                        container.kill(signal=stop_signal)
+                    except APIError as e:
+                        self.logger.error('Cannot kill container using signal %s. stopping normally. Error: %s',
+                                          stop_signal, e)
+                        container.stop()
+                else:
+                    container.stop()
 
                 self.logger.debug('Removing container: %s', container.name)
                 try:
