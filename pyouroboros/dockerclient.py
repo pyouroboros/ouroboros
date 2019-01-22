@@ -86,7 +86,7 @@ class Docker(object):
                         tag = split_tag[0]
                 else:
                     tag = ':'.join(split_tag[:-1])
-            tag = tag + ':latest'
+            tag = f'{tag}:latest'
 
         self.logger.debug('Pulling tag: %s', tag)
         try:
