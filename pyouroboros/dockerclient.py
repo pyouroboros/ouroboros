@@ -107,7 +107,7 @@ class Docker(object):
             elif 'Client.Timeout' in str(e):
                 self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", image.tags[0])
                 raise ConnectionError
-            elif 'pull access' in str(e):
+            elif ('pull access' or 'TLS handshake') in str(e):
                 self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
                 raise ConnectionError
 
