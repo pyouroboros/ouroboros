@@ -1,9 +1,0 @@
-name: ouroboros_dev
-dependencies:
-  - pip:
-      - docker
-      - schedule
-      - prometheus_client
-      - requests
-      - influxdb
-      - flake8

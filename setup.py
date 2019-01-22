@@ -7,13 +7,6 @@ requirements = ['docker>=3.7.0',
                 'requests>=2.21.0',
                 'influxdb>=5.2.1']
 
-requirements_dev = ['docker>=3.7.0',
-                    'schedule>=0.5.0',
-                    'prometheus_client>=0.5.0',
-                    'requests>=2.21.0',
-                    'influxdb>=5.2.1',
-                    'flake8']
-
 
 def readme():
     with open('./README.md') as f:
@@ -31,9 +24,8 @@ setup(
     classifiers=['Programming Language :: Python',
                  'Programming Language :: Python :: 3.6',
                  'Programming Language :: Python :: 3.7'],
-    packages=find_packages(exclude=['doc', 'tests']),
+    packages=find_packages(),
     scripts=['ouroboros'],
     install_requires=requirements,
-    tests_require=requirements_dev,
     python_requires='>=3.6.2'
 )
