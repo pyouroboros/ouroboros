@@ -12,3 +12,5 @@ services:
       - IGNORE=mongo influxdb postgres mariadb
       - TZ=America/Chicago
     restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
