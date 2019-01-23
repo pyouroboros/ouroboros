@@ -75,35 +75,31 @@ def main():
                             help='Enable exporting of data for chosen option')
 
     data_group.add_argument('-a', '--prometheus-addr', default=Config.prometheus_addr,
-                            dest='PROMETHEUS_ADDR', help='Bind address to run Prometheus exporter on. '
-                                                         'Has no effect without --data-export prometheus\n'
+                            dest='PROMETHEUS_ADDR', help='Bind address to run Prometheus exporter on\n'
                                                          'DEFAULT: 127.0.0.1')
 
     data_group.add_argument('-p', '--prometheus-port', type=int, default=Config.prometheus_port,
-                            dest='PROMETHEUS_PORT', help='Port to run Prometheus exporter on. '
-                                                         'Has no effect without --data-export prometheus\n'
+                            dest='PROMETHEUS_PORT', help='Port to run Prometheus exporter on\n'
                                                          'DEFAULT: 8000')
 
     data_group.add_argument('-I', '--influx-url', default=Config.influx_url, dest='INFLUX_URL',
-                            help='URL for influxdb, Has no effect without --data-export influxdb\n'
+                            help='URL for influxdb\n'
                                   'DEFAULT: 127.0.0.1')
 
     data_group.add_argument('-P', '--influx-port', type=int, default=Config.influx_port, dest='INFLUX_PORT',
-                            help='PORT for influxdb, Has no effect without --data-export influxdb\n'
+                            help='PORT for influxdb\n'
                                   'DEFAULT: 8086')
 
     data_group.add_argument('-U', '--influx-username', default=Config.influx_username, dest='INFLUX_USERNAME',
-                            help='Username for influxdb, Has no effect without --data-export influxdb\n'
+                            help='Username for influxdb\n'
                                   'DEFAULT: root')
 
     data_group.add_argument('-x', '--influx-password', default=Config.influx_password, dest='INFLUX_PASSWORD',
-                            help='Password for influxdb, Has no effect without --data-export influxdb\n'
+                            help='Password for influxdb\n'
                                   'DEFAULT: root')
 
     data_group.add_argument('-X', '--influx-database', default=Config.influx_password, dest='INFLUX_DATABASE',
-                            help='Database for influxdb, Required if using influxdb. Has no effect without '
-                                 '--data-export influxdb.\n'
-                                  'DEFAULT: root')
+                            help='Influx database name. Required if using influxdb')
 
     data_group.add_argument('-s', '--influx-ssl', default=False, dest='INFLUX_SSL', action='store_true',
                             help='Use SSL when connecting to influxdb')

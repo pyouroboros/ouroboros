@@ -44,26 +44,18 @@ class Docker(object):
         running_containers = self.get_running()
         monitored_containers = []
 
-        # Use labels first:
         for container in running_containers:
             ouro_label = container.labels.get('com.ouroboros.enable', False)
-            if self.config.label_enable:
-                if ouro_label:
-                    if ouro_label.lower() in ["true", "yes"]:
-                        monitored_containers.append(container)
-            elif ouro_label:
-                if ouro_label.lower() in ["false", "no"]:
+            # if labels enabled, use the label. 'true/yes' trigger monitoring.
+            if self.config.label_enable and ouro_label:
+                if ouro_label.lower() in ["true", "yes"]:
+                    monitored_containers.append(container)
+                else:
                     continue
-            elif self.config.monitor:
-                if self.config.ignore:
-                    if container.name in self.config.monitor and container.name not in self.config.ignore:
-                        monitored_containers.append(container)
-                elif container.name in self.config.monitor:
-                        monitored_containers.append(container)
-            elif self.config.ignore:
-                continue
-            else:
-                monitored_containers.append(container)
+            elif self.config.monitor and container.name not in self.config.ignore:
+                    monitored_containers.append(container)
+            elif container.name not in self.config.ignore:
+                    monitored_containers.append(container)
 
         self.data_manager.monitored_containers[self.socket] = len(monitored_containers)
         self.data_manager.set(self.socket)
