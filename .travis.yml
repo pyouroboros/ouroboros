@@ -11,8 +11,8 @@ addons:
       - docker-ce
 
 script:
-  - pip install flake8 && flake8 *.py pyouroboros/
-  - python3 ./ouroboros -i 1 -l debug --run-once
+  - pip install flake8 && flake8 --max-line-length 120 *.py pyouroboros/
+  - python3 ./ouroboros -l debug --run-once
 
 deploy:
   - provider: pypi

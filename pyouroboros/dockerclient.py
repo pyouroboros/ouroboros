@@ -10,7 +10,7 @@ class Docker(object):
     def __init__(self, socket, config, data_manager, notification_manager):
         self.config = config
         self.socket = socket
-        self.client = DockerClient(base_url=socket)
+        self.client = DockerClient(base_url=socket, tls=self.config.docker_tls_verify)
         self.data_manager = data_manager
         self.data_manager.total_updated[self.socket] = 0
         self.logger = getLogger()
@@ -26,8 +26,12 @@ class Docker(object):
                 if self.config.self_update:
                     running_containers.append(container)
                 else:
-                    if 'ouroboros' not in container.image.tags[0]:
-                        running_containers.append(container)
+                    try:
+                        if 'ouroboros' not in container.image.tags[0]:
+                            running_containers.append(container)
+                    except IndexError:
+                        self.logger.error("%s has no tags.. you should clean it up! Ignoring.", container.id)
+                        continue
 
         except DockerException:
             self.logger.critical("Can't connect to Docker API at %s", self.config.docker_socket)
@@ -38,20 +42,25 @@ class Docker(object):
     def monitor_filter(self):
         """Return filtered running container objects list"""
         running_containers = self.get_running()
+        monitored_containers = []
 
-        if self.config.monitor:
-            running_containers = [container for container in running_containers
-                                  if container.name in self.config.monitor]
+        for container in running_containers:
+            ouro_label = container.labels.get('com.ouroboros.enable', False)
+            # if labels enabled, use the label. 'true/yes' trigger monitoring.
+            if self.config.label_enable and ouro_label:
+                if ouro_label.lower() in ["true", "yes"]:
+                    monitored_containers.append(container)
+                else:
+                    continue
+            elif self.config.monitor and container.name not in self.config.ignore:
+                    monitored_containers.append(container)
+            elif container.name not in self.config.ignore:
+                    monitored_containers.append(container)
 
-        if self.config.ignore:
-            self.logger.info("Ignoring container(s): %s", ", ".join(self.config.ignore))
-            running_containers = [container for container in running_containers
-                                  if container.name not in self.config.ignore]
-
-        self.data_manager.monitored_containers[self.socket] = len(running_containers)
+        self.data_manager.monitored_containers[self.socket] = len(monitored_containers)
         self.data_manager.set(self.socket)
 
-        return running_containers
+        return monitored_containers
 
     def pull(self, image_object):
         """Docker pull image tag/latest"""
@@ -62,7 +71,14 @@ class Docker(object):
             self.logger.error('Malformed or missing tag. Skipping...')
             raise ConnectionError
         if self.config.latest and image.tags[0][-6:] != 'latest':
-            tag = tag.split(':')[0] + ':latest'
+            if ':' in tag:
+                split_tag = tag.split(':')
+                if len(split_tag) == 2:
+                    if '/' not in split_tag[1]:
+                        tag = split_tag[0]
+                else:
+                    tag = ':'.join(split_tag[:-1])
+            tag = f'{tag}:latest'
 
         self.logger.debug('Pulling tag: %s', tag)
         try:
@@ -83,7 +99,7 @@ class Docker(object):
             elif 'Client.Timeout' in str(e):
                 self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", image.tags[0])
                 raise ConnectionError
-            elif 'pull access' in str(e):
+            elif ('pull access' or 'TLS handshake') in str(e):
                 self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
                 raise ConnectionError
 
@@ -126,7 +142,16 @@ class Docker(object):
                 new_config = set_properties(old=container, new=latest_image)
 
                 self.logger.debug('Stopping container: %s', container.name)
-                container.stop()
+                stop_signal = container.labels.get('com.ouroboros.stop-signal', False)
+                if stop_signal:
+                    try:
+                        container.kill(signal=stop_signal)
+                    except APIError as e:
+                        self.logger.error('Cannot kill container using signal %s. stopping normally. Error: %s',
+                                          stop_signal, e)
+                        container.stop()
+                else:
+                    container.stop()
 
                 self.logger.debug('Removing container: %s', container.name)
                 try:

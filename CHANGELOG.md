@@ -1,6 +1,41 @@
 # Change Log
 
-## [0.6.0](https://github.com/pyouroboros/ouroboros/tree/0.6.0) (2019-01-16)
+## [1.0.0](https://github.com/pyouroboros/ouroboros/tree/1.0.0) (2019-01-22)
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/0.6.0...1.0.0)
+
+**Implemented enhancements:**
+
+- Stop containers with alternate signal [\#107](https://github.com/pyouroboros/ouroboros/issues/107)
+- Docker Socket secure connections [\#105](https://github.com/pyouroboros/ouroboros/issues/105)
+- Selectively monitor containers with label [\#104](https://github.com/pyouroboros/ouroboros/issues/104)
+- Allow stop-signal label [\#133](https://github.com/pyouroboros/ouroboros/pull/133) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Docker TLS Verify option [\#132](https://github.com/pyouroboros/ouroboros/pull/132) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- add label priority feature for watch/ignore. Addresses \#104 [\#121](https://github.com/pyouroboros/ouroboros/pull/121) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
+**Fixed bugs:**
+
+- Unexpected docker API causes program to quit ‘500 Server Error: Internal Server Error’ [\#130](https://github.com/pyouroboros/ouroboros/issues/130)
+- Error tag handling under the registry with port [\#129](https://github.com/pyouroboros/ouroboros/issues/129)
+- a fatal error when none tag image [\#122](https://github.com/pyouroboros/ouroboros/issues/122)
+- Bug/ignore logic [\#135](https://github.com/pyouroboros/ouroboros/pull/135) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Bug/registry logic [\#131](https://github.com/pyouroboros/ouroboros/pull/131) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- catch no tags in get\_running [\#124](https://github.com/pyouroboros/ouroboros/pull/124) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- fixed logic for latest vs develop, and added -f to specify file [\#119](https://github.com/pyouroboros/ouroboros/pull/119) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
+**Closed issues:**
+
+- Missing docker-compose.yml from documentation [\#120](https://github.com/pyouroboros/ouroboros/issues/120) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)]
+- Wiki usage docs reference old argument names [\#115](https://github.com/pyouroboros/ouroboros/issues/115) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)]
+
+**Other Pull Requests**
+
+- v1.0.0 to develop [\#136](https://github.com/pyouroboros/ouroboros/pull/136) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.0.0 Merge [\#137](https://github.com/pyouroboros/ouroboros/pull/137) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Clean old legacy files [\#134](https://github.com/pyouroboros/ouroboros/pull/134) [[cleanup](https://github.com/pyouroboros/ouroboros/labels/cleanup)] ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Cleanup/qemu logic [\#128](https://github.com/pyouroboros/ouroboros/pull/128) [[cleanup](https://github.com/pyouroboros/ouroboros/labels/cleanup)] ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- fix readme wording for monitoring remote hosts [\#126](https://github.com/pyouroboros/ouroboros/pull/126) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)] ([circa10a](https://github.com/circa10a))
+
+## [0.6.0](https://github.com/pyouroboros/ouroboros/tree/0.6.0) (2019-01-17)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/0.5.0...0.6.0)
 
 **Implemented enhancements:**
@@ -26,8 +61,8 @@
 
 **Other Pull Requests**
 
-- Master Merge v0.6.0 [\#117](https://github.com/pyouroboros/ouroboros/pull/117) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - v0.6.0 to develop [\#118](https://github.com/pyouroboros/ouroboros/pull/118) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v0.6.0 Merge [\#117](https://github.com/pyouroboros/ouroboros/pull/117) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - add changelog formatting and fix all labels going back to 1 [\#116](https://github.com/pyouroboros/ouroboros/pull/116) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)] ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 
 ## [0.5.0](https://github.com/pyouroboros/ouroboros/tree/0.5.0) (2019-01-13)
