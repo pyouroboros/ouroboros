@@ -47,8 +47,11 @@ class Docker(object):
         for container in running_containers:
             ouro_label = container.labels.get('com.ouroboros.enable', False)
             # if labels enabled, use the label. 'true/yes' trigger monitoring.
-            if self.config.label_enable and ouro_label and ouro_label.lower() in ["true", "yes"]:
+            if self.config.label_enable and ouro_label:
+                if ouro_label.lower() in ["true", "yes"]:
                     monitored_containers.append(container)
+                else:
+                    continue
             elif self.config.monitor and container.name not in self.config.ignore:
                     monitored_containers.append(container)
             elif container.name not in self.config.ignore:
