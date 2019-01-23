@@ -42,28 +42,25 @@ class Docker(object):
     def monitor_filter(self):
         """Return filtered running container objects list"""
         running_containers = self.get_running()
-        monitored_containers = []
 
-        # Use labels first:
-        for container in running_containers:
-            ouro_label = container.labels.get('com.ouroboros.enable', False)
-            if self.config.label_enable:
-                if ouro_label:
-                    if ouro_label.lower() in ["true", "yes"]:
-                        monitored_containers.append(container)
-            elif ouro_label:
-                if ouro_label.lower() in ["false", "no"]:
-                    continue
-            elif self.config.monitor:
-                if self.config.ignore:
-                    if container.name in self.config.monitor and container.name not in self.config.ignore:
-                        monitored_containers.append(container)
-                elif container.name in self.config.monitor:
-                        monitored_containers.append(container)
-            elif self.config.ignore:
-                continue
-            else:
-                monitored_containers.append(container)
+        # Set a monitored value of true for all running containers initially
+        container_tuples = [(container, True) for container in running_containers]
+        # Go through and unmark all containers that are not in monitored list if a monitored list exists
+        if self.config.monitor:
+            container_tuples = [(con_tup[0], False) if con_tup[0].name not in self.config.monitor else con_tup
+                                for con_tup in container_tuples]
+        # Re-iterate to mark any ignores in the ignore list overriding monitor list
+        if self.config.ignore:
+            container_tuples = [(con_tup[0], False) if con_tup[0].name in self.config.ignore else con_tup for
+                                con_tup in container_tuples]
+        # Iterate once more if labels are enabled overriding all other options
+        if self.config.label_enable:
+            container_tuples = [(con_tup[0], True) if con_tup[0].labels.get('com.ouroboros.enable', False)
+                                in ["true", "yes"] else (con_tup[0], False)
+                                if con_tup[0].labels.get('com.ouroboros.enable', False)
+                                in ["false", "no"] else con_tup for con_tup in container_tuples]
+        # Finally just get the decidedly monitored containers
+        monitored_containers = [con_tup[0] for con_tup in container_tuples if con_tup[1]]
 
         self.data_manager.monitored_containers[self.socket] = len(monitored_containers)
         self.data_manager.set(self.socket)
