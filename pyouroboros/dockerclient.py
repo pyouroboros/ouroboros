@@ -106,7 +106,7 @@ class Docker(object):
     def update_containers(self):
         updated_count = 0
         updated_container_tuples = []
-
+        depends_on_list = []
         self.monitored = self.monitor_filter()
 
         if not self.monitored:
@@ -138,6 +138,10 @@ class Docker(object):
                 )
                 self.logger.info('%s will be updated', container.name)
 
+                # Get container list to restart after update complete
+                depends_on = container.labels.get('com.ouroboros.depends-on', False)
+                if depends_on:
+                    depends_on_list.extend([name.strip() for name in depends_on.split(',')])
                 # new container dict to create new container from
                 new_config = set_properties(old=container, new=latest_image)
 
@@ -175,6 +179,19 @@ class Docker(object):
                 self.data_manager.total_updated[self.socket] += 1
                 self.data_manager.add(label=container.name, socket=self.socket)
                 self.data_manager.add(label='all', socket=self.socket)
+
+        if depends_on_list:
+            depends_on_containers = []
+            for name in list(set(depends_on_list)):
+                try:
+                    depends_on_containers.append(self.client.containers.get(name))
+                except NotFound:
+                    self.logger.error("Could not find dependant container %s on socket %s. Ignoring", name, self.socket)
+
+            if depends_on_containers:
+                for container in depends_on_containers:
+                    self.logger.debug('Restarting dependant container %s', container.name)
+                    container.restart()
 
         if updated_count > 0:
             self.notification_manager.send(container_tuples=updated_container_tuples, socket=self.socket,
