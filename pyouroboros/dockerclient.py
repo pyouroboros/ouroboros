@@ -92,7 +92,6 @@ class Docker(object):
                     return_image = self.client.images.pull(tag)
                 return return_image
         except APIError as e:
-            self.logger.critical(e)
             if '<html>' in str(e):
                 self.logger.debug("Docker api issue. Ignoring")
                 raise ConnectionError
