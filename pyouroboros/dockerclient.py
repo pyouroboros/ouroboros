@@ -80,14 +80,17 @@ class Docker(object):
                     tag = ':'.join(split_tag[:-1])
             tag = f'{tag}:latest'
 
-        self.logger.debug('Pulling tag: %s', tag)
+        self.logger.debug('Checking tag: %s', tag)
         try:
-            if self.config.auth_json:
-                return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
+            if self.config.dry_run:
+                registry_data = self.client.images.get_registry_data(tag)
+                return registry_data
             else:
-                return_image = self.client.images.pull(tag)
-            return return_image
-
+                if self.config.auth_json:
+                    return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
+                else:
+                    return_image = self.client.images.pull(tag)
+                return return_image
         except APIError as e:
             self.logger.critical(e)
             if '<html>' in str(e):
@@ -129,7 +132,11 @@ class Docker(object):
                     continue
 
             # If current running container is running latest image
-            if current_image.id != latest_image.id:
+            if current_image.short_id != latest_image.short_id:
+                if self.config.dry_run:
+                    self.logger.info('%s would be updated from %s to %s', container.name,
+                                     current_image.short_id, latest_image.short_id)
+                    continue
                 if container.name in ['ouroboros', 'ouroboros-updated']:
                     self.update_self(old_container=container, new_image=latest_image, count=1)
 

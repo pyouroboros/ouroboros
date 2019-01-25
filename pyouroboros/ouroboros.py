@@ -43,6 +43,9 @@ def main():
 
     core_group.add_argument('-o', '--run-once', default=False, action='store_true', dest='RUN_ONCE', help='Single run')
 
+    core_group.add_argument('-A', '--dry-run', default=False, action='store_true', dest='DRY_RUN',
+                            help='Run without making changes. Best used with run-once')
+
     docker_group = parser.add_argument_group("Docker", "Configuration of docker functionality")
     docker_group.add_argument('-m', '--monitor', nargs='+', default=Config.monitor, dest='MONITOR',
                               help='Which container(s) to monitor\n'
