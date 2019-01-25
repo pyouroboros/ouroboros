@@ -97,7 +97,7 @@ class Docker(object):
                 raise ConnectionError
             elif 'unauthorized' in str(e):
                 if self.config.dry_run:
-                    self.logger.error(': dry run : Upstream authentication issue while checking %s. See: '
+                    self.logger.error('dry run : Upstream authentication issue while checking %s. See: '
                                       'https://github.com/docker/docker-py/issues/2225', tag)
                     raise ConnectionError
                 else:
@@ -139,7 +139,7 @@ class Docker(object):
                 # Ugly hack for repo digest
                 repo_digest_id = current_image.attrs['RepoDigests'][0].split('@')[1]
                 if repo_digest_id != latest_image.id:
-                    self.logger.info(': dry run : %s would be updated', container.name)
+                    self.logger.info('dry run : %s would be updated', container.name)
                 continue
 
             # If current running container is running latest image
