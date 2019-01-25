@@ -52,9 +52,9 @@ class Docker(object):
                     monitored_containers.append(container)
                 else:
                     continue
-            elif self.config.monitor and container.name not in self.config.ignore:
+            elif not self.config.labels_only and self.config.monitor and container.name not in self.config.ignore:
                     monitored_containers.append(container)
-            elif container.name not in self.config.ignore:
+            elif not self.config.labels_only and container.name not in self.config.ignore:
                     monitored_containers.append(container)
 
         self.data_manager.monitored_containers[self.socket] = len(monitored_containers)

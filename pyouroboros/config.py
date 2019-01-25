@@ -8,7 +8,7 @@ class Config(object):
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
                'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'PUSHOVER_TOKEN', 'PUSHOVER_USER', 'PUSHOVER_DEVICE', 'SMTP_HOST',
                'SMTP_PORT', 'SMTP_STARTTLS', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'SMTP_RECIPIENTS', 'SMTP_FROM_EMAIL',
-               'SMTP_FROM_NAME', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY']
+               'SMTP_FROM_NAME', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY', 'LABELS_ONLY']
 
     interval = 300
     docker_sockets = 'unix://var/run/docker.sock'
@@ -22,6 +22,7 @@ class Config(object):
     run_once = False
     self_update = False
     label_enable = False
+    labels_only = False
 
     repo_user = None
     repo_pass = None
@@ -95,7 +96,7 @@ class Config(object):
                     except ValueError as e:
                         print(e)
                 elif option in ['LATEST', 'CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL',
-                                'SMTP_STARTTLS', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY']:
+                                'SMTP_STARTTLS', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY', 'LABELS_ONLY']:
                     if self.environment_vars[option].lower() in ['true', 'yes']:
                         setattr(self, option.lower(), True)
                     elif self.environment_vars[option].lower() in ['false', 'no']:
