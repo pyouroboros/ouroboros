@@ -83,8 +83,12 @@ class Docker(object):
         self.logger.debug('Checking tag: %s', tag)
         try:
             if self.config.dry_run:
-                registry_data = self.client.images.get_registry_data(tag)
-                return registry_data
+                try:
+                    registry_data = self.client.images.get_registry_data(tag)
+                    return registry_data
+                except APIError as e:
+                    self.logger.error('Issue during dry-run pull. Ignoring %s. Error: %s', tag, e)
+                    raise ConnectionError
             else:
                 if self.config.auth_json:
                     return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
