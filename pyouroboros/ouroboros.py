@@ -2,6 +2,7 @@ import schedule
 from time import sleep
 from os import environ
 
+from requests.exceptions import ConnectionError
 from argparse import ArgumentParser, RawTextHelpFormatter
 
 from pyouroboros.config import Config
@@ -171,8 +172,11 @@ def main():
     notification_manager = NotificationManager(config, data_manager)
 
     for socket in config.docker_sockets:
-        docker = Docker(socket, config, data_manager, notification_manager)
-        schedule.every(config.interval).seconds.do(docker.update_containers).tag(f'update-containers-{socket}')
+        try:
+            docker = Docker(socket, config, data_manager, notification_manager)
+            schedule.every(config.interval).seconds.do(docker.update_containers).tag(f'update-containers-{socket}')
+        except ConnectionError:
+            ol.logger.error("Could not connect to socket %s. Check your config", socket)
 
     schedule.run_all()
 
