@@ -135,12 +135,15 @@ class Docker(object):
                 except ConnectionError:
                     continue
 
-            # If current running container is running latest image
-            if current_image.short_id != latest_image.short_id:
-                if self.config.dry_run:
-                    self.logger.info('%s would be updated from %s to %s', container.name,
-                                     current_image.short_id, latest_image.short_id)
+            if self.config.dry_run:
+                # Ugly hack for repo digest
+                repo_digest_id = current_image.attrs['RepoDigests'][0].split('@')[1]
+                if repo_digest_id != latest_image.id:
+                    self.logger.info('%s would be updated', container.name)
                     continue
+
+            # If current running container is running latest image
+            if current_image.id != latest_image.id:
                 if container.name in ['ouroboros', 'ouroboros-updated']:
                     self.update_self(old_container=container, new_image=latest_image, count=1)
 
