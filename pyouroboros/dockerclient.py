@@ -100,6 +100,7 @@ class Docker(object):
                 if self.config.dry_run:
                     self.logger.error('Upstream authentication issue while checking %s. See: '
                                       'https://github.com/docker/docker-py/issues/2225', tag)
+                    raise ConnectionError
                 else:
                     self.logger.critical("Invalid Credentials. Exiting")
                     exit(1)
