@@ -96,10 +96,12 @@ class Config(object):
                         print(e)
                 elif option in ['LATEST', 'CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL',
                                 'SMTP_STARTTLS', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY']:
-                    if self.environment_vars[option].lower() == 'true':
+                    if self.environment_vars[option].lower() in ['true', 'yes']:
                         setattr(self, option.lower(), True)
+                    elif self.environment_vars[option].lower() in ['false', 'no']:
+                        setattr(self, option.lower(), False)
                     else:
-                        self.logger.error('%s is not a valid option for %s. setting to false',
+                        self.logger.error('%s is not true/yes, nor false/no for %s. Assuming false',
                                           self.environment_vars[option], option)
                 else:
                     setattr(self, option.lower(), self.environment_vars[option])
