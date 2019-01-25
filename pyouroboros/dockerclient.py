@@ -140,7 +140,7 @@ class Docker(object):
                 repo_digest_id = current_image.attrs['RepoDigests'][0].split('@')[1]
                 if repo_digest_id != latest_image.id:
                     self.logger.info('%s would be updated', container.name)
-                    continue
+                continue
 
             # If current running container is running latest image
             if current_image.id != latest_image.id:
