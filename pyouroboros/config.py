@@ -120,7 +120,7 @@ class Config(object):
         for option in ['docker_sockets', 'webhook_urls', 'smtp_recipients', 'monitor', 'ignore']:
             if isinstance(getattr(self, option), str):
                 string_list = getattr(self, option)
-                setattr(self, option, [string.strip(' ') for string in string_list.split(' ')])
+                setattr(self, option, [string.strip(' ').strip('"') for string in string_list.split(' ')])
 
         # Config sanity checks
         if self.data_export == 'influxdb' and not self.influx_database:
