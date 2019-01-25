@@ -83,12 +83,8 @@ class Docker(object):
         self.logger.debug('Checking tag: %s', tag)
         try:
             if self.config.dry_run:
-                try:
-                    registry_data = self.client.images.get_registry_data(tag)
-                    return registry_data
-                except APIError as e:
-                    self.logger.error('Issue during dry-run pull. Ignoring %s. Error: %s', tag, e)
-                    raise ConnectionError
+                registry_data = self.client.images.get_registry_data(tag)
+                return registry_data
             else:
                 if self.config.auth_json:
                     return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
@@ -101,8 +97,12 @@ class Docker(object):
                 self.logger.debug("Docker api issue. Ignoring")
                 raise ConnectionError
             elif 'unauthorized' in str(e):
-                self.logger.critical("Invalid Credentials. Exiting")
-                exit(1)
+                if self.config.dry_run:
+                    self.logger.error('Upstream authentication issue while checking %s. See: '
+                                      'https://github.com/docker/docker-py/issues/2225', tag)
+                else:
+                    self.logger.critical("Invalid Credentials. Exiting")
+                    exit(1)
             elif 'Client.Timeout' in str(e):
                 self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", image.tags[0])
                 raise ConnectionError

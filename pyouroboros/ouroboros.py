@@ -188,7 +188,7 @@ def main():
 
     schedule.run_all()
 
-    if args.RUN_ONCE:
+    if config.run_once:
         for socket in config.docker_sockets:
             schedule.clear(f'update-containers-{socket}')
 

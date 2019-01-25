@@ -143,4 +143,8 @@ class Config(object):
                               'email. Disabling email notifications')
             self.smtp_host = None
 
+        if self.dry_run and not self.run_once:
+            self.logger.warning("Dry run is designed to be ran with run once. Setting for you.")
+            self.run_once = True
+
         self.config_blacklist()
