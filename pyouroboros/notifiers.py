@@ -49,8 +49,13 @@ class NotificationManager(object):
                 f"Containers updated this pass: {len(container_tuples)}"
             ]
             body_fields.extend(
-                [f"{container} updated from {old_image.short_id.split(':')[1]} to {new_image.short_id.split(':')[1]}"
-                 for container, old_image, new_image in container_tuples]
+                [
+                    "{} updated from {} to {}".format(
+                        container.name,
+                        old_image.short_id.split(':')[1],
+                        new_image.short_id.split(':')[1]
+                    ) for container, old_image, new_image in container_tuples
+                ]
             )
         body = '\n'.join(body_fields)
 
