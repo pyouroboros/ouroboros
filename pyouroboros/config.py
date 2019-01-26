@@ -4,11 +4,10 @@ from pyouroboros.logger import BlacklistFilter
 
 class Config(object):
     options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKETS', 'MONITOR', 'IGNORE', 'LOG_LEVEL', 'PROMETHEUS_ADDR',
-               'PROMETHEUS_PORT', 'WEBHOOK_URLS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'LATEST',
+               'PROMETHEUS_PORT', 'NOTIFIERS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'LATEST',
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
-               'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'PUSHOVER_TOKEN', 'PUSHOVER_USER', 'PUSHOVER_DEVICE', 'SMTP_HOST',
-               'SMTP_PORT', 'SMTP_STARTTLS', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'SMTP_RECIPIENTS', 'SMTP_FROM_EMAIL',
-               'SMTP_FROM_NAME', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY']
+               'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY', 'LABELS_ONLY',
+               'DRY_RUN']
 
     interval = 300
     docker_sockets = 'unix://var/run/docker.sock'
@@ -20,8 +19,10 @@ class Config(object):
     latest = False
     cleanup = False
     run_once = False
+    dry_run = False
     self_update = False
     label_enable = False
+    labels_only = False
 
     repo_user = None
     repo_pass = None
@@ -39,20 +40,7 @@ class Config(object):
     influx_password = 'root'
     influx_database = None
 
-    webhook_urls = []
-
-    pushover_token = None
-    pushover_user = None
-    pushover_device = None
-
-    smtp_host = None
-    smtp_port = 587
-    smtp_starttls = False
-    smtp_username = None
-    smtp_password = None
-    smtp_recipients = None
-    smtp_from_email = None
-    smtp_from_name = 'Ouroboros'
+    notifiers = []
 
     def __init__(self, environment_vars, cli_args):
         self.cli_args = cli_args
@@ -88,18 +76,20 @@ class Config(object):
     def parse(self):
         for option in Config.options:
             if self.environment_vars.get(option):
-                if option in ['INTERVAL', 'PROMETHEUS_PORT', 'INFLUX_PORT', 'SMTP_PORT']:
+                if option in ['INTERVAL', 'PROMETHEUS_PORT', 'INFLUX_PORT']:
                     try:
                         opt = int(self.environment_vars[option])
                         setattr(self, option.lower(), opt)
                     except ValueError as e:
                         print(e)
-                elif option in ['LATEST', 'CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL',
-                                'SMTP_STARTTLS', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY']:
-                    if self.environment_vars[option].lower() == 'true':
+                elif option in ['LATEST', 'CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL', 'DRY_RUN',
+                                'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY', 'LABELS_ONLY']:
+                    if self.environment_vars[option].lower() in ['true', 'yes']:
                         setattr(self, option.lower(), True)
+                    elif self.environment_vars[option].lower() in ['false', 'no']:
+                        setattr(self, option.lower(), False)
                     else:
-                        self.logger.error('%s is not a valid option for %s. setting to false',
+                        self.logger.error('%s is not true/yes, nor false/no for %s. Assuming false',
                                           self.environment_vars[option], option)
                 else:
                     setattr(self, option.lower(), self.environment_vars[option])
@@ -113,10 +103,10 @@ class Config(object):
         if self.interval < 30:
             self.interval = 30
 
-        for option in ['docker_sockets', 'webhook_urls', 'smtp_recipients', 'monitor', 'ignore']:
+        for option in ['docker_sockets', 'notifiers', 'monitor', 'ignore']:
             if isinstance(getattr(self, option), str):
                 string_list = getattr(self, option)
-                setattr(self, option, [string.strip(' ') for string in string_list.split(' ')])
+                setattr(self, option, [string.strip(' ').strip('"') for string in string_list.split(' ')])
 
         # Config sanity checks
         if self.data_export == 'influxdb' and not self.influx_database:
@@ -126,17 +116,8 @@ class Config(object):
         if self.data_export == 'prometheus' and self.self_update:
             self.logger.warning("If you bind a port to ouroboros, it will be lost when it updates itself.")
 
-        pushover_config = [self.pushover_token, self.pushover_device, self.pushover_user]
-        if any(pushover_config) and not all(pushover_config):
-            self.logger.error('You must specify a pushover user, token, and device to use pushover. Disabling '
-                              'pushover notifications')
-        elif all(pushover_config):
-            self.webhook_urls.append('https://api.pushover.net/1/messages.json')
-
-        email_config = [self.smtp_host, self.smtp_recipients, self.smtp_from_email]
-        if any(email_config) and not all(email_config):
-            self.logger.error('To use email notifications, you need to specify at least smtp host/recipients/from '
-                              'email. Disabling email notifications')
-            self.smtp_host = None
+        if self.dry_run and not self.run_once:
+            self.logger.warning("Dry run is designed to be ran with run once. Setting for you.")
+            self.run_once = True
 
         self.config_blacklist()

@@ -2,6 +2,7 @@ import schedule
 from time import sleep
 from os import environ
 
+from requests.exceptions import ConnectionError
 from argparse import ArgumentParser, RawTextHelpFormatter
 
 from pyouroboros.config import Config
@@ -42,6 +43,14 @@ def main():
 
     core_group.add_argument('-o', '--run-once', default=False, action='store_true', dest='RUN_ONCE', help='Single run')
 
+    core_group.add_argument('-A', '--dry-run', default=False, action='store_true', dest='DRY_RUN',
+                            help='Run without making changes. Best used with run-once')
+
+    core_group.add_argument('-N', '--notifiers', nargs='+', default=Config.notifiers, dest='NOTIFIERS',
+                            help='Apprise formatted notifiers\n'
+                                 'EXAMPLE: -N discord://1234123412341234/jasdfasdfasdfasddfasdf '
+                                 'mailto://user:pass@gmail.com')
+
     docker_group = parser.add_argument_group("Docker", "Configuration of docker functionality")
     docker_group.add_argument('-m', '--monitor', nargs='+', default=Config.monitor, dest='MONITOR',
                               help='Which container(s) to monitor\n'
@@ -52,8 +61,13 @@ def main():
                                    'EXAMPLE: -n container1 container2')
 
     docker_group.add_argument('-k', '--label-enable', default=False, dest='LABEL_ENABLE', action='store_true',
-                              help='Only watch ouroboros enable labeled containers\n'
-                                   'Note: labels take precedence over monitor/ignore'
+                              help='Enable label monitoring for ouroboros label options\n'
+                                   'Note: labels take precedence'
+                                   'DEFAULT: False')
+
+    docker_group.add_argument('-M', '--labels-only', default=False, dest='LABELS_ONLY', action='store_true',
+                              help='Only watch containers that utilize labels\n'
+                                   'This allows a more strict compliance for environments'
                                    'DEFAULT: False')
 
     docker_group.add_argument('-c', '--cleanup', default=False, dest='CLEANUP', action='store_true',
@@ -107,54 +121,6 @@ def main():
     data_group.add_argument('-V', '--influx-verify-ssl', default=False, dest='INFLUX_VERIFY_SSL', action='store_true',
                             help='Verify SSL certificate when connecting to influxdb')
 
-    notification_group = parser.add_argument_group('Notifications', 'Configuration of notification functionality')
-    notification_group.add_argument('-w', '--webhook-urls', nargs='+', default=Config.webhook_urls, dest='WEBHOOK_URLS',
-                                    help='Webhook POST urls\n'
-                                         'EXAMPLE: -w https://domain.tld/1234/asdf http://123.123.123.123:4040/re235')
-
-    notification_group.add_argument('-y', '--pushover-token', default=Config.pushover_token, dest='PUSHOVER_TOKEN',
-                                    help='Pushover token to authenticate against application\n'
-                                         'EXAMPLE: -y af2r52352asd')
-
-    notification_group.add_argument('-Y', '--pushover-device', default=Config.pushover_device, dest='PUSHOVER_DEVICE',
-                                    help='Device to receive pushover notification\n'
-                                         'EXAMPLE: -Y SamsungGalaxyS8')
-
-    notification_group.add_argument('-z', '--pushover-user', default=Config.pushover_user, dest='PUSHOVER_USER',
-                                    help='Pushover user bound to application\n'
-                                         'EXAMPLE: -z asdfweawefasdfawef')
-
-    notification_group.add_argument('-e', '--smtp-host', default=Config.smtp_host, dest='SMTP_HOST',
-                                    help='SMTP relay hostname\n'
-                                         'EXAMPLE: -e smtp.gmail.com')
-
-    notification_group.add_argument('-E', '--smtp-port', default=Config.smtp_port, type=int, dest='SMTP_PORT',
-                                    help='SMTP relay port\n'
-                                         'EXAMPLE: -E 587')
-
-    notification_group.add_argument('-f', '--smtp-starttls', default=False, dest='SMTP_STARTTLS', action='store_true',
-                                    help='SMTP relay uses STARTTLS')
-
-    notification_group.add_argument('-F', '--smtp-username', default=Config.smtp_username, dest='SMTP_USERNAME',
-                                    help='SMTP relay username\n'
-                                         'EXAMPLE: -F ouroboros@ouroboros.com')
-
-    notification_group.add_argument('-g', '--smtp-password', default=Config.smtp_password, dest='SMTP_PASSWORD',
-                                    help='SMTP relay password\n'
-                                         'EXAMPLE: -g MyPa$$w0rd')
-
-    notification_group.add_argument('-G', '--smtp-recipients', default=Config.smtp_recipients, dest='SMTP_RECIPIENTS',
-                                    nargs='+', help='SMTP notification recipients\n'
-                                                    'EXAMPLE: -G ouroboros@ouroboros.com ouroboros2@ouroboros.com')
-
-    notification_group.add_argument('-j', '--smtp-from-email', default=Config.smtp_from_email, dest='SMTP_FROM_EMAIL',
-                                    help='SMTP from email\n'
-                                         'EXAMPLE: -g notifications@ouroboros.com')
-
-    notification_group.add_argument('-J', '--smtp-from-name', default=Config.smtp_from_name, dest='SMTP_FROM_NAME',
-                                    help='SMTP from name\n'
-                                         'DEFAULT: Ouroboros')
-
     args = parser.parse_args()
 
     if environ.get('LOG_LEVEL'):
@@ -169,14 +135,18 @@ def main():
 
     data_manager = DataManager(config)
     notification_manager = NotificationManager(config, data_manager)
+    notification_manager.send(kind='startup')
 
     for socket in config.docker_sockets:
-        docker = Docker(socket, config, data_manager, notification_manager)
-        schedule.every(config.interval).seconds.do(docker.update_containers).tag(f'update-containers-{socket}')
+        try:
+            docker = Docker(socket, config, data_manager, notification_manager)
+            schedule.every(config.interval).seconds.do(docker.update_containers).tag(f'update-containers-{socket}')
+        except ConnectionError:
+            ol.logger.error("Could not connect to socket %s. Check your config", socket)
 
     schedule.run_all()
 
-    if args.RUN_ONCE:
+    if config.run_once:
         for socket in config.docker_sockets:
             schedule.clear(f'update-containers-{socket}')
 
