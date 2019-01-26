@@ -19,6 +19,8 @@
 
 **Other Pull Requests**
 
+- v1.1.0 Merge [\#137](https://github.com/pyouroboros/ouroboros/pull/153) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.1.0 to develop [\#136](https://github.com/pyouroboros/ouroboros/pull/152) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - Patch/group 1 [\#150](https://github.com/pyouroboros/ouroboros/pull/150) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - Add volume for docker socket path [\#144](https://github.com/pyouroboros/ouroboros/pull/144) ([mauvehed](https://github.com/mauvehed))
 
