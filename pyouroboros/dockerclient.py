@@ -52,9 +52,9 @@ class Docker(object):
                     monitored_containers.append(container)
                 else:
                     continue
-            elif self.config.monitor and container.name not in self.config.ignore:
+            elif not self.config.labels_only and self.config.monitor and container.name not in self.config.ignore:
                     monitored_containers.append(container)
-            elif container.name not in self.config.ignore:
+            elif not self.config.labels_only and container.name not in self.config.ignore:
                     monitored_containers.append(container)
 
         self.data_manager.monitored_containers[self.socket] = len(monitored_containers)
@@ -80,22 +80,29 @@ class Docker(object):
                     tag = ':'.join(split_tag[:-1])
             tag = f'{tag}:latest'
 
-        self.logger.debug('Pulling tag: %s', tag)
+        self.logger.debug('Checking tag: %s', tag)
         try:
-            if self.config.auth_json:
-                return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
+            if self.config.dry_run:
+                registry_data = self.client.images.get_registry_data(tag)
+                return registry_data
             else:
-                return_image = self.client.images.pull(tag)
-            return return_image
-
+                if self.config.auth_json:
+                    return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
+                else:
+                    return_image = self.client.images.pull(tag)
+                return return_image
         except APIError as e:
-            self.logger.critical(e)
             if '<html>' in str(e):
                 self.logger.debug("Docker api issue. Ignoring")
                 raise ConnectionError
             elif 'unauthorized' in str(e):
-                self.logger.critical("Invalid Credentials. Exiting")
-                exit(1)
+                if self.config.dry_run:
+                    self.logger.error('dry run : Upstream authentication issue while checking %s. See: '
+                                      'https://github.com/docker/docker-py/issues/2225', tag)
+                    raise ConnectionError
+                else:
+                    self.logger.critical("Invalid Credentials. Exiting")
+                    exit(1)
             elif 'Client.Timeout' in str(e):
                 self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", image.tags[0])
                 raise ConnectionError
@@ -106,7 +113,7 @@ class Docker(object):
     def update_containers(self):
         updated_count = 0
         updated_container_tuples = []
-
+        depends_on_list = []
         self.monitored = self.monitor_filter()
 
         if not self.monitored:
@@ -128,6 +135,13 @@ class Docker(object):
                 except ConnectionError:
                     continue
 
+            if self.config.dry_run:
+                # Ugly hack for repo digest
+                repo_digest_id = current_image.attrs['RepoDigests'][0].split('@')[1]
+                if repo_digest_id != latest_image.id:
+                    self.logger.info('dry run : %s would be updated', container.name)
+                continue
+
             # If current running container is running latest image
             if current_image.id != latest_image.id:
                 if container.name in ['ouroboros', 'ouroboros-updated']:
@@ -138,6 +152,10 @@ class Docker(object):
                 )
                 self.logger.info('%s will be updated', container.name)
 
+                # Get container list to restart after update complete
+                depends_on = container.labels.get('com.ouroboros.depends-on', False)
+                if depends_on:
+                    depends_on_list.extend([name.strip() for name in depends_on.split(',')])
                 # new container dict to create new container from
                 new_config = set_properties(old=container, new=latest_image)
 
@@ -175,6 +193,19 @@ class Docker(object):
                 self.data_manager.total_updated[self.socket] += 1
                 self.data_manager.add(label=container.name, socket=self.socket)
                 self.data_manager.add(label='all', socket=self.socket)
+
+        if depends_on_list:
+            depends_on_containers = []
+            for name in list(set(depends_on_list)):
+                try:
+                    depends_on_containers.append(self.client.containers.get(name))
+                except NotFound:
+                    self.logger.error("Could not find dependant container %s on socket %s. Ignoring", name, self.socket)
+
+            if depends_on_containers:
+                for container in depends_on_containers:
+                    self.logger.debug('Restarting dependant container %s', container.name)
+                    container.restart()
 
         if updated_count > 0:
             self.notification_manager.send(container_tuples=updated_container_tuples, socket=self.socket,
