@@ -76,14 +76,14 @@ class Config(object):
     def parse(self):
         for option in Config.options:
             if self.environment_vars.get(option):
-                if option in ['INTERVAL', 'PROMETHEUS_PORT', 'INFLUX_PORT', 'SMTP_PORT']:
+                if option in ['INTERVAL', 'PROMETHEUS_PORT', 'INFLUX_PORT']:
                     try:
                         opt = int(self.environment_vars[option])
                         setattr(self, option.lower(), opt)
                     except ValueError as e:
                         print(e)
                 elif option in ['LATEST', 'CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL', 'DRY_RUN',
-                                'SMTP_STARTTLS', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY', 'LABELS_ONLY']:
+                                'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY', 'LABELS_ONLY']:
                     if self.environment_vars[option].lower() in ['true', 'yes']:
                         setattr(self, option.lower(), True)
                     elif self.environment_vars[option].lower() in ['false', 'no']:
@@ -103,7 +103,7 @@ class Config(object):
         if self.interval < 30:
             self.interval = 30
 
-        for option in ['docker_sockets', 'notifiers', 'smtp_recipients', 'monitor', 'ignore']:
+        for option in ['docker_sockets', 'notifiers', 'monitor', 'ignore']:
             if isinstance(getattr(self, option), str):
                 string_list = getattr(self, option)
                 setattr(self, option, [string.strip(' ').strip('"') for string in string_list.split(' ')])
