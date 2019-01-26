@@ -5,7 +5,8 @@ requirements = ['docker>=3.7.0',
                 'schedule>=0.5.0',
                 'prometheus_client>=0.5.0',
                 'requests>=2.21.0',
-                'influxdb>=5.2.1']
+                'influxdb>=5.2.1',
+                'apprise>=0.5.2']
 
 
 def readme():

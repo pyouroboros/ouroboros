@@ -208,10 +208,7 @@ class Docker(object):
                     container.restart()
 
         if updated_count > 0:
-            self.notification_manager.send(container_tuples=updated_container_tuples, socket=self.socket,
-                                           notification_type='data')
-
-        self.notification_manager.send(notification_type='keep_alive')
+            self.notification_manager.send(container_tuples=updated_container_tuples, socket=self.socket, kind='update')
 
     def update_self(self, count=None, old_container=None, me_list=None, new_image=None):
         if count == 2:
