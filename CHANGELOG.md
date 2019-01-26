@@ -1,6 +1,30 @@
 # Change Log
 
-## [1.0.0](https://github.com/pyouroboros/ouroboros/tree/1.0.0) (2019-01-22)
+## [1.1.0](https://github.com/pyouroboros/ouroboros/tree/1.1.0) (2019-01-26)
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.0.0...1.1.0)
+
+**Implemented enhancements:**
+
+- Notification via Telegram [\#146](https://github.com/pyouroboros/ouroboros/issues/146)
+- Add flag to allow a labels\_only condition [\#142](https://github.com/pyouroboros/ouroboros/issues/142)
+- DRY\_RUN flag [\#140](https://github.com/pyouroboros/ouroboros/issues/140)
+- Notification on startup [\#138](https://github.com/pyouroboros/ouroboros/issues/138)
+- Start/Stop containers in sequence [\#106](https://github.com/pyouroboros/ouroboros/issues/106)
+- Refactor/notifications with apprise [\#151](https://github.com/pyouroboros/ouroboros/pull/151) [[breaking change](https://github.com/pyouroboros/ouroboros/labels/breaking%20change)] [[cleanup](https://github.com/pyouroboros/ouroboros/labels/cleanup)] [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)] ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
+**Fixed bugs:**
+
+- Catch invalid docker socket config [\#148](https://github.com/pyouroboros/ouroboros/issues/148)
+- Explicitly Define true/false [\#141](https://github.com/pyouroboros/ouroboros/issues/141) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)]
+
+**Other Pull Requests**
+
+- v1.1.0 Merge [\#153](https://github.com/pyouroboros/ouroboros/pull/153) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.1.0 to develop [\#152](https://github.com/pyouroboros/ouroboros/pull/152) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Patch/group 1 [\#150](https://github.com/pyouroboros/ouroboros/pull/150) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Add volume for docker socket path [\#144](https://github.com/pyouroboros/ouroboros/pull/144) ([mauvehed](https://github.com/mauvehed))
+
+## [1.0.0](https://github.com/pyouroboros/ouroboros/tree/1.0.0) (2019-01-23)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/0.6.0...1.0.0)
 
 **Implemented enhancements:**
@@ -29,8 +53,8 @@
 
 **Other Pull Requests**
 
-- v1.0.0 to develop [\#136](https://github.com/pyouroboros/ouroboros/pull/136) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - v1.0.0 Merge [\#137](https://github.com/pyouroboros/ouroboros/pull/137) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.0.0 to develop [\#136](https://github.com/pyouroboros/ouroboros/pull/136) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - Clean old legacy files [\#134](https://github.com/pyouroboros/ouroboros/pull/134) [[cleanup](https://github.com/pyouroboros/ouroboros/labels/cleanup)] ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - Cleanup/qemu logic [\#128](https://github.com/pyouroboros/ouroboros/pull/128) [[cleanup](https://github.com/pyouroboros/ouroboros/labels/cleanup)] ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - fix readme wording for monitoring remote hosts [\#126](https://github.com/pyouroboros/ouroboros/pull/126) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)] ([circa10a](https://github.com/circa10a))
