@@ -18,7 +18,7 @@ A python-based successor to [watchtower](https://github.com/v2tec/watchtower)
 Ouroboros will monitor (all or specified) running docker containers and update them to the (latest or tagged) available image in the remote registry. The updated container uses the same tag and parameters that were used when the container was first created such as volume/bind mounts, docker network connections, environment variables, restart policies, entrypoints, commands, etc.
 
 - Push your image to your registry and simply wait your defined interval for ouroboros to find the new image and redeploy your container autonomously.
-- Notify you via email or platform customized webhooks. (Currently: Discord/Slack/Pushover/HealthChecks/Generic)
+- Notify you via many platforms courtesy of [Apprise](https://github.com/caronc/apprise) 
 - Serve metrics for trend monitoring (Currently: Prometheus/Influxdb)
 - Limit your server ssh access
 - `ssh -i key server.domainname "docker pull ... && docker run ..."` is for scrubs
