@@ -178,6 +178,7 @@ def main():
 
     data_manager = DataManager(config)
     notification_manager = NotificationManager(config, data_manager)
+    notification_manager.send(kind='startup')
 
     for socket in config.docker_sockets:
         try:
