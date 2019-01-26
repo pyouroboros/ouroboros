@@ -1,7 +1,7 @@
 import apprise
 
 from logging import getLogger
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 
 class NotificationManager(object):
@@ -36,18 +36,23 @@ class NotificationManager(object):
         if kind == 'startup':
             now = datetime.now(timezone.utc).astimezone()
             title = f'Ouroboros has started'
-            body = f'Time: {now.strftime("%Y-%m-%d %H:%M:%S")}'
+            body_fields = [
+                f'Time: {now.strftime("%Y-%m-%d %H:%M:%S")}',
+                f'Next Run: {(now + timedelta(0, self.config.interval)).strftime("%Y-%m-%d %H:%M:%S")}'
+            ]
         else:
             title = 'Ouroboros has updated containers!'
-            body = f"Host Socket: {socket.split('//')[1]}\n"
-            body += f"Containers Monitored: {self.data_manager.monitored_containers[socket]}\n"
-            body += f"Total Containers Updated: {self.data_manager.total_updated[socket]}\n"
-            body += f"Containers updated this pass: {len(container_tuples)}\n"
-            for container, old_image, new_image in container_tuples:
-                body += "{} updated from {} to {}\n".format(
-                    container.name,
-                    old_image.short_id.split(":")[1],
-                    new_image.short_id.split(":")[1]
-                )
+            body_fields = [
+                f"Host Socket: {socket.split('//')[1]}",
+                f"Containers Monitored: {self.data_manager.monitored_containers[socket]}",
+                f"Total Containers Updated: {self.data_manager.total_updated[socket]}",
+                f"Containers updated this pass: {len(container_tuples)}"
+            ]
+            body_fields.extend(
+                [f"{container} updated from {old_image} to {new_image}"
+                 for container, old_image, new_image in container_tuples]
+            )
+        body = '\n'.join(body_fields)
+
         if self.apprise.servers:
             self.apprise.notify(title=title, body=body)
