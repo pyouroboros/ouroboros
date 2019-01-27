@@ -4,12 +4,13 @@ from pyouroboros.logger import BlacklistFilter
 
 class Config(object):
     options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKETS', 'MONITOR', 'IGNORE', 'LOG_LEVEL', 'PROMETHEUS_ADDR',
-               'PROMETHEUS_PORT', 'NOTIFIERS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'LATEST',
+               'PROMETHEUS_PORT', 'NOTIFIERS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'LATEST', 'CRON',
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
                'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY', 'LABELS_ONLY',
                'DRY_RUN']
 
     interval = 300
+    cron = None
     docker_sockets = 'unix://var/run/docker.sock'
     docker_tls_verify = False
     monitor = []
@@ -109,6 +110,15 @@ class Config(object):
                 setattr(self, option, [string.strip(' ').strip('"') for string in string_list.split(' ')])
 
         # Config sanity checks
+        if self.cron:
+            cron_times = self.cron.strip().split(' ')
+            if len(cron_times) != 5:
+                self.logger.error("Cron must be in cron syntax. e.g. * * * * * (5 places). Ignoring and using interval")
+                self.cron = None
+            else:
+                self.logger.error("Cron configuration is valid. Using Cron")
+                self.cron = cron_times
+
         if self.data_export == 'influxdb' and not self.influx_database:
             self.logger.error("You need to specify an influx database if you want to export to influxdb. Disabling "
                               "influxdb data export.")

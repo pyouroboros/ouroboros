@@ -1,7 +1,7 @@
-import schedule
 from time import sleep
 from os import environ
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from requests.exceptions import ConnectionError
 from argparse import ArgumentParser, RawTextHelpFormatter
 
@@ -136,23 +136,36 @@ def main():
     data_manager = DataManager(config)
     notification_manager = NotificationManager(config, data_manager)
     notification_manager.send(kind='startup')
+    scheduler = BackgroundScheduler()
 
     for socket in config.docker_sockets:
         try:
             docker = Docker(socket, config, data_manager, notification_manager)
-            schedule.every(config.interval).seconds.do(docker.update_containers).tag(f'update-containers-{socket}')
+            if config.cron:
+                scheduler.add_job(
+                    docker.update_containers,
+                    trigger='cron',
+                    minute=config.cron[0],
+                    hour=config.cron[1],
+                    day=config.cron[2],
+                    month=config.cron[3],
+                    day_of_week=config.cron[4]
+                )
+            else:
+                if config.run_once:
+                    scheduler.add_job(docker.update_containers)
+                else:
+                    scheduler.add_job(docker.update_containers)
+                    scheduler.add_job(docker.update_containers, trigger='interval', seconds=config.interval)
         except ConnectionError:
             ol.logger.error("Could not connect to socket %s. Check your config", socket)
 
-    schedule.run_all()
+    scheduler.start()
 
-    if config.run_once:
-        for socket in config.docker_sockets:
-            schedule.clear(f'update-containers-{socket}')
-
-    while schedule.jobs:
-        schedule.run_pending()
+    while scheduler.get_jobs():
         sleep(1)
+
+    scheduler.shutdown()
 
 
 if __name__ == "__main__":
