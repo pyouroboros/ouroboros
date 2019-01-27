@@ -1,6 +1,7 @@
 from time import sleep
 from os import environ
 
+from datetime import datetime, timezone, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 from requests.exceptions import ConnectionError
 from argparse import ArgumentParser, RawTextHelpFormatter
@@ -135,8 +136,8 @@ def main():
 
     data_manager = DataManager(config)
     notification_manager = NotificationManager(config, data_manager)
-    notification_manager.send(kind='startup')
     scheduler = BackgroundScheduler()
+    scheduler.start()
 
     for socket in config.docker_sockets:
         try:
@@ -144,6 +145,7 @@ def main():
             if config.cron:
                 scheduler.add_job(
                     docker.update_containers,
+                    name=f'Cron container update for {socket}',
                     trigger='cron',
                     minute=config.cron[0],
                     hour=config.cron[1],
@@ -153,14 +155,29 @@ def main():
                 )
             else:
                 if config.run_once:
-                    scheduler.add_job(docker.update_containers)
+                    scheduler.add_job(docker.update_containers, name=f'Run Once container update for {socket}')
                 else:
-                    scheduler.add_job(docker.update_containers)
-                    scheduler.add_job(docker.update_containers, trigger='interval', seconds=config.interval)
+                    scheduler.add_job(
+                        docker.update_containers,
+                        name=f'Initial run interval container update for {socket}'
+                    )
+                    scheduler.add_job(
+                        docker.update_containers,
+                        name=f'Interval container update for {socket}',
+                        trigger='interval', seconds=config.interval
+                    )
         except ConnectionError:
             ol.logger.error("Could not connect to socket %s. Check your config", socket)
 
-    scheduler.start()
+    if config.run_once:
+        next_run = None
+    elif config.cron:
+        next_run = scheduler.get_jobs()[0].next_run_time
+    else:
+        now = datetime.now(timezone.utc).astimezone()
+        next_run = (now + timedelta(0, config.interval)).strftime("%Y-%m-%d %H:%M:%S")
+
+    notification_manager.send(kind='startup', next_run=next_run)
 
     while scheduler.get_jobs():
         sleep(1)
