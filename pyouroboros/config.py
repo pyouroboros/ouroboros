@@ -116,7 +116,7 @@ class Config(object):
                 self.logger.error("Cron must be in cron syntax. e.g. * * * * * (5 places). Ignoring and using interval")
                 self.cron = None
             else:
-                self.logger.error("Cron configuration is valid. Using Cron")
+                self.logger.info("Cron configuration is valid. Using Cron schedule %s", cron_times)
                 self.cron = cron_times
 
         if self.data_export == 'influxdb' and not self.influx_database:
