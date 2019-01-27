@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from pyouroboros import VERSION
 
 requirements = ['docker>=3.7.0',
-                'schedule>=0.5.0',
+                'apscheduler>=3.5.3',
                 'prometheus_client>=0.5.0',
                 'requests>=2.21.0',
                 'influxdb>=5.2.1',
