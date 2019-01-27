@@ -1,6 +1,3 @@
-from string import Template
-
-
 def set_properties(old, new, self_name=None):
     """Store object for spawning new container in place of the one with outdated image"""
     properties = {
@@ -14,12 +11,3 @@ def set_properties(old, new, self_name=None):
     }
 
     return properties
-
-
-NotificationTemplate = Template(
-    'Host Socket: ${HOST_SOCKET}\n'
-    'Containers Monitored: ${CONTAINERS_MONITORED}\n'
-    'Containers Updated: ${CONTAINERS_UPDATED}\n'
-    'Containers Updated This Pass: {CONTAINERS_THIS_PASS}'
-    '${CONTAINER_UPDATES}'
-)

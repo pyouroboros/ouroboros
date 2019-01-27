@@ -144,12 +144,15 @@ class Docker(object):
 
             # If current running container is running latest image
             if current_image.id != latest_image.id:
-                if container.name in ['ouroboros', 'ouroboros-updated']:
-                    self.update_self(old_container=container, new_image=latest_image, count=1)
-
                 updated_container_tuples.append(
                     (container, current_image, latest_image)
                 )
+
+                if container.name in ['ouroboros', 'ouroboros-updated']:
+                    self.notification_manager.send(container_tuples=updated_container_tuples,
+                                                   socket=self.socket, kind='update')
+                    self.update_self(old_container=container, new_image=latest_image, count=1)
+
                 self.logger.info('%s will be updated', container.name)
 
                 # Get container list to restart after update complete

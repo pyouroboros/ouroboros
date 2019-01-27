@@ -1,7 +1,7 @@
 import apprise
 
 from logging import getLogger
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 
 
 class NotificationManager(object):
@@ -32,14 +32,11 @@ class NotificationManager(object):
 
         return apprise_obj
 
-    def send(self, container_tuples=None, socket=None, kind='update'):
+    def send(self, container_tuples=None, socket=None, kind='update', next_run=None):
         if kind == 'startup':
             now = datetime.now(timezone.utc).astimezone()
             title = f'Ouroboros has started'
-            body_fields = [
-                f'Time: {now.strftime("%Y-%m-%d %H:%M:%S")}',
-                f'Next Run: {(now + timedelta(0, self.config.interval)).strftime("%Y-%m-%d %H:%M:%S")}'
-            ]
+            body_fields = [f'Time: {now.strftime("%Y-%m-%d %H:%M:%S")}', f'Next Run: {next_run}']
         else:
             title = 'Ouroboros has updated containers!'
             body_fields = [

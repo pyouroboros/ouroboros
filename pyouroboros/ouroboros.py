@@ -1,7 +1,8 @@
-import schedule
 from time import sleep
 from os import environ
 
+from datetime import datetime, timezone, timedelta
+from apscheduler.schedulers.background import BackgroundScheduler
 from requests.exceptions import ConnectionError
 from argparse import ArgumentParser, RawTextHelpFormatter
 
@@ -135,24 +136,53 @@ def main():
 
     data_manager = DataManager(config)
     notification_manager = NotificationManager(config, data_manager)
-    notification_manager.send(kind='startup')
+    scheduler = BackgroundScheduler()
+    scheduler.start()
 
     for socket in config.docker_sockets:
         try:
             docker = Docker(socket, config, data_manager, notification_manager)
-            schedule.every(config.interval).seconds.do(docker.update_containers).tag(f'update-containers-{socket}')
+            if config.cron:
+                scheduler.add_job(
+                    docker.update_containers,
+                    name=f'Cron container update for {socket}',
+                    trigger='cron',
+                    minute=config.cron[0],
+                    hour=config.cron[1],
+                    day=config.cron[2],
+                    month=config.cron[3],
+                    day_of_week=config.cron[4]
+                )
+            else:
+                if config.run_once:
+                    scheduler.add_job(docker.update_containers, name=f'Run Once container update for {socket}')
+                else:
+                    scheduler.add_job(
+                        docker.update_containers,
+                        name=f'Initial run interval container update for {socket}'
+                    )
+                    scheduler.add_job(
+                        docker.update_containers,
+                        name=f'Interval container update for {socket}',
+                        trigger='interval', seconds=config.interval
+                    )
         except ConnectionError:
             ol.logger.error("Could not connect to socket %s. Check your config", socket)
 
-    schedule.run_all()
-
     if config.run_once:
-        for socket in config.docker_sockets:
-            schedule.clear(f'update-containers-{socket}')
+        next_run = None
+    elif config.cron:
+        next_run = scheduler.get_jobs()[0].next_run_time
+    else:
+        now = datetime.now(timezone.utc).astimezone()
+        next_run = (now + timedelta(0, config.interval)).strftime("%Y-%m-%d %H:%M:%S")
 
-    while schedule.jobs:
-        schedule.run_pending()
+    notification_manager.send(kind='startup', next_run=next_run)
+
+    while scheduler.get_jobs():
         sleep(1)
+
+    scheduler.shutdown()
 
 
 if __name__ == "__main__":
