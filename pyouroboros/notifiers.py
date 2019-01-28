@@ -54,7 +54,7 @@ class NotificationManager(object):
                     ) for container, old_image, new_image in container_tuples
                 ]
             )
-        body = '\n'.join(body_fields)
+        body = '\r\n'.join(body_fields)
 
         if self.apprise.servers:
             self.apprise.notify(title=title, body=body)
