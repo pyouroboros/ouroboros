@@ -1,17 +1,17 @@
 from time import sleep
 from os import environ
 
-from datetime import datetime, timezone, timedelta
-from apscheduler.schedulers.background import BackgroundScheduler
 from requests.exceptions import ConnectionError
+from datetime import datetime, timezone, timedelta
 from argparse import ArgumentParser, RawTextHelpFormatter
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from pyouroboros.config import Config
+from pyouroboros import VERSION, BRANCH
 from pyouroboros.dockerclient import Docker
 from pyouroboros.logger import OuroborosLogger
 from pyouroboros.dataexporters import DataManager
 from pyouroboros.notifiers import NotificationManager
-from pyouroboros import VERSION, BRANCH
 
 
 def main():

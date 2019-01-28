@@ -1,6 +1,6 @@
+from os import environ
 from logging import getLogger
 from pyouroboros.logger import BlacklistFilter
-from os import environ
 
 
 class Config(object):
