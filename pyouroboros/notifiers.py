@@ -33,18 +33,17 @@ class NotificationManager(object):
         return apprise_obj
 
     def send(self, container_tuples=None, socket=None, kind='update', next_run=None):
-        socket_notifi = socket.split('//')[1]
         if kind == 'startup':
             now = datetime.now(timezone.utc).astimezone()
             title = f'Ouroboros has started'
             body_fields = [
-                f'Host/Socket: {self.config.hostname} / {socket_notifi}',
+                f'Host: {self.config.hostname}',
                 f'Time: {now.strftime("%Y-%m-%d %H:%M:%S")}',
                 f'Next Run: {next_run}']
         else:
             title = 'Ouroboros has updated containers!'
             body_fields = [
-                f"Host/Socket: {self.config.hostname} / {socket_notifi}",
+                f"Host/Socket: {self.config.hostname} / {socket.split('//')[1]}",
                 f"Containers Monitored: {self.data_manager.monitored_containers[socket]}",
                 f"Total Containers Updated: {self.data_manager.total_updated[socket]}",
                 f"Containers updated this pass: {len(container_tuples)}"

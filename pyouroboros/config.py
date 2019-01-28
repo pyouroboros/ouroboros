@@ -1,6 +1,6 @@
 from logging import getLogger
 from pyouroboros.logger import BlacklistFilter
-import os
+from os import environ
 
 
 class Config(object):
@@ -10,7 +10,7 @@ class Config(object):
                'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY', 'LABELS_ONLY',
                'DRY_RUN', 'HOSTNAME']
 
-    hostname = os.environ.get('HOSTNAME')
+    hostname = environ.get('HOSTNAME')
     interval = 300
     cron = None
     docker_sockets = 'unix://var/run/docker.sock'
