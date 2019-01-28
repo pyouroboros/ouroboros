@@ -1,5 +1,6 @@
 from logging import getLogger
 from pyouroboros.logger import BlacklistFilter
+import os
 
 
 class Config(object):
@@ -9,6 +10,7 @@ class Config(object):
                'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY', 'LABELS_ONLY',
                'DRY_RUN']
 
+    hostname = os.environ.get('HOSTNAME')
     interval = 300
     docker_sockets = 'unix://var/run/docker.sock'
     docker_tls_verify = False
