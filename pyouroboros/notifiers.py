@@ -37,13 +37,14 @@ class NotificationManager(object):
             now = datetime.now(timezone.utc).astimezone()
             title = f'Ouroboros has started'
             body_fields = [
+                f'Host/Socket: {}',
                 f'Time: {now.strftime("%Y-%m-%d %H:%M:%S")}',
                 f'Next Run: {(now + timedelta(0, self.config.interval)).strftime("%Y-%m-%d %H:%M:%S")}'
             ]
         else:
             title = 'Ouroboros has updated containers!'
             body_fields = [
-                f"Host Socket: {socket.split('//')[1]}",
+                f"Host/Socket: {socket.split('//')[1]}",
                 f"Containers Monitored: {self.data_manager.monitored_containers[socket]}",
                 f"Total Containers Updated: {self.data_manager.total_updated[socket]}",
                 f"Containers updated this pass: {len(container_tuples)}"
