@@ -24,9 +24,8 @@ class DataManager(object):
         elif self.config.data_export == "influxdb" and self.enabled:
             if label == "all":
                 self.logger.debug("Total containers updated %s", self.total_updated[socket])
-                self.influx.write_points(label, socket)
-            else:
-                self.influx.write_points(label, socket)
+
+            self.influx.write_points(label, socket)
 
     def set(self, socket):
         if self.config.data_export == "prometheus" and self.enabled:
@@ -109,6 +108,12 @@ class InfluxClient(object):
                 "tags": {'socket': clean_socket},
                 "time": now,
                 "fields": {}
+            },
+            {
+                "measurement": "Ouroboros",
+                "tags": {'configuration': self.config.hostname},
+                "time": now,
+                "fields": {key: value for key, value in vars(self.config).items() if key.upper() in self.config.options}
             }
         ]
         if label == "all":
