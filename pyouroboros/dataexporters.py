@@ -113,8 +113,8 @@ class InfluxClient(object):
                 "measurement": "Ouroboros",
                 "tags": {'configuration': self.config.hostname},
                 "time": now,
-                "fields": {key: (value if isinstance(value, str) else ' '.join(value)) for key, value
-                           in vars(self.config).items() if key.upper() in self.config.options}
+                "fields": {key: (value if (isinstance(value, str) or isinstance(value, bool)) else ' '.join(value))
+                           for key, value in vars(self.config).items() if key.upper() in self.config.options}
             }
         ]
         if label == "all":
