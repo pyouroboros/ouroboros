@@ -1,5 +1,6 @@
 from logging import getLogger
 from pyouroboros.logger import BlacklistFilter
+import os
 
 
 class Config(object):
@@ -7,8 +8,9 @@ class Config(object):
                'PROMETHEUS_PORT', 'NOTIFIERS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'LATEST', 'CRON',
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
                'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY', 'LABELS_ONLY',
-               'DRY_RUN']
+               'DRY_RUN', 'HOSTNAME']
 
+    hostname = os.environ.get('HOSTNAME')
     interval = 300
     cron = None
     docker_sockets = 'unix://var/run/docker.sock'
