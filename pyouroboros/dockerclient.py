@@ -149,11 +149,11 @@ class Docker(object):
                 )
 
                 if container.name in ['ouroboros', 'ouroboros-updated']:
-                    self.notification_manager.send(container_tuples=updated_container_tuples,
-                                                   socket=self.socket, kind='update')
                     self.data_manager.total_updated[self.socket] += 1
                     self.data_manager.add(label=container.name, socket=self.socket)
                     self.data_manager.add(label='all', socket=self.socket)
+                    self.notification_manager.send(container_tuples=updated_container_tuples,
+                                                   socket=self.socket, kind='update')
                     self.update_self(old_container=container, new_image=latest_image, count=1)
 
                 self.logger.info('%s will be updated', container.name)
