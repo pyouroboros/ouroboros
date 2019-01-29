@@ -52,7 +52,8 @@ class Docker(object):
                     monitored_containers.append(container)
                 else:
                     continue
-            elif not self.config.labels_only and self.config.monitor and container.name not in self.config.ignore:
+            elif not self.config.labels_only and self.config.monitor and container.name in self.config.monitor \
+                    and container.name not in self.config.ignore:
                     monitored_containers.append(container)
             elif not self.config.labels_only and container.name not in self.config.ignore:
                     monitored_containers.append(container)
