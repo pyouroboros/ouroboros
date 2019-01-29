@@ -7,14 +7,15 @@ class Config(object):
     options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKETS', 'MONITOR', 'IGNORE', 'LOG_LEVEL', 'PROMETHEUS_ADDR',
                'PROMETHEUS_PORT', 'NOTIFIERS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'LATEST', 'CRON',
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
-               'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY', 'LABELS_ONLY',
-               'DRY_RUN', 'HOSTNAME']
+               'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY',
+               'DRY_RUN', 'HOSTNAME', 'DOCKER_TLS_VERIFY']
 
     hostname = environ.get('HOSTNAME')
     interval = 300
     cron = None
     docker_sockets = 'unix://var/run/docker.sock'
-    docker_tls_verify = False
+    docker_tls = False
+    docker_tls_verify = True
     monitor = []
     ignore = []
     data_export = None
@@ -90,13 +91,14 @@ class Config(object):
                     except ValueError as e:
                         print(e)
                 elif option in ['LATEST', 'CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL', 'DRY_RUN',
-                                'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY', 'LABELS_ONLY']:
+                                'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY', 'DOCKER_TLS_VERIFY']:
                     if env_opt.lower() in ['true', 'yes']:
                         setattr(self, option.lower(), True)
                     elif env_opt.lower() in ['false', 'no']:
                         setattr(self, option.lower(), False)
                     else:
-                        self.logger.error('%s is not true/yes, nor false/no for %s. Assuming false', env_opt, option)
+                        self.logger.error('%s is not true/yes, nor false/no for %s. Assuming %s',
+                                          env_opt, option, getattr(self, option))
                 else:
                     setattr(self, option.lower(), env_opt)
             elif vars(self.cli_args).get(option):
