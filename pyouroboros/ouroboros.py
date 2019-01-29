@@ -27,9 +27,9 @@ def main():
                                  'DEFAULT: "unix://var/run/docker.sock"\n'
                                  'EXAMPLE: -d unix://var/run/docker.sock tcp://192.168.1.100:2376')
 
-    core_group.add_argument('-t', '--docker-tls-verify', default=False, dest='DOCKER_TLS_VERIFY', action='store_true',
-                            help='Enable docker TLS\n'
-                                 'REQUIRES: docker cert mount')
+    core_group.add_argument('-t', '--docker-tls-verify', default=Config.docker_tls_verify, dest='DOCKER_TLS_VERIFY',
+                            action='store_true', help='Enable docker TLS\n'
+                                                      'REQUIRES: docker cert mount')
 
     core_group.add_argument('-i', '--interval', type=int, default=Config.interval, dest='INTERVAL',
                             help='Interval in seconds between checking for updates\n'
@@ -43,12 +43,13 @@ def main():
                             dest='LOG_LEVEL', default=Config.log_level, help='Set logging level\n'
                                                                              'DEFAULT: info')
 
-    core_group.add_argument('-u', '--self-update', default=False, dest='SELF_UPDATE', action='store_true',
+    core_group.add_argument('-u', '--self-update', default=Config.self_update, dest='SELF_UPDATE', action='store_true',
                             help='Let ouroboros update itself')
 
-    core_group.add_argument('-o', '--run-once', default=False, action='store_true', dest='RUN_ONCE', help='Single run')
+    core_group.add_argument('-o', '--run-once', default=Config.run_once, action='store_true', dest='RUN_ONCE',
+                            help='Single run')
 
-    core_group.add_argument('-A', '--dry-run', default=False, action='store_true', dest='DRY_RUN',
+    core_group.add_argument('-A', '--dry-run', default=Config.dry_run, action='store_true', dest='DRY_RUN',
                             help='Run without making changes. Best used with run-once')
 
     core_group.add_argument('-N', '--notifiers', nargs='+', default=Config.notifiers, dest='NOTIFIERS',
@@ -65,33 +66,33 @@ def main():
                               help='Container(s) to ignore\n'
                                    'EXAMPLE: -n container1 container2')
 
-    docker_group.add_argument('-k', '--label-enable', default=False, dest='LABEL_ENABLE', action='store_true',
-                              help='Enable label monitoring for ouroboros label options\n'
-                                   'Note: labels take precedence'
-                                   'DEFAULT: False')
+    docker_group.add_argument('-k', '--label-enable', default=Config.label_enable, dest='LABEL_ENABLE',
+                              action='store_true', help='Enable label monitoring for ouroboros label options\n'
+                                                        'Note: labels take precedence'
+                                                        'DEFAULT: False')
 
-    docker_group.add_argument('-M', '--labels-only', default=False, dest='LABELS_ONLY', action='store_true',
-                              help='Only watch containers that utilize labels\n'
-                                   'This allows a more strict compliance for environments'
-                                   'DEFAULT: False')
+    docker_group.add_argument('-M', '--labels-only', default=Config.labels_only, dest='LABELS_ONLY',
+                              action='store_true', help='Only watch containers that utilize labels\n'
+                                                        'This allows a more strict compliance for environments'
+                                                        'DEFAULT: False')
 
-    docker_group.add_argument('-c', '--cleanup', default=False, dest='CLEANUP', action='store_true',
+    docker_group.add_argument('-c', '--cleanup', default=Config.cleanup, dest='CLEANUP', action='store_true',
                               help='Remove old images after updating')
 
-    docker_group.add_argument('-L', '--latest', default=False, dest='LATEST', action='store_true',
+    docker_group.add_argument('-L', '--latest', default=Config.latest, dest='LATEST', action='store_true',
                               help='Check for latest image instead of pulling current tag')
 
-    docker_group.add_argument('-r', '--repo-user', default=None, dest='REPO_USER',
+    docker_group.add_argument('-r', '--repo-user', default=Config.repo_user, dest='REPO_USER',
                               help='Private docker registry username\n'
                                    'EXAMPLE: foo@bar.baz')
 
-    docker_group.add_argument('-R', '--repo-pass', default=None, dest='REPO_PASS',
+    docker_group.add_argument('-R', '--repo-pass', default=Config.repo_pass, dest='REPO_PASS',
                               help='Private docker registry password\n'
                                    'EXAMPLE: MyPa$$w0rd')
 
     data_group = parser.add_argument_group('Data Export', 'Configuration of data export functionality')
-    data_group.add_argument('-D', '--data-export', choices=['prometheus', 'influxdb'], default=None, dest='DATA_EXPORT',
-                            help='Enable exporting of data for chosen option')
+    data_group.add_argument('-D', '--data-export', choices=['prometheus', 'influxdb'], default=Config.data_export,
+                            dest='DATA_EXPORT', help='Enable exporting of data for chosen option')
 
     data_group.add_argument('-a', '--prometheus-addr', default=Config.prometheus_addr,
                             dest='PROMETHEUS_ADDR', help='Bind address to run Prometheus exporter on\n'
@@ -117,14 +118,14 @@ def main():
                             help='Password for influxdb\n'
                                   'DEFAULT: root')
 
-    data_group.add_argument('-X', '--influx-database', default=Config.influx_password, dest='INFLUX_DATABASE',
+    data_group.add_argument('-X', '--influx-database', default=Config.influx_database, dest='INFLUX_DATABASE',
                             help='Influx database name. Required if using influxdb')
 
-    data_group.add_argument('-s', '--influx-ssl', default=False, dest='INFLUX_SSL', action='store_true',
+    data_group.add_argument('-s', '--influx-ssl', default=Config.influx_ssl, dest='INFLUX_SSL', action='store_true',
                             help='Use SSL when connecting to influxdb')
 
-    data_group.add_argument('-V', '--influx-verify-ssl', default=False, dest='INFLUX_VERIFY_SSL', action='store_true',
-                            help='Verify SSL certificate when connecting to influxdb')
+    data_group.add_argument('-V', '--influx-verify-ssl', default=Config.influx_verify_ssl, dest='INFLUX_VERIFY_SSL',
+                            action='store_true', help='Verify SSL certificate when connecting to influxdb')
 
     args = parser.parse_args()
 

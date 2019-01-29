@@ -120,6 +120,7 @@ class Config(object):
             else:
                 self.logger.info("Cron configuration is valid. Using Cron schedule %s", cron_times)
                 self.cron = cron_times
+                self.interval = None
 
         if self.data_export == 'influxdb' and not self.influx_database:
             self.logger.error("You need to specify an influx database if you want to export to influxdb. Disabling "
@@ -131,5 +132,12 @@ class Config(object):
         if self.dry_run and not self.run_once:
             self.logger.warning("Dry run is designed to be ran with run once. Setting for you.")
             self.run_once = True
+
+        # Remove default config that is not used for cleaner logs
+        if self.data_export != 'prometheus':
+            self.prometheus_addr, self.prometheus_port = None, None
+
+        if self.data_export != 'influxdb':
+            self.influx_url, self.influx_port, self.influx_username, self.influx_password = None, None, None, None
 
         self.config_blacklist()
