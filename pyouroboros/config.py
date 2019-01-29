@@ -120,6 +120,7 @@ class Config(object):
             else:
                 self.logger.info("Cron configuration is valid. Using Cron schedule %s", cron_times)
                 self.cron = cron_times
+                self.interval = None
 
         if self.data_export == 'influxdb' and not self.influx_database:
             self.logger.error("You need to specify an influx database if you want to export to influxdb. Disabling "
@@ -137,7 +138,6 @@ class Config(object):
             self.prometheus_addr, self.prometheus_port = None, None
 
         if self.data_export != 'influxdb':
-            self.influx_url, self.influx_port, self.influx_ssl, self.influx_verify_ssl = None, None, None, None
-            self.influx_username, self.influx_password = None, None
+            self.influx_url, self.influx_port, self.influx_username, self.influx_password = None, None, None, None
 
         self.config_blacklist()
