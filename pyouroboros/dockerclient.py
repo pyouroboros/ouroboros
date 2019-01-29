@@ -50,7 +50,10 @@ class Docker(object):
             if self.config.label_enable and ouro_label:
                 if ouro_label.lower() in ["true", "yes"]:
                     monitored_containers.append(container)
+                elif ouro_label.lower() in ["false", "no"]:
+                    continue
                 else:
+                    self.logger.error('Malformed container enable label value in container \"%s\" (\"%s\").', container.name, ouro_label)
                     continue
             elif not self.config.labels_only and self.config.monitor and container.name in self.config.monitor \
                     and container.name not in self.config.ignore:
