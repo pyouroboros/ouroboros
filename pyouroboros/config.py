@@ -132,4 +132,12 @@ class Config(object):
             self.logger.warning("Dry run is designed to be ran with run once. Setting for you.")
             self.run_once = True
 
+        # Remove default config that is not used for cleaner logs
+        if self.data_export != 'prometheus':
+            self.prometheus_addr, self.prometheus_port = None, None
+
+        if self.data_export != 'influxdb':
+            self.influx_url, self.influx_port, self.influx_ssl, self.influx_verify_ssl = None, None, None, None
+            self.influx_username, self.influx_password = None, None
+
         self.config_blacklist()
