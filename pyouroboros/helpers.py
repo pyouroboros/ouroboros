@@ -10,7 +10,7 @@ def set_properties(old, new, self_name=None):
             (p.split('/')[0], p.split('/')[1]) for p in old.attrs['Config']['ExposedPorts'].keys()
         ],
         'volumes': None if not old.attrs['Config'].get('Volumes') else [
-            [v for v in old.attrs['Config']['Volumes'].keys()]
+            v for v in old.attrs['Config']['Volumes'].keys()
         ],
         'working_dir': old.attrs['Config']['WorkingDir'],
         'image': new.tags[0],
