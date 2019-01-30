@@ -27,9 +27,13 @@ def main():
                                  'DEFAULT: "unix://var/run/docker.sock"\n'
                                  'EXAMPLE: -d unix://var/run/docker.sock tcp://192.168.1.100:2376')
 
-    core_group.add_argument('-t', '--docker-tls-verify', default=Config.docker_tls_verify, dest='DOCKER_TLS_VERIFY',
+    core_group.add_argument('-t', '--docker-tls', default=Config.docker_tls, dest='DOCKER_TLS',
                             action='store_true', help='Enable docker TLS\n'
                                                       'REQUIRES: docker cert mount')
+
+    core_group.add_argument('-T', '--docker-tls-verify', default=Config.docker_tls_verify, dest='DOCKER_TLS_VERIFY',
+                            action='store_false', help='Verify the CA Certificate mounted for TLS\n'
+                                                       'DEFAULT: True')
 
     core_group.add_argument('-i', '--interval', type=int, default=Config.interval, dest='INTERVAL',
                             help='Interval in seconds between checking for updates\n'
