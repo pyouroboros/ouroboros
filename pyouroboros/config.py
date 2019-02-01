@@ -1,17 +1,21 @@
+from os import environ
 from logging import getLogger
 from pyouroboros.logger import BlacklistFilter
 
 
 class Config(object):
     options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKETS', 'MONITOR', 'IGNORE', 'LOG_LEVEL', 'PROMETHEUS_ADDR',
-               'PROMETHEUS_PORT', 'NOTIFIERS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'LATEST',
+               'PROMETHEUS_PORT', 'NOTIFIERS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'LATEST', 'CRON',
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
-               'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY', 'LABELS_ONLY',
-               'DRY_RUN']
+               'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY',
+               'DRY_RUN', 'HOSTNAME', 'DOCKER_TLS_VERIFY']
 
+    hostname = environ.get('HOSTNAME')
     interval = 300
+    cron = None
     docker_sockets = 'unix://var/run/docker.sock'
-    docker_tls_verify = False
+    docker_tls = False
+    docker_tls_verify = True
     monitor = []
     ignore = []
     data_export = None
@@ -76,23 +80,27 @@ class Config(object):
     def parse(self):
         for option in Config.options:
             if self.environment_vars.get(option):
+                env_opt = self.environment_vars[option]
+                if isinstance(env_opt, str):
+                    # Clean out quotes, both single/double and whitespace
+                    env_opt = env_opt.strip("'").strip('"').strip(' ')
                 if option in ['INTERVAL', 'PROMETHEUS_PORT', 'INFLUX_PORT']:
                     try:
-                        opt = int(self.environment_vars[option])
+                        opt = int(env_opt)
                         setattr(self, option.lower(), opt)
                     except ValueError as e:
                         print(e)
                 elif option in ['LATEST', 'CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL', 'DRY_RUN',
-                                'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS_VERIFY', 'LABELS_ONLY']:
-                    if self.environment_vars[option].lower() in ['true', 'yes']:
+                                'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY', 'DOCKER_TLS_VERIFY']:
+                    if env_opt.lower() in ['true', 'yes']:
                         setattr(self, option.lower(), True)
-                    elif self.environment_vars[option].lower() in ['false', 'no']:
+                    elif env_opt.lower() in ['false', 'no']:
                         setattr(self, option.lower(), False)
                     else:
-                        self.logger.error('%s is not true/yes, nor false/no for %s. Assuming false',
-                                          self.environment_vars[option], option)
+                        self.logger.error('%s is not true/yes, nor false/no for %s. Assuming %s',
+                                          env_opt, option, getattr(self, option))
                 else:
-                    setattr(self, option.lower(), self.environment_vars[option])
+                    setattr(self, option.lower(), env_opt)
             elif vars(self.cli_args).get(option):
                 setattr(self, option.lower(), vars(self.cli_args).get(option))
 
@@ -106,9 +114,19 @@ class Config(object):
         for option in ['docker_sockets', 'notifiers', 'monitor', 'ignore']:
             if isinstance(getattr(self, option), str):
                 string_list = getattr(self, option)
-                setattr(self, option, [string.strip(' ').strip('"') for string in string_list.split(' ')])
+                setattr(self, option, [string for string in string_list.split(' ')])
 
         # Config sanity checks
+        if self.cron:
+            cron_times = self.cron.strip().split(' ')
+            if len(cron_times) != 5:
+                self.logger.error("Cron must be in cron syntax. e.g. * * * * * (5 places). Ignoring and using interval")
+                self.cron = None
+            else:
+                self.logger.info("Cron configuration is valid. Using Cron schedule %s", cron_times)
+                self.cron = cron_times
+                self.interval = None
+
         if self.data_export == 'influxdb' and not self.influx_database:
             self.logger.error("You need to specify an influx database if you want to export to influxdb. Disabling "
                               "influxdb data export.")
@@ -119,5 +137,12 @@ class Config(object):
         if self.dry_run and not self.run_once:
             self.logger.warning("Dry run is designed to be ran with run once. Setting for you.")
             self.run_once = True
+
+        # Remove default config that is not used for cleaner logs
+        if self.data_export != 'prometheus':
+            self.prometheus_addr, self.prometheus_port = None, None
+
+        if self.data_export != 'influxdb':
+            self.influx_url, self.influx_port, self.influx_username, self.influx_password = None, None, None, None
 
         self.config_blacklist()

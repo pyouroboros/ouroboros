@@ -1,7 +1,7 @@
 import apprise
 
 from logging import getLogger
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 
 
 class NotificationManager(object):
@@ -32,18 +32,18 @@ class NotificationManager(object):
 
         return apprise_obj
 
-    def send(self, container_tuples=None, socket=None, kind='update'):
+    def send(self, container_tuples=None, socket=None, kind='update', next_run=None):
         if kind == 'startup':
             now = datetime.now(timezone.utc).astimezone()
             title = f'Ouroboros has started'
             body_fields = [
+                f'Host: {self.config.hostname}',
                 f'Time: {now.strftime("%Y-%m-%d %H:%M:%S")}',
-                f'Next Run: {(now + timedelta(0, self.config.interval)).strftime("%Y-%m-%d %H:%M:%S")}'
-            ]
+                f'Next Run: {next_run}']
         else:
             title = 'Ouroboros has updated containers!'
             body_fields = [
-                f"Host Socket: {socket.split('//')[1]}",
+                f"Host/Socket: {self.config.hostname} / {socket.split('//')[1]}",
                 f"Containers Monitored: {self.data_manager.monitored_containers[socket]}",
                 f"Total Containers Updated: {self.data_manager.total_updated[socket]}",
                 f"Containers updated this pass: {len(container_tuples)}"
@@ -57,7 +57,7 @@ class NotificationManager(object):
                     ) for container, old_image, new_image in container_tuples
                 ]
             )
-        body = '\n'.join(body_fields)
+        body = '\r\n'.join(body_fields)
 
         if self.apprise.servers:
             self.apprise.notify(title=title, body=body)
