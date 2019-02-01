@@ -19,7 +19,7 @@ class DataManager(object):
 
     def add(self, label, socket):
         if self.config.data_export == "prometheus" and self.enabled:
-                self.prometheus.update(label, socket)
+            self.prometheus.update(label, socket)
 
         elif self.config.data_export == "influxdb" and self.enabled:
             if label == "all":
