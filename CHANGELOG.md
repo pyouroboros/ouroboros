@@ -1,5 +1,30 @@
 # Change Log
 
+## [1.1.1](https://github.com/pyouroboros/ouroboros/tree/1.1.1) (2019-02-01)
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.1.0...1.1.1)
+
+**Implemented enhancements:**
+
+- Support for adding an identifier \(hostname?\) to notifications [\#158](https://github.com/pyouroboros/ouroboros/issues/158)
+- Influx config data + ocd cleanup [\#162](https://github.com/pyouroboros/ouroboros/pull/162) [[cleanup](https://github.com/pyouroboros/ouroboros/labels/cleanup)] ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- add cli arg for cron [\#157](https://github.com/pyouroboros/ouroboros/pull/157) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
+**Fixed bugs:**
+
+- Ouroboros does not respect MONITOR= [\#166](https://github.com/pyouroboros/ouroboros/issues/166)
+- Docker TLS over TCP connections [\#154](https://github.com/pyouroboros/ouroboros/issues/154) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)]
+- Patch/group 4 [\#169](https://github.com/pyouroboros/ouroboros/pull/169) [[cleanup](https://github.com/pyouroboros/ouroboros/labels/cleanup)] ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Recheck properly for only non lists [\#164](https://github.com/pyouroboros/ouroboros/pull/164) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- add some missing passthrough info for restart [\#163](https://github.com/pyouroboros/ouroboros/pull/163) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
+**Other Pull Requests**
+
+- v1.1.1 Merge [\#173](https://github.com/pyouroboros/ouroboros/pull/173) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.1.1 to develop [\#172](https://github.com/pyouroboros/ouroboros/pull/172) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Patch/group 3 [\#167](https://github.com/pyouroboros/ouroboros/pull/167) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Add hostname to the notifications [\#161](https://github.com/pyouroboros/ouroboros/pull/161) ([tlkamp](https://github.com/tlkamp))
+- Patch/group 2 [\#155](https://github.com/pyouroboros/ouroboros/pull/155) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
 ## [1.1.0](https://github.com/pyouroboros/ouroboros/tree/1.1.0) (2019-01-26)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.0.0...1.1.0)
 
