@@ -43,10 +43,6 @@ def main():
                             help='Cron formatted string for scheduling\n'
                                  'EXAMPLE: "*/5 * * * *"')
 
-    core_group.add_argument('-z', '--timezone', default=Config.timezone, dest='TIMEZONE',
-                            help='Timezone for scheduling\n'
-                                 'EXAMPLE: "America/Chicago"')
-
     core_group.add_argument('-l', '--log-level', choices=['debug', 'info', 'warn', 'error', 'critical'],
                             dest='LOG_LEVEL', default=Config.log_level, help='Set logging level\n'
                                                                              'DEFAULT: info')
@@ -149,7 +145,7 @@ def main():
 
     data_manager = DataManager(config)
     notification_manager = NotificationManager(config, data_manager)
-    scheduler = BackgroundScheduler(timezone=config.timezone)
+    scheduler = BackgroundScheduler()
     scheduler.start()
 
     for socket in config.docker_sockets:
