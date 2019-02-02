@@ -1,2 +1,2 @@
-VERSION = "1.1.1"
-BRANCH = "master"
+VERSION = "1.1.2"
+BRANCH = "develop"
