@@ -1,5 +1,20 @@
 # Change Log
 
+## [1.1.2](https://github.com/pyouroboros/ouroboros/tree/1.1.2) (2019-02-02)
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.1.1...1.1.2)
+
+**Fixed bugs:**
+
+- No default timezone [\#176](https://github.com/pyouroboros/ouroboros/issues/176)
+
+**Closed issues:**
+
+- cron documentation example update [\#182](https://github.com/pyouroboros/ouroboros/issues/182) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)]
+
+**Other Pull Requests**
+- v1.1.2 Merge [\#184](https://github.com/pyouroboros/ouroboros/pull/184) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.1.2 to develop [\#183](https://github.com/pyouroboros/ouroboros/pull/183) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
 ## [1.1.1](https://github.com/pyouroboros/ouroboros/tree/1.1.1) (2019-02-01)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.1.0...1.1.1)
 
