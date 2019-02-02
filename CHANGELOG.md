@@ -1,5 +1,18 @@
 # Change Log
 
+## [1.1.2](https://github.com/pyouroboros/ouroboros/tree/HEAD)
+
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.1.1...1.1.2)
+
+**Fixed bugs:**
+
+- Ouroboros Container stopping. [\#176](https://github.com/pyouroboros/ouroboros/issues/176)
+
+**Merged pull requests:**
+
+- V1.1.2 [\#179](https://github.com/pyouroboros/ouroboros/pull/179) ([circa10a](https://github.com/circa10a))
+- Fix default timezone [\#177](https://github.com/pyouroboros/ouroboros/pull/177) ([circa10a](https://github.com/circa10a))
+
 ## [1.1.1](https://github.com/pyouroboros/ouroboros/tree/1.1.1) (2019-02-01)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.1.0...1.1.1)
 
