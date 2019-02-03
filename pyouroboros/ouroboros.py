@@ -8,10 +8,10 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from pyouroboros.config import Config
 from pyouroboros import VERSION, BRANCH
-from pyouroboros.dockerclient import Docker
 from pyouroboros.logger import OuroborosLogger
 from pyouroboros.dataexporters import DataManager
 from pyouroboros.notifiers import NotificationManager
+from pyouroboros.dockerclient import Docker, Container, Service
 
 
 def main():
@@ -49,6 +49,9 @@ def main():
 
     core_group.add_argument('-u', '--self-update', default=Config.self_update, dest='SELF_UPDATE', action='store_true',
                             help='Let ouroboros update itself')
+
+    core_group.add_argument('-S', '--swarm', default=Config.swarm, dest='SWARM', action='store_true',
+                            help='Put ouroboros in swarm mode')
 
     core_group.add_argument('-o', '--run-once', default=Config.run_once, action='store_true', dest='RUN_ONCE',
                             help='Single run')
@@ -151,9 +154,13 @@ def main():
     for socket in config.docker_sockets:
         try:
             docker = Docker(socket, config, data_manager, notification_manager)
+            if config.swarm:
+                mode = Service(docker)
+            else:
+                mode = Container(docker)
             if config.cron:
                 scheduler.add_job(
-                    docker.update_containers,
+                    mode.update,
                     name=f'Cron container update for {socket}',
                     trigger='cron',
                     minute=config.cron[0],
@@ -164,14 +171,14 @@ def main():
                 )
             else:
                 if config.run_once:
-                    scheduler.add_job(docker.update_containers, name=f'Run Once container update for {socket}')
+                    scheduler.add_job(mode.update, name=f'Run Once container update for {socket}')
                 else:
                     scheduler.add_job(
-                        docker.update_containers,
+                        mode.update,
                         name=f'Initial run interval container update for {socket}'
                     )
                     scheduler.add_job(
-                        docker.update_containers,
+                        mode.update,
                         name=f'Interval container update for {socket}',
                         trigger='interval', seconds=config.interval
                     )

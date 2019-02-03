@@ -8,7 +8,7 @@ class Config(object):
                'PROMETHEUS_PORT', 'NOTIFIERS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'LATEST', 'CRON',
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
                'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY',
-               'DRY_RUN', 'HOSTNAME', 'DOCKER_TLS_VERIFY']
+               'DRY_RUN', 'HOSTNAME', 'DOCKER_TLS_VERIFY', 'SWARM']
 
     hostname = environ.get('HOSTNAME')
     interval = 300
@@ -16,6 +16,7 @@ class Config(object):
     docker_sockets = 'unix://var/run/docker.sock'
     docker_tls = False
     docker_tls_verify = True
+    swarm = False
     monitor = []
     ignore = []
     data_export = None
@@ -91,7 +92,8 @@ class Config(object):
                     except ValueError as e:
                         print(e)
                 elif option in ['LATEST', 'CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL', 'DRY_RUN',
-                                'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY', 'DOCKER_TLS_VERIFY']:
+                                'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY', 'DOCKER_TLS_VERIFY',
+                                'SWARM']:
                     if env_opt.lower() in ['true', 'yes']:
                         setattr(self, option.lower(), True)
                     elif env_opt.lower() in ['false', 'no']:
