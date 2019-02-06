@@ -348,7 +348,7 @@ class Service(object):
                     self.logger.critical("Invalid Credentials. Exiting")
                     exit(1)
             elif 'Client.Timeout' in str(e):
-                self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", image.tags[0])
+                self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", tag)
                 raise ConnectionError
             elif ('pull access' or 'TLS handshake') in str(e):
                 self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
