@@ -104,6 +104,7 @@ pipeline {
                                     docker manifest inspect ${DOCKER_REPO}:develop
                                     docker manifest push -p ${DOCKER_REPO}:develop
                                     """
+                                )
                             }
                         }
                     }
