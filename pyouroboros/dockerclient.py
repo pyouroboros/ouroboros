@@ -13,9 +13,7 @@ class Docker(object):
         self.socket = socket
         self.client = self.connect()
         self.data_manager = data_manager
-        self.data_manager.total_updated[self.socket] = 0
         self.logger = getLogger()
-        self.monitored = self.monitor_filter()
 
         self.notification_manager = notification_manager
 
@@ -56,50 +54,19 @@ class Docker(object):
 
         return client
 
-    def get_running(self):
-        """Return running container objects list, except ouroboros itself"""
-        running_containers = []
-        try:
-            for container in self.client.containers.list(filters={'status': 'running'}):
-                if self.config.self_update:
-                    running_containers.append(container)
-                else:
-                    try:
-                        if 'ouroboros' not in container.image.tags[0]:
-                            running_containers.append(container)
-                    except IndexError:
-                        self.logger.error("%s has no tags.. you should clean it up! Ignoring.", container.id)
-                        continue
 
-        except DockerException:
-            self.logger.critical("Can't connect to Docker API at %s", self.config.docker_socket)
-            exit(1)
+class Container(object):
+    def __init__(self, docker_client):
+        self.docker = docker_client
+        self.logger = self.docker.logger
+        self.config = self.docker.config
+        self.client = self.docker.client
+        self.socket = self.docker.socket
+        self.data_manager = self.docker.data_manager
+        self.data_manager.total_updated[self.socket] = 0
+        self.notification_manager = self.docker.notification_manager
 
-        return running_containers
-
-    def monitor_filter(self):
-        """Return filtered running container objects list"""
-        running_containers = self.get_running()
-        monitored_containers = []
-
-        for container in running_containers:
-            ouro_label = container.labels.get('com.ouroboros.enable', False)
-            # if labels enabled, use the label. 'true/yes' trigger monitoring.
-            if self.config.label_enable and ouro_label:
-                if ouro_label.lower() in ["true", "yes"]:
-                    monitored_containers.append(container)
-                else:
-                    continue
-            elif not self.config.labels_only and self.config.monitor and container.name in self.config.monitor \
-                    and container.name not in self.config.ignore:
-                monitored_containers.append(container)
-            elif not self.config.labels_only and container.name not in self.config.ignore:
-                monitored_containers.append(container)
-
-        self.data_manager.monitored_containers[self.socket] = len(monitored_containers)
-        self.data_manager.set(self.socket)
-
-        return monitored_containers
+        self.monitored = self.monitor_filter()
 
     def pull(self, image_object):
         """Docker pull image tag/latest"""
@@ -149,7 +116,52 @@ class Docker(object):
                 self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
                 raise ConnectionError
 
-    def update_containers(self):
+    def get_running(self):
+        """Return running container objects list, except ouroboros itself"""
+        running_containers = []
+        try:
+            for container in self.client.containers.list(filters={'status': 'running'}):
+                if self.config.self_update:
+                    running_containers.append(container)
+                else:
+                    try:
+                        if 'ouroboros' not in container.image.tags[0]:
+                            running_containers.append(container)
+                    except IndexError:
+                        self.logger.error("%s has no tags.. you should clean it up! Ignoring.", container.id)
+                        continue
+
+        except DockerException:
+            self.logger.critical("Can't connect to Docker API at %s", self.config.docker_socket)
+            exit(1)
+
+        return running_containers
+
+    def monitor_filter(self):
+        """Return filtered running container objects list"""
+        running_containers = self.get_running()
+        monitored_containers = []
+
+        for container in running_containers:
+            ouro_label = container.labels.get('com.ouroboros.enable', False)
+            # if labels enabled, use the label. 'true/yes' trigger monitoring.
+            if self.config.label_enable and ouro_label:
+                if ouro_label.lower() in ["true", "yes"]:
+                    monitored_containers.append(container)
+                else:
+                    continue
+            elif not self.config.labels_only and self.config.monitor and container.name in self.config.monitor \
+                    and container.name not in self.config.ignore:
+                monitored_containers.append(container)
+            elif not self.config.labels_only and container.name not in self.config.ignore:
+                monitored_containers.append(container)
+
+        self.data_manager.monitored_containers[self.socket] = len(monitored_containers)
+        self.data_manager.set(self.socket)
+
+        return monitored_containers
+
+    def update(self):
         updated_count = 0
         updated_container_tuples = []
         depends_on_list = []
@@ -279,3 +291,115 @@ class Docker(object):
             self.logger.debug('If you strike me down, I shall become more powerful than you could possibly imagine')
             self.logger.debug('https://bit.ly/2VVY7GH')
             sleep(30)
+
+
+class Service(object):
+    def __init__(self, docker_client):
+        self.docker = docker_client
+        self.logger = self.docker.logger
+        self.config = self.docker.config
+        self.client = self.docker.client
+        self.socket = self.docker.socket
+        self.data_manager = self.docker.data_manager
+        self.data_manager.total_updated[self.socket] = 0
+        self.notification_manager = self.docker.notification_manager
+
+        self.monitored = self.monitor_filter()
+
+    def monitor_filter(self):
+        """Return filtered service objects list"""
+        services = self.client.services.list(filters={'label': 'com.ouroboros.enable'})
+
+        monitored_services = []
+
+        for service in services:
+            ouro_label = service.attrs['Spec']['Labels'].get('com.ouroboros.enable')
+            if ouro_label.lower() in ["true", "yes"]:
+                monitored_services.append(service)
+
+        self.data_manager.monitored_containers[self.socket] = len(monitored_services)
+        self.data_manager.set(self.socket)
+
+        return monitored_services
+
+    def pull(self, tag):
+        """Docker pull image tag/latest"""
+        self.logger.debug('Checking tag: %s', tag)
+        try:
+            if self.config.dry_run:
+                registry_data = self.client.images.get_registry_data(tag)
+                return registry_data
+            else:
+                if self.config.auth_json:
+                    return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
+                else:
+                    return_image = self.client.images.pull(tag)
+                return return_image
+        except APIError as e:
+            if '<html>' in str(e):
+                self.logger.debug("Docker api issue. Ignoring")
+                raise ConnectionError
+            elif 'unauthorized' in str(e):
+                if self.config.dry_run:
+                    self.logger.error('dry run : Upstream authentication issue while checking %s. See: '
+                                      'https://github.com/docker/docker-py/issues/2225', tag)
+                    raise ConnectionError
+                else:
+                    self.logger.critical("Invalid Credentials. Exiting")
+                    exit(1)
+            elif 'Client.Timeout' in str(e):
+                self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", tag)
+                raise ConnectionError
+            elif ('pull access' or 'TLS handshake') in str(e):
+                self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
+                raise ConnectionError
+
+    def update(self):
+        updated_count = 0
+        updated_service_tuples = []
+        self.monitored = self.monitor_filter()
+
+        if not self.monitored:
+            self.logger.info('No services monitored')
+
+        for service in self.monitored:
+            image_string = service.attrs['Spec']['TaskTemplate']['ContainerSpec']['Image']
+            tag = image_string.split('@')[0]
+            sha256 = image_string.split('@')[1][7:]
+
+            try:
+                latest_image = self.pull(tag)
+            except ConnectionError:
+                continue
+
+            if self.config.dry_run:
+                # Ugly hack for repo digest
+                if sha256 != latest_image.id:
+                    self.logger.info('dry run : %s would be updated', service.name)
+                continue
+
+            if sha256 != latest_image.id:
+                updated_service_tuples.append(
+                    (service, sha256[-10:], latest_image)
+                )
+
+                if 'ouroboros' in service.name:
+                    self.data_manager.total_updated[self.socket] += 1
+                    self.data_manager.add(label=service.name, socket=self.socket)
+                    self.data_manager.add(label='all', socket=self.socket)
+                    self.notification_manager.send(container_tuples=updated_service_tuples,
+                                                   socket=self.socket, kind='update')
+
+                self.logger.info('%s will be updated', service.name)
+                service.update(image=tag)
+
+                updated_count += 1
+
+                self.logger.debug("Incrementing total service updated count")
+
+                self.data_manager.total_updated[self.socket] += 1
+                self.data_manager.add(label=service.name, socket=self.socket)
+                self.data_manager.add(label='all', socket=self.socket)
+
+        if updated_count > 0:
+            self.notification_manager.send(container_tuples=updated_service_tuples, socket=self.socket, kind='update')
