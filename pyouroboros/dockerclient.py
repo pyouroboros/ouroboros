@@ -150,11 +150,12 @@ class Container(object):
                     monitored_containers.append(container)
                 else:
                     continue
-            elif not self.config.labels_only and self.config.monitor and container.name in self.config.monitor \
-                    and container.name not in self.config.ignore:
-                monitored_containers.append(container)
-            elif not self.config.labels_only and container.name not in self.config.ignore:
-                monitored_containers.append(container)
+            elif not self.config.labels_only:
+                if self.config.monitor:
+                    if container.name in self.config.monitor and container.name not in self.config.ignore:
+                        monitored_containers.append(container)
+                elif container.name not in self.config.ignore:
+                    monitored_containers.append(container)
 
         self.data_manager.monitored_containers[self.socket] = len(monitored_containers)
         self.data_manager.set(self.socket)
