@@ -24,14 +24,14 @@ pipeline {
             }
         }
         stage('Docker Builds') {
+            when {
+                anyOf {
+                    branch 'master'
+                    branch 'develop'
+                }
+            }
             parallel {
                 stage('amd64') {
-                    when {
-                        anyOf {
-                            branch 'master'
-                            branch 'develop'
-                        }
-                    }
                     agent { label 'amd64'}
                     steps {
                         script {
@@ -47,12 +47,6 @@ pipeline {
                     }
                 }
                 stage('ARMv6') {
-                    when {
-                        anyOf {
-                            branch 'master'
-                            branch 'develop'
-                        }
-                    }
                     agent { label 'arm64'}
                     steps {
                         script {
@@ -67,12 +61,6 @@ pipeline {
                     }
                 }
                 stage('ARM64v8') {
-                    when {
-                        anyOf {
-                            branch 'master'
-                            branch 'develop'
-                        }
-                    }
                     agent { label 'arm64'}
                     steps {
                         script {
@@ -89,28 +77,33 @@ pipeline {
             }
         }
         stage('Releases') {
+            when {
+                anyOf {
+                    branch 'master'
+                    branch 'develop'
+                }
+            }
             parallel {
                 stage('Docker Manifest') {
-                    when {
-                        anyOf {
-                            branch 'master'
-                            branch 'develop'
-                        }
-                    }
                     agent { label 'amd64'}
                     steps {
                         script {
                             if (BRANCH_NAME == 'master') {
-                                sh(script: "docker manifest create ${DOCKER_REPO}:${TAG} ${DOCKER_REPO}:${TAG}-amd64 ${DOCKER_REPO}:${TAG}-arm64 ${DOCKER_REPO}:${TAG}-arm")
-                                sh(script: "docker manifest inspect ${DOCKER_REPO}:${TAG}")
-                                sh(script: "docker manifest push -p ${DOCKER_REPO}:${TAG}")
-                                sh(script: "docker manifest create ${DOCKER_REPO}:latest ${DOCKER_REPO}:${TAG}-amd64 ${DOCKER_REPO}:${TAG}-arm64 ${DOCKER_REPO}:${TAG}-arm")
-                                sh(script: "docker manifest inspect ${DOCKER_REPO}:latest")
-                                sh(script: "docker manifest push -p ${DOCKER_REPO}:latest")
+                                sh(script: """
+                                    docker manifest create ${DOCKER_REPO}:${TAG} ${DOCKER_REPO}:${TAG}-amd64 ${DOCKER_REPO}:${TAG}-arm64 ${DOCKER_REPO}:${TAG}-arm
+                                    docker manifest inspect ${DOCKER_REPO}:${TAG}
+                                    docker manifest push -p ${DOCKER_REPO}:${TAG}
+                                    docker manifest create ${DOCKER_REPO}:latest ${DOCKER_REPO}:${TAG}-amd64 ${DOCKER_REPO}:${TAG}-arm64 ${DOCKER_REPO}:${TAG}-arm
+                                    docker manifest inspect ${DOCKER_REPO}:latest
+                                    docker manifest push -p ${DOCKER_REPO}:latest
+                                    """
+                                )
                             } else if (BRANCH_NAME == 'develop') {
-                                sh(script: "docker manifest create ${DOCKER_REPO}:develop ${DOCKER_REPO}:develop-amd64 ${DOCKER_REPO}:develop-arm64 ${DOCKER_REPO}:develop-arm")
-                                sh(script: "docker manifest inspect ${DOCKER_REPO}:develop")
-                                sh(script: "docker manifest push -p ${DOCKER_REPO}:develop")
+                                sh(script: """
+                                    docker manifest create ${DOCKER_REPO}:develop ${DOCKER_REPO}:develop-amd64 ${DOCKER_REPO}:develop-arm64 ${DOCKER_REPO}:develop-arm
+                                    docker manifest inspect ${DOCKER_REPO}:develop
+                                    docker manifest push -p ${DOCKER_REPO}:develop
+                                    """
                             }
                         }
                     }
