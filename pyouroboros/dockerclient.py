@@ -237,6 +237,39 @@ class Container(object):
 
                 created = self.client.api.create_container(**new_config)
                 new_container = self.client.containers.get(created.get("Id"))
+
+                # disconnect new container from old networks (with possible
+                # broken config)
+                for network in new_container.attrs['NetworkSettings']['Networks']:
+                    self.client.api.disconnect_container_from_network(
+                        container=new_container.attrs['Id'],
+                        net_id=network,
+                        force=True
+                    )
+
+                # connect the new container to all networks of the old container
+                for network in container.attrs['NetworkSettings']['Networks']:
+                    host_net = self.client.networks.get(network_id=network)
+                    if host_net.attrs.get('Options', {}).get('com.docker.network.bridge.default_bridge') == 'true':
+                        # default network
+                        # User specified IP address is supported on user defined networks only
+                        self.client.api.connect_container_to_network(
+                            container=new_container.attrs['Id'],
+                            net_id=network,
+                            aliases=container.attrs['NetworkSettings']['Networks'][network]['Aliases'],
+                            links=container.attrs['NetworkSettings']['Networks'][network]['Links']
+                        )
+                    else:
+                        # user defined network
+                        self.client.api.connect_container_to_network(
+                            container=new_container.attrs['Id'],
+                            net_id=network,
+                            aliases=container.attrs['NetworkSettings']['Networks'][network]['Aliases'],
+                            links=container.attrs['NetworkSettings']['Networks'][network]['Links'],
+                            ipv4_address=container.attrs['NetworkSettings']['Networks'][network]['IPAddress'],
+                            ipv6_address=container.attrs['NetworkSettings']['Networks'][network]['GlobalIPv6Address']
+                        )
+
                 new_container.start()
 
                 if self.config.cleanup:
