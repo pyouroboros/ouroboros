@@ -1,4 +1,4 @@
-from logging import Filter, getLogger, Formatter, StreamHandler, WARNING
+from logging import Filter, getLogger, Formatter, StreamHandler
 
 
 class BlacklistFilter(Filter):
@@ -50,4 +50,4 @@ class OuroborosLogger(object):
 
         # Less verbose apscheduler logging
         if level.upper() == 'INFO':
-            getLogger('apscheduler').setLevel(WARNING)
+            getLogger('apscheduler').setLevel('WARNING')
