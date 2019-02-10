@@ -1,5 +1,4 @@
-from logging import Filter, getLogger, Formatter, StreamHandler
-
+from logging import Filter, getLogger, Formatter, StreamHandler, WARNING
 
 class BlacklistFilter(Filter):
     """
@@ -38,7 +37,6 @@ class OuroborosLogger(object):
 
         # Create a Formatter for formatting the log messages
         logger_formatter = Formatter('%(asctime)s : %(levelname)s : %(module)s : %(message)s', '%Y-%m-%d %H:%M:%S')
-
         # Add the console logger
         console_logger = StreamHandler()
         console_logger.setFormatter(logger_formatter)
@@ -47,3 +45,6 @@ class OuroborosLogger(object):
 
         # Add the Handler to the Logger
         self.logger.addHandler(console_logger)
+        # Less verbose apscheduler logging
+        if level == 'info':
+            getLogger('apscheduler').setLevel(WARNING)
