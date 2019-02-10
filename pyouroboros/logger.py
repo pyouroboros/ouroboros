@@ -47,3 +47,7 @@ class OuroborosLogger(object):
 
         # Add the Handler to the Logger
         self.logger.addHandler(console_logger)
+
+        # Less verbose apscheduler logging if info
+        if self.logger.getEffectiveLevel() == 20:
+            getLogger('apscheduler').setLevel('WARNING')
