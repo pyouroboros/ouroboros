@@ -49,5 +49,5 @@ class OuroborosLogger(object):
         self.logger.addHandler(console_logger)
 
         # Less verbose apscheduler logging
-        if level in ['info', 'INFO']:
+        if level.upper() == 'INFO':
             getLogger('apscheduler').setLevel(WARNING)
