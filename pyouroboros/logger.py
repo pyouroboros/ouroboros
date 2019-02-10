@@ -1,5 +1,6 @@
 from logging import Filter, getLogger, Formatter, StreamHandler, WARNING
 
+
 class BlacklistFilter(Filter):
     """
     Log filter for blacklisted tokens and passwords
