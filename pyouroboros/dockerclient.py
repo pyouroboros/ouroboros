@@ -249,18 +249,8 @@ class Container(object):
 
                 # connect the new container to all networks of the old container
                 for network in container.attrs['NetworkSettings']['Networks']:
-                    host_net = self.client.networks.get(network_id=network)
-                    if host_net.attrs.get('Options', {}).get('com.docker.network.bridge.default_bridge') == 'true':
-                        # default network
-                        # User specified IP address is supported on user defined networks only
-                        self.client.api.connect_container_to_network(
-                            container=new_container.attrs['Id'],
-                            net_id=network,
-                            aliases=container.attrs['NetworkSettings']['Networks'][network]['Aliases'],
-                            links=container.attrs['NetworkSettings']['Networks'][network]['Links']
-                        )
-                    else:
-                        # user defined network
+                    try:
+                        # assuming the network has user configured subnet
                         self.client.api.connect_container_to_network(
                             container=new_container.attrs['Id'],
                             net_id=network,
@@ -269,6 +259,24 @@ class Container(object):
                             ipv4_address=container.attrs['NetworkSettings']['Networks'][network]['IPAddress'],
                             ipv6_address=container.attrs['NetworkSettings']['Networks'][network]['GlobalIPv6Address']
                         )
+                    except APIError as e:
+                        if ('user specified IP address is supported only when '
+                                'connecting to networks with user configured subnets' in str(e)):
+                            # configure the network without ip addresses
+                            try:
+                                self.client.api.connect_container_to_network(
+                                    container=new_container.attrs['Id'],
+                                    net_id=network,
+                                    aliases=container.attrs['NetworkSettings']['Networks'][network]['Aliases'],
+                                    links=container.attrs['NetworkSettings']['Networks'][network]['Links']
+                                )
+                            except APIError as e:
+                                self.logger.error(
+                                    'Unable to attach updated container to network "%s". Error: %s', network, e
+                                )
+                        else:
+                            # another exception occured
+                            raise
 
                 new_container.start()
 
