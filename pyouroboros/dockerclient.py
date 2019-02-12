@@ -238,45 +238,27 @@ class Container(object):
                 created = self.client.api.create_container(**new_config)
                 new_container = self.client.containers.get(created.get("Id"))
 
-                # disconnect new container from old networks (with possible
-                # broken config)
-                for network in new_container.attrs['NetworkSettings']['Networks']:
-                    self.client.api.disconnect_container_from_network(
-                        container=new_container.attrs['Id'],
-                        net_id=network,
-                        force=True
-                    )
+                # disconnect new container from old networks (with possible broken config)
+                for network_config in new_container.attrs['NetworkSettings']['Networks']:
+                    network = self.client.networks.get(network_config['NetworkID'])
+                    network.disconnect(new_container.id, force=True)
 
                 # connect the new container to all networks of the old container
-                for network in container.attrs['NetworkSettings']['Networks']:
+                for network_config in container.attrs['NetworkSettings']['Networks']:
+                    network = self.client.networks.get(network_config['NetworkID'])
+                    new_network_config = {
+                        'container': container,
+                        'aliases': network_config['Aliases'],
+                        'links': network_config['Links']
+                    }
+                    if network_config['Gateway']:
+                        network_config.update({'ipv4_address': network_config['IPAddress']})
+                    if network_config['IPv6Gateway']:
+                        network_config.update({'ipv6_address': network_config['GlobalIPv6Address']})
                     try:
-                        # assuming the network has user configured subnet
-                        self.client.api.connect_container_to_network(
-                            container=new_container.attrs['Id'],
-                            net_id=network,
-                            aliases=container.attrs['NetworkSettings']['Networks'][network]['Aliases'],
-                            links=container.attrs['NetworkSettings']['Networks'][network]['Links'],
-                            ipv4_address=container.attrs['NetworkSettings']['Networks'][network]['IPAddress'],
-                            ipv6_address=container.attrs['NetworkSettings']['Networks'][network]['GlobalIPv6Address']
-                        )
+                        network.connect(**new_network_config)
                     except APIError as e:
-                        if ('user specified IP address is supported only when '
-                                'connecting to networks with user configured subnets' in str(e)):
-                            # configure the network without ip addresses
-                            try:
-                                self.client.api.connect_container_to_network(
-                                    container=new_container.attrs['Id'],
-                                    net_id=network,
-                                    aliases=container.attrs['NetworkSettings']['Networks'][network]['Aliases'],
-                                    links=container.attrs['NetworkSettings']['Networks'][network]['Links']
-                                )
-                            except APIError as e:
-                                self.logger.error(
-                                    'Unable to attach updated container to network "%s". Error: %s', network, e
-                                )
-                        else:
-                            # another exception occured
-                            raise
+                        self.logger.error('Unable to attach updated container to network "%s". Error: %s', network, e)
 
                 new_container.start()
 
