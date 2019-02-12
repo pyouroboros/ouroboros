@@ -68,6 +68,60 @@ class Container(object):
 
         self.monitored = self.monitor_filter()
 
+    # Container sub functions
+    def stop(self, container):
+        self.logger.debug('Stopping container: %s', container.name)
+        stop_signal = container.labels.get('com.ouroboros.stop_signal', False)
+        if stop_signal:
+            try:
+                container.kill(signal=stop_signal)
+            except APIError as e:
+                self.logger.error('Cannot kill container using signal %s. stopping normally. Error: %s',
+                                  stop_signal, e)
+                container.stop()
+        else:
+            container.stop()
+
+    def remove(self, container):
+        self.logger.debug('Removing container: %s', container.name)
+        try:
+            container.remove()
+        except NotFound as e:
+            self.logger.error("Could not remove container. Error: %s", e)
+            return
+
+    def recreate(self, container, latest_image):
+        new_config = set_properties(old=container, new=latest_image)
+
+        self.stop(container)
+        self.remove(container)
+
+        created = self.client.api.create_container(**new_config)
+        new_container = self.client.containers.get(created.get("Id"))
+
+        # connect the new container to all networks of the old container
+        for network_name, network_config in container.attrs['NetworkSettings']['Networks'].items():
+            network = self.client.networks.get(network_config['NetworkID'])
+            try:
+                network.disconnect(new_container.id, force=True)
+            except APIError:
+                pass
+            new_network_config = {
+                'container': new_container,
+                'aliases': network_config['Aliases'],
+                'links': network_config['Links']
+            }
+            if network_config['Gateway']:
+                network_config.update({'ipv4_address': network_config['IPAddress']})
+            if network_config['IPv6Gateway']:
+                network_config.update({'ipv6_address': network_config['GlobalIPv6Address']})
+            try:
+                network.connect(**new_network_config)
+            except APIError as e:
+                self.logger.error('Unable to attach updated container to network "%s". Error: %s', network, e)
+
+        new_container.start()
+
     def pull(self, image_object):
         """Docker pull image tag/latest"""
         image = image_object
@@ -116,6 +170,7 @@ class Container(object):
                 self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
                 raise ConnectionError
 
+    # Filters
     def running_filter(self):
         """Return running container objects list, except ouroboros itself"""
         running_containers = []
@@ -162,6 +217,7 @@ class Container(object):
 
         return monitored_containers
 
+    # Socket Functions
     def socket_check(self):
         depends_on_names = []
         hard_depends_on_names = []
@@ -218,59 +274,6 @@ class Container(object):
                 self.logger.error("Could not find dependant container %s on socket %s. Ignoring", name, self.socket)
 
         return updateable, depends_on_containers, hard_depends_on_containers
-
-    def stop(self, container):
-        self.logger.debug('Stopping container: %s', container.name)
-        stop_signal = container.labels.get('com.ouroboros.stop_signal', False)
-        if stop_signal:
-            try:
-                container.kill(signal=stop_signal)
-            except APIError as e:
-                self.logger.error('Cannot kill container using signal %s. stopping normally. Error: %s',
-                                  stop_signal, e)
-                container.stop()
-        else:
-            container.stop()
-
-    def remove(self, container):
-        self.logger.debug('Removing container: %s', container.name)
-        try:
-            container.remove()
-        except NotFound as e:
-            self.logger.error("Could not remove container. Error: %s", e)
-            return
-
-    def recreate(self, container, latest_image):
-        new_config = set_properties(old=container, new=latest_image)
-
-        self.stop(container)
-        self.remove(container)
-
-        created = self.client.api.create_container(**new_config)
-        new_container = self.client.containers.get(created.get("Id"))
-
-        # connect the new container to all networks of the old container
-        for network_name, network_config in container.attrs['NetworkSettings']['Networks'].items():
-            network = self.client.networks.get(network_config['NetworkID'])
-            try:
-                network.disconnect(new_container.id, force=True)
-            except APIError:
-                pass
-            new_network_config = {
-                'container': new_container,
-                'aliases': network_config['Aliases'],
-                'links': network_config['Links']
-            }
-            if network_config['Gateway']:
-                network_config.update({'ipv4_address': network_config['IPAddress']})
-            if network_config['IPv6Gateway']:
-                network_config.update({'ipv6_address': network_config['GlobalIPv6Address']})
-            try:
-                network.connect(**new_network_config)
-            except APIError as e:
-                self.logger.error('Unable to attach updated container to network "%s". Error: %s', network, e)
-
-        new_container.start()
 
     def update(self):
         updated_count = 0
