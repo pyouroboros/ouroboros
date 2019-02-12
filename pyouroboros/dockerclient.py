@@ -232,17 +232,18 @@ class Container(object):
         else:
             container.stop()
 
-    def recreate(self, container, latest_image):
-        new_config = set_properties(old=container, new=latest_image)
-
-        self.stop_container(container)
-
+    def remove_container(self, container):
         self.logger.debug('Removing container: %s', container.name)
         try:
             container.remove()
         except NotFound as e:
             self.logger.error("Could not remove container. Error: %s", e)
             return
+
+    def recreate(self, container, latest_image):
+        new_config = set_properties(old=container, new=latest_image)
+
+        self.stop_container(container)
 
         created = self.client.api.create_container(**new_config)
         new_container = self.client.containers.get(created.get("Id"))
@@ -277,8 +278,11 @@ class Container(object):
         except TypeError:
             return
 
-        for container in depends_on_containers:
+        for container in depends_on_containers + hard_depends_on_containers:
             self.stop_container(container)
+
+        for container in hard_depends_on_containers:
+            self.remove_container(container)
 
         for container, current_image, latest_image in updateable:
             if self.config.dry_run:
