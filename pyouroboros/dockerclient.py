@@ -314,6 +314,8 @@ class Container(object):
             self.data_manager.add(label='all', socket=self.socket)
 
         for container in depends_on_containers:
+            # Reload container to ensure it isn't referencing the old image
+            container.reload()
             container.start()
 
         for container in hard_depends_on_containers:
