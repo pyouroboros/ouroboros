@@ -76,17 +76,15 @@ class Container(object):
         except IndexError:
             self.logger.error('Malformed or missing tag. Skipping...')
             raise ConnectionError
-        if self.config.latest and image.tags[0][-6:] != 'latest':
-            if ':' in tag:
-                split_tag = tag.split(':')
-                if len(split_tag) == 2:
-                    if '/' not in split_tag[1]:
-                        tag = split_tag[0]
-                else:
-                    tag = ':'.join(split_tag[:-1])
-            tag = f'{tag}:latest'
 
-        self.logger.debug('Checking tag: %s', tag)
+        if self.config.image_tag:
+            if ':' in tag:
+                split_tag = tag.rpartition(':')
+                if '/' not in split_tag[2]:
+                    tag = split_tag[0]
+            tag = f'{tag}:{self.config.image_tag}'
+
+        self.logger.debug('Pulling tag: %s', tag)
         try:
             if self.config.dry_run:
                 registry_data = self.client.images.get_registry_data(tag)
@@ -103,17 +101,17 @@ class Container(object):
                 raise ConnectionError
             elif 'unauthorized' in str(e):
                 if self.config.dry_run:
-                    self.logger.error('dry run : Upstream authentication issue while checking %s. See: '
+                    self.logger.error('Dry run: Upstream authentication issue while checking %s. See: '
                                       'https://github.com/docker/docker-py/issues/2225', tag)
                     raise ConnectionError
                 else:
                     self.logger.critical("Invalid Credentials. Exiting")
                     exit(1)
             elif 'Client.Timeout' in str(e):
-                self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", image.tags[0])
+                self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", tag)
                 raise ConnectionError
-            elif ('pull access' or 'TLS handshake') in str(e):
-                self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
+            else:
+                self.logger.critical("Couldn't pull image %s. Skipping. Error: %s", tag, e)
                 raise ConnectionError
 
     def get_running(self):
@@ -185,13 +183,14 @@ class Container(object):
                 try:
                     latest_image = self.pull(current_image)
                 except ConnectionError:
+                    self.logger.error('Ignoring container %s due to connection error while pulling', container.name)
                     continue
 
             if self.config.dry_run:
                 # Ugly hack for repo digest
                 repo_digest_id = current_image.attrs['RepoDigests'][0].split('@')[1]
                 if repo_digest_id != latest_image.id:
-                    self.logger.info('dry run : %s would be updated', container.name)
+                    self.logger.info('Dry run: %s would be updated', container.name)
                 continue
 
             # If current running container is running latest image

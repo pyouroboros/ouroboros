@@ -89,6 +89,9 @@ def main():
     docker_group.add_argument('-L', '--latest', default=Config.latest, dest='LATEST', action='store_true',
                               help='Check for latest image instead of pulling current tag')
 
+    docker_group.add_argument('-g', '--image-tag', default=Config.image_tag, dest='IMAGE_TAG',
+                              help='Check for specified tag, regardless of what is being used')
+
     docker_group.add_argument('-r', '--repo-user', default=Config.repo_user, dest='REPO_USER',
                               help='Private docker registry username\n'
                                    'EXAMPLE: foo@bar.baz')

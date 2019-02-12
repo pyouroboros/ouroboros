@@ -8,7 +8,7 @@ class Config(object):
                'PROMETHEUS_PORT', 'NOTIFIERS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'LATEST', 'CRON',
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
                'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY',
-               'DRY_RUN', 'HOSTNAME', 'DOCKER_TLS_VERIFY', 'SWARM']
+               'DRY_RUN', 'HOSTNAME', 'DOCKER_TLS_VERIFY', 'SWARM', 'IMAGE_TAG']
 
     hostname = environ.get('HOSTNAME')
     interval = 300
@@ -22,6 +22,7 @@ class Config(object):
     data_export = None
     log_level = 'info'
     latest = False
+    image_tag = None
     cleanup = False
     run_once = False
     dry_run = False
@@ -112,6 +113,9 @@ class Config(object):
 
         if self.interval < 30:
             self.interval = 30
+        
+        if self.latest:
+            self.image_tag = 'latest'
 
         for option in ['docker_sockets', 'notifiers', 'monitor', 'ignore']:
             if isinstance(getattr(self, option), str):
