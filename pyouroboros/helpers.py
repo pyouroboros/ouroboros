@@ -20,7 +20,7 @@ def set_properties(old, new, self_name=None):
         'entrypoint': old.attrs['Config']['Entrypoint'],
         'environment': old.attrs['Config']['Env'],
         # networks are conigured later
-        'networking_config': None
+        #'networking_config': None
     }
 
     return properties

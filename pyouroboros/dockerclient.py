@@ -247,16 +247,15 @@ class Container(object):
         created = self.client.api.create_container(**new_config)
         new_container = self.client.containers.get(created.get("Id"))
 
-        # disconnect new container from old networks (with possible broken config)
-        for network_config in new_container.attrs['NetworkSettings']['Networks']:
-            network = self.client.networks.get(network_config['NetworkID'])
-            network.disconnect(new_container.id, force=True)
-
         # connect the new container to all networks of the old container
-        for network_config in container.attrs['NetworkSettings']['Networks']:
+        for network_name, network_config in container.attrs['NetworkSettings']['Networks'].items():
             network = self.client.networks.get(network_config['NetworkID'])
+            try:
+                network.disconnect(new_container.id, force=True)
+            except APIError:
+                pass
             new_network_config = {
-                'container': container,
+                'container': new_container,
                 'aliases': network_config['Aliases'],
                 'links': network_config['Links']
             }
@@ -273,7 +272,10 @@ class Container(object):
 
     def update(self):
         updated_count = 0
-        updateable, depends_on_containers, hard_depends_on_containers = self.check()
+        try:
+            updateable, depends_on_containers, hard_depends_on_containers = self.check()
+        except TypeError:
+            return
 
         for container in depends_on_containers:
             self.stop_container(container)
