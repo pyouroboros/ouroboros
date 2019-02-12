@@ -422,7 +422,7 @@ class Service(object):
                     self.data_manager.add(label=service.name, socket=self.socket)
                     self.data_manager.add(label='all', socket=self.socket)
                     self.notification_manager.send(container_tuples=updated_service_tuples,
-                                                   socket=self.socket, kind='update')
+                                                   socket=self.socket, kind='update', mode='service')
 
                 self.logger.info('%s will be updated', service.name)
                 service.update(image=tag)

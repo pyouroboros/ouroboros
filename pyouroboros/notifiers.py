@@ -32,7 +32,7 @@ class NotificationManager(object):
 
         return apprise_obj
 
-    def send(self, container_tuples=None, socket=None, kind='update', next_run=None):
+    def send(self, container_tuples=None, socket=None, kind='update', next_run=None, mode='container'):
         if kind == 'startup':
             now = datetime.now(timezone.utc).astimezone()
             title = f'Ouroboros has started'
@@ -52,7 +52,7 @@ class NotificationManager(object):
                 [
                     "{} updated from {} to {}".format(
                         container.name,
-                        old_image.short_id.split(':')[1],
+                        old_image if mode == 'service' else old_image.short_id.split(':')[1],
                         new_image.short_id.split(':')[1]
                     ) for container, old_image, new_image in container_tuples
                 ]
