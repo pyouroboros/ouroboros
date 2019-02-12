@@ -164,6 +164,7 @@ class Container(object):
 
     def check(self):
         depends_on_names = []
+        hard_depends_on_names = []
         updateable = []
         self.monitored = self.monitor_filter()
 
@@ -193,17 +194,30 @@ class Container(object):
 
             # Get container list to restart after update complete
             depends_on = container.labels.get('com.ouroboros.depends_on', False)
+            hard_depends_on = container.labels.get('com.ouroboros.hard_depends_on', False)
             if depends_on:
                 depends_on_names.extend([name.strip() for name in depends_on.split(',')])
+            if hard_depends_on:
+                hard_depends_on_names.extend([name.strip() for name in hard_depends_on.split(',')])
+
+        hard_depends_on_containers = []
+        hard_depends_on_names = list(set(hard_depends_on_names))
+        for name in hard_depends_on_names:
+            try:
+                hard_depends_on_containers.append(self.client.containers.get(name))
+            except NotFound:
+                self.logger.error("Could not find dependant container %s on socket %s. Ignoring", name, self.socket)
 
         depends_on_containers = []
-        for name in list(set(depends_on_names)):
+        depends_on_names = list(set(depends_on_names))
+        depends_on_names = [name for name in depends_on_names if name not in hard_depends_on_names]
+        for name in depends_on_names:
             try:
                 depends_on_containers.append(self.client.containers.get(name))
             except NotFound:
                 self.logger.error("Could not find dependant container %s on socket %s. Ignoring", name, self.socket)
 
-        return updateable, depends_on_containers
+        return updateable, depends_on_containers, hard_depends_on_containers
 
     def stop_container(self, container):
         self.logger.debug('Stopping container: %s', container.name)
@@ -218,9 +232,48 @@ class Container(object):
         else:
             container.stop()
 
+    def recreate(self, container, latest_image):
+        new_config = set_properties(old=container, new=latest_image)
+
+        self.stop_container(container)
+
+        self.logger.debug('Removing container: %s', container.name)
+        try:
+            container.remove()
+        except NotFound as e:
+            self.logger.error("Could not remove container. Error: %s", e)
+            return
+
+        created = self.client.api.create_container(**new_config)
+        new_container = self.client.containers.get(created.get("Id"))
+
+        # disconnect new container from old networks (with possible broken config)
+        for network_config in new_container.attrs['NetworkSettings']['Networks']:
+            network = self.client.networks.get(network_config['NetworkID'])
+            network.disconnect(new_container.id, force=True)
+
+        # connect the new container to all networks of the old container
+        for network_config in container.attrs['NetworkSettings']['Networks']:
+            network = self.client.networks.get(network_config['NetworkID'])
+            new_network_config = {
+                'container': container,
+                'aliases': network_config['Aliases'],
+                'links': network_config['Links']
+            }
+            if network_config['Gateway']:
+                network_config.update({'ipv4_address': network_config['IPAddress']})
+            if network_config['IPv6Gateway']:
+                network_config.update({'ipv6_address': network_config['GlobalIPv6Address']})
+            try:
+                network.connect(**new_network_config)
+            except APIError as e:
+                self.logger.error('Unable to attach updated container to network "%s". Error: %s', network, e)
+
+        new_container.start()
+
     def update(self):
         updated_count = 0
-        updateable, depends_on_containers = self.check()
+        updateable, depends_on_containers, hard_depends_on_containers = self.check()
 
         for container in depends_on_containers:
             self.stop_container(container)
@@ -243,44 +296,7 @@ class Container(object):
 
             self.logger.info('%s will be updated', container.name)
 
-            # new container dict to create new container from
-            new_config = set_properties(old=container, new=latest_image)
-
-            self.stop_container(container)
-
-            self.logger.debug('Removing container: %s', container.name)
-            try:
-                container.remove()
-            except NotFound as e:
-                self.logger.error("Could not remove container. Error: %s", e)
-                continue
-
-            created = self.client.api.create_container(**new_config)
-            new_container = self.client.containers.get(created.get("Id"))
-
-            # disconnect new container from old networks (with possible broken config)
-            for network_config in new_container.attrs['NetworkSettings']['Networks']:
-                network = self.client.networks.get(network_config['NetworkID'])
-                network.disconnect(new_container.id, force=True)
-
-            # connect the new container to all networks of the old container
-            for network_config in container.attrs['NetworkSettings']['Networks']:
-                network = self.client.networks.get(network_config['NetworkID'])
-                new_network_config = {
-                    'container': container,
-                    'aliases': network_config['Aliases'],
-                    'links': network_config['Links']
-                }
-                if network_config['Gateway']:
-                    network_config.update({'ipv4_address': network_config['IPAddress']})
-                if network_config['IPv6Gateway']:
-                    network_config.update({'ipv6_address': network_config['GlobalIPv6Address']})
-                try:
-                    network.connect(**new_network_config)
-                except APIError as e:
-                    self.logger.error('Unable to attach updated container to network "%s". Error: %s', network, e)
-
-            new_container.start()
+            self.recreate(container, latest_image)
 
             if self.config.cleanup:
                 try:
@@ -297,6 +313,9 @@ class Container(object):
 
         for container in depends_on_containers:
             container.start()
+
+        for container in hard_depends_on_containers:
+            self.recreate(container, container.image)
 
         if updated_count > 0:
             self.notification_manager.send(container_tuples=updateable, socket=self.socket, kind='update')
