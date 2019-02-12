@@ -109,12 +109,10 @@ class Container(object):
             new_network_config = {
                 'container': new_container,
                 'aliases': network_config['Aliases'],
-                'links': network_config['Links']
+                'links': network_config['Links'],
+                'ipv4_address': network_config['IPAddress'],
+                'ipv6_address': network_config['GlobalIPv6Address']
             }
-            if network_config['Gateway']:
-                new_network_config.update({'ipv4_address': network_config['IPAddress']})
-            if network_config['IPv6Gateway']:
-                new_network_config.update({'ipv6_address': network_config['GlobalIPv6Address']})
             try:
                 network.connect(**new_network_config)
             except APIError as e:
