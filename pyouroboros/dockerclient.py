@@ -116,7 +116,7 @@ class Container(object):
                 self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
                 raise ConnectionError
 
-    def get_running(self):
+    def running_filter(self):
         """Return running container objects list, except ouroboros itself"""
         running_containers = []
         try:
@@ -139,7 +139,7 @@ class Container(object):
 
     def monitor_filter(self):
         """Return filtered running container objects list"""
-        running_containers = self.get_running()
+        running_containers = self.running_filter()
         monitored_containers = []
 
         for container in running_containers:
@@ -162,7 +162,7 @@ class Container(object):
 
         return monitored_containers
 
-    def check(self):
+    def socket_check(self):
         depends_on_names = []
         hard_depends_on_names = []
         updateable = []
@@ -219,7 +219,7 @@ class Container(object):
 
         return updateable, depends_on_containers, hard_depends_on_containers
 
-    def stop_container(self, container):
+    def stop(self, container):
         self.logger.debug('Stopping container: %s', container.name)
         stop_signal = container.labels.get('com.ouroboros.stop_signal', False)
         if stop_signal:
@@ -232,7 +232,7 @@ class Container(object):
         else:
             container.stop()
 
-    def remove_container(self, container):
+    def remove(self, container):
         self.logger.debug('Removing container: %s', container.name)
         try:
             container.remove()
@@ -243,7 +243,8 @@ class Container(object):
     def recreate(self, container, latest_image):
         new_config = set_properties(old=container, new=latest_image)
 
-        self.stop_container(container)
+        self.stop(container)
+        self.remove(container)
 
         created = self.client.api.create_container(**new_config)
         new_container = self.client.containers.get(created.get("Id"))
@@ -274,15 +275,12 @@ class Container(object):
     def update(self):
         updated_count = 0
         try:
-            updateable, depends_on_containers, hard_depends_on_containers = self.check()
+            updateable, depends_on_containers, hard_depends_on_containers = self.socket_check()
         except TypeError:
             return
 
         for container in depends_on_containers + hard_depends_on_containers:
-            self.stop_container(container)
-
-        for container in hard_depends_on_containers:
-            self.remove_container(container)
+            self.stop(container)
 
         for container, current_image, latest_image in updateable:
             if self.config.dry_run:
