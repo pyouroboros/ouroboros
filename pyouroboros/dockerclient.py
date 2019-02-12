@@ -112,13 +112,20 @@ class Container(object):
                 'links': network_config['Links']
             }
             if network_config['Gateway']:
-                network_config.update({'ipv4_address': network_config['IPAddress']})
+                new_network_config.update({'ipv4_address': network_config['IPAddress']})
             if network_config['IPv6Gateway']:
-                network_config.update({'ipv6_address': network_config['GlobalIPv6Address']})
+                new_network_config.update({'ipv6_address': network_config['GlobalIPv6Address']})
             try:
                 network.connect(**new_network_config)
             except APIError as e:
-                self.logger.error('Unable to attach updated container to network "%s". Error: %s', network, e)
+                if 'user configured subnets' in str(e):
+                    if new_network_config.get('ipv4_address'):
+                        del new_network_config['ipv4_address']
+                    if new_network_config.get('ipv6_address'):
+                        del new_network_config['ipv6_address']
+                    network.connect(**new_network_config)
+                else:
+                    self.logger.error('Unable to attach updated container to network "%s". Error: %s', network, e)
 
         new_container.start()
 
