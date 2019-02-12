@@ -116,14 +116,14 @@ class Container(object):
             try:
                 network.connect(**new_network_config)
             except APIError as e:
-                if 'user configured subnets' in str(e):
+                if any(err in str(e) for err in ['user configured subnets', 'user defined networks']):
                     if new_network_config.get('ipv4_address'):
                         del new_network_config['ipv4_address']
                     if new_network_config.get('ipv6_address'):
                         del new_network_config['ipv6_address']
                     network.connect(**new_network_config)
                 else:
-                    self.logger.error('Unable to attach updated container to network "%s". Error: %s', network, e)
+                    self.logger.error('Unable to attach updated container to network "%s". Error: %s', network.name, e)
 
         new_container.start()
 
