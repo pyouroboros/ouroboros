@@ -112,6 +112,9 @@ class Config(object):
 
         if self.interval < 30:
             self.interval = 30
+        
+        if self.labels_only and not self.label_enable:
+            self.logger.warning('labels_only enabled but not in use without label_enable')
 
         for option in ['docker_sockets', 'notifiers', 'monitor', 'ignore']:
             if isinstance(getattr(self, option), str):
