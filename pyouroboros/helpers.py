@@ -18,9 +18,7 @@ def set_properties(old, new, self_name=None):
         'host_config': old.attrs['HostConfig'],
         'labels': old.attrs['Config']['Labels'],
         'entrypoint': old.attrs['Config']['Entrypoint'],
-        'environment': old.attrs['Config']['Env'],
-        # networks are conigured later
-        'networking_config': None
+        'environment': old.attrs['Config']['Env']
     }
 
     return properties
