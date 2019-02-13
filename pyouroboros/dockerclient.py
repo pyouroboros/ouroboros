@@ -127,15 +127,13 @@ class Container(object):
 
         new_container.start()
 
-    def pull(self, image_object):
+    def pull(self, current_tag):
         """Docker pull image tag/latest"""
-        image = image_object
-        try:
-            tag = image.tags[0]
-        except IndexError:
-            self.logger.error('Malformed or missing tag. Skipping...')
+        tag = current_tag
+        if not tag:
+            self.logger.error('Missing tag. Skipping...')
             raise ConnectionError
-        if self.config.latest and image.tags[0][-6:] != 'latest':
+        if self.config.latest and tag[-6:] != 'latest':
             if ':' in tag:
                 split_tag = tag.split(':')
                 if len(split_tag) == 2:
@@ -169,7 +167,7 @@ class Container(object):
                     self.logger.critical("Invalid Credentials. Exiting")
                     exit(1)
             elif 'Client.Timeout' in str(e):
-                self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", image.tags[0])
+                self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", tag)
                 raise ConnectionError
             elif ('pull access' or 'TLS handshake') in str(e):
                 self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
@@ -239,12 +237,13 @@ class Container(object):
 
         for container in self.monitored:
             current_image = container.image
+            current_tag = container.attrs['Config']['Image']
             shared_image = [uct for uct in updateable if uct[1].id == current_image.id]
             if shared_image:
                 latest_image = shared_image[0][2]
             else:
                 try:
-                    latest_image = self.pull(current_image)
+                    latest_image = self.pull(current_tag)
                 except ConnectionError:
                     continue
 
