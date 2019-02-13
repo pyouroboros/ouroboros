@@ -80,8 +80,7 @@ def main():
 
     docker_group.add_argument('-M', '--labels-only', default=Config.labels_only, dest='LABELS_ONLY',
                               action='store_true', help='Only watch containers that utilize labels\n'
-                                                        'This allows a more strict compliance for environments\n'
-                                                        'Note: This implies --label-enable true'
+                                                        'This allows a more strict compliance for environments'
                                                         'DEFAULT: False')
 
     docker_group.add_argument('-c', '--cleanup', default=Config.cleanup, dest='CLEANUP', action='store_true',
