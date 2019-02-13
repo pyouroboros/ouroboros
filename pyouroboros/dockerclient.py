@@ -430,8 +430,12 @@ class Service(object):
 
         for service in self.monitored:
             image_string = service.attrs['Spec']['TaskTemplate']['ContainerSpec']['Image']
-            tag = image_string.split('@')[0]
-            sha256 = image_string.split('@')[1][7:]
+            if '@' in image_string:
+                tag = image_string.split('@')[0]
+                sha256 = image_string.split('@')[1][7:]
+            else:
+                self.logger.error('No image SHA for %s. Skipping', image_string)
+                continue
 
             try:
                 latest_image = self.pull(tag)
