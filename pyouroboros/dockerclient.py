@@ -472,4 +472,9 @@ class Service(object):
                 self.data_manager.add(label='all', socket=self.socket)
 
         if updated_count > 0:
-            self.notification_manager.send(container_tuples=updated_service_tuples, socket=self.socket, kind='update')
+            self.notification_manager.send(
+                container_tuples=updated_service_tuples,
+                socket=self.socket,
+                kind='update',
+                mode='service'
+            )
