@@ -68,6 +68,65 @@ class Container(object):
 
         self.monitored = self.monitor_filter()
 
+    # Container sub functions
+    def stop(self, container):
+        self.logger.debug('Stopping container: %s', container.name)
+        stop_signal = container.labels.get('com.ouroboros.stop_signal', False)
+        if stop_signal:
+            try:
+                container.kill(signal=stop_signal)
+            except APIError as e:
+                self.logger.error('Cannot kill container using signal %s. stopping normally. Error: %s',
+                                  stop_signal, e)
+                container.stop()
+        else:
+            container.stop()
+
+    def remove(self, container):
+        self.logger.debug('Removing container: %s', container.name)
+        try:
+            container.remove()
+        except NotFound as e:
+            self.logger.error("Could not remove container. Error: %s", e)
+            return
+
+    def recreate(self, container, latest_image):
+        new_config = set_properties(old=container, new=latest_image)
+
+        self.stop(container)
+        self.remove(container)
+
+        created = self.client.api.create_container(**new_config)
+        new_container = self.client.containers.get(created.get("Id"))
+
+        # connect the new container to all networks of the old container
+        for network_name, network_config in container.attrs['NetworkSettings']['Networks'].items():
+            network = self.client.networks.get(network_config['NetworkID'])
+            try:
+                network.disconnect(new_container.id, force=True)
+            except APIError:
+                pass
+            new_network_config = {
+                'container': new_container,
+                'aliases': network_config['Aliases'],
+                'links': network_config['Links'],
+                'ipv4_address': network_config['IPAddress'],
+                'ipv6_address': network_config['GlobalIPv6Address']
+            }
+            try:
+                network.connect(**new_network_config)
+            except APIError as e:
+                if any(err in str(e) for err in ['user configured subnets', 'user defined networks']):
+                    if new_network_config.get('ipv4_address'):
+                        del new_network_config['ipv4_address']
+                    if new_network_config.get('ipv6_address'):
+                        del new_network_config['ipv6_address']
+                    network.connect(**new_network_config)
+                else:
+                    self.logger.error('Unable to attach updated container to network "%s". Error: %s', network.name, e)
+
+        new_container.start()
+
     def pull(self, image_object):
         """Docker pull image tag/latest"""
         image = image_object
@@ -116,7 +175,8 @@ class Container(object):
                 self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
                 raise ConnectionError
 
-    def get_running(self):
+    # Filters
+    def running_filter(self):
         """Return running container objects list, except ouroboros itself"""
         running_containers = []
         try:
@@ -139,7 +199,7 @@ class Container(object):
 
     def monitor_filter(self):
         """Return filtered running container objects list"""
-        running_containers = self.get_running()
+        running_containers = self.running_filter()
         monitored_containers = []
 
         for container in running_containers:
@@ -162,14 +222,16 @@ class Container(object):
 
         return monitored_containers
 
-    def update(self):
-        updated_count = 0
-        updated_container_tuples = []
-        depends_on_list = []
+    # Socket Functions
+    def socket_check(self):
+        depends_on_names = []
+        hard_depends_on_names = []
+        updateable = []
         self.monitored = self.monitor_filter()
 
         if not self.monitored:
             self.logger.info('No containers are running or monitored on %s', self.socket)
+            return
 
         me_list = [c for c in self.client.api.containers() if 'ouroboros' in c['Names'][0].strip('/')]
         if len(me_list) > 1:
@@ -177,8 +239,7 @@ class Container(object):
 
         for container in self.monitored:
             current_image = container.image
-
-            shared_image = [uct for uct in updated_container_tuples if uct[1].id == current_image.id]
+            shared_image = [uct for uct in updateable if uct[1].id == current_image.id]
             if shared_image:
                 latest_image = shared_image[0][2]
             else:
@@ -187,6 +248,49 @@ class Container(object):
                 except ConnectionError:
                     continue
 
+            if current_image.id != latest_image.id:
+                updateable.append((container, current_image, latest_image))
+            else:
+                continue
+
+            # Get container list to restart after update complete
+            depends_on = container.labels.get('com.ouroboros.depends_on', False)
+            hard_depends_on = container.labels.get('com.ouroboros.hard_depends_on', False)
+            if depends_on:
+                depends_on_names.extend([name.strip() for name in depends_on.split(',')])
+            if hard_depends_on:
+                hard_depends_on_names.extend([name.strip() for name in hard_depends_on.split(',')])
+
+        hard_depends_on_containers = []
+        hard_depends_on_names = list(set(hard_depends_on_names))
+        for name in hard_depends_on_names:
+            try:
+                hard_depends_on_containers.append(self.client.containers.get(name))
+            except NotFound:
+                self.logger.error("Could not find dependant container %s on socket %s. Ignoring", name, self.socket)
+
+        depends_on_containers = []
+        depends_on_names = list(set(depends_on_names))
+        depends_on_names = [name for name in depends_on_names if name not in hard_depends_on_names]
+        for name in depends_on_names:
+            try:
+                depends_on_containers.append(self.client.containers.get(name))
+            except NotFound:
+                self.logger.error("Could not find dependant container %s on socket %s. Ignoring", name, self.socket)
+
+        return updateable, depends_on_containers, hard_depends_on_containers
+
+    def update(self):
+        updated_count = 0
+        try:
+            updateable, depends_on_containers, hard_depends_on_containers = self.socket_check()
+        except TypeError:
+            return
+
+        for container in depends_on_containers + hard_depends_on_containers:
+            self.stop(container)
+
+        for container, current_image, latest_image in updateable:
             if self.config.dry_run:
                 # Ugly hack for repo digest
                 repo_digest_id = current_image.attrs['RepoDigests'][0].split('@')[1]
@@ -194,120 +298,41 @@ class Container(object):
                     self.logger.info('dry run : %s would be updated', container.name)
                 continue
 
-            # If current running container is running latest image
-            if current_image.id != latest_image.id:
-                updated_container_tuples.append(
-                    (container, current_image, latest_image)
-                )
-
-                if container.name in ['ouroboros', 'ouroboros-updated']:
-                    self.data_manager.total_updated[self.socket] += 1
-                    self.data_manager.add(label=container.name, socket=self.socket)
-                    self.data_manager.add(label='all', socket=self.socket)
-                    self.notification_manager.send(container_tuples=updated_container_tuples,
-                                                   socket=self.socket, kind='update')
-                    self.update_self(old_container=container, new_image=latest_image, count=1)
-
-                self.logger.info('%s will be updated', container.name)
-
-                # Get container list to restart after update complete
-                depends_on = container.labels.get('com.ouroboros.depends-on', False)
-                if depends_on:
-                    depends_on_list.extend([name.strip() for name in depends_on.split(',')])
-                # new container dict to create new container from
-                new_config = set_properties(old=container, new=latest_image)
-
-                self.logger.debug('Stopping container: %s', container.name)
-                stop_signal = container.labels.get('com.ouroboros.stop-signal', False)
-                if stop_signal:
-                    try:
-                        container.kill(signal=stop_signal)
-                    except APIError as e:
-                        self.logger.error('Cannot kill container using signal %s. stopping normally. Error: %s',
-                                          stop_signal, e)
-                        container.stop()
-                else:
-                    container.stop()
-
-                self.logger.debug('Removing container: %s', container.name)
-                try:
-                    container.remove()
-                except NotFound as e:
-                    self.logger.error("Could not remove container. Error: %s", e)
-
-                created = self.client.api.create_container(**new_config)
-                new_container = self.client.containers.get(created.get("Id"))
-
-                # disconnect new container from old networks (with possible
-                # broken config)
-                for network in new_container.attrs['NetworkSettings']['Networks']:
-                    self.client.api.disconnect_container_from_network(
-                        container=new_container.attrs['Id'],
-                        net_id=network,
-                        force=True
-                    )
-
-                # connect the new container to all networks of the old container
-                for network in container.attrs['NetworkSettings']['Networks']:
-                    try:
-                        # assuming the network has user configured subnet
-                        self.client.api.connect_container_to_network(
-                            container=new_container.attrs['Id'],
-                            net_id=network,
-                            aliases=container.attrs['NetworkSettings']['Networks'][network]['Aliases'],
-                            links=container.attrs['NetworkSettings']['Networks'][network]['Links'],
-                            ipv4_address=container.attrs['NetworkSettings']['Networks'][network]['IPAddress'],
-                            ipv6_address=container.attrs['NetworkSettings']['Networks'][network]['GlobalIPv6Address']
-                        )
-                    except APIError as e:
-                        if ('user specified IP address is supported only when '
-                                'connecting to networks with user configured subnets' in str(e)):
-                            # configure the network without ip addresses
-                            try:
-                                self.client.api.connect_container_to_network(
-                                    container=new_container.attrs['Id'],
-                                    net_id=network,
-                                    aliases=container.attrs['NetworkSettings']['Networks'][network]['Aliases'],
-                                    links=container.attrs['NetworkSettings']['Networks'][network]['Links']
-                                )
-                            except APIError as e:
-                                self.logger.error(
-                                    'Unable to attach updated container to network "%s". Error: %s', network, e
-                                )
-                        else:
-                            # another exception occured
-                            raise
-
-                new_container.start()
-
-                if self.config.cleanup:
-                    try:
-                        self.client.images.remove(current_image.id)
-                    except APIError as e:
-                        self.logger.error("Could not delete old image for %s, Error: %s", container.name, e)
-                updated_count += 1
-
-                self.logger.debug("Incrementing total container updated count")
-
+            if container.name in ['ouroboros', 'ouroboros-updated']:
                 self.data_manager.total_updated[self.socket] += 1
                 self.data_manager.add(label=container.name, socket=self.socket)
                 self.data_manager.add(label='all', socket=self.socket)
+                self.notification_manager.send(container_tuples=updateable,
+                                               socket=self.socket, kind='update')
+                self.update_self(old_container=container, new_image=latest_image, count=1)
 
-        if depends_on_list:
-            depends_on_containers = []
-            for name in list(set(depends_on_list)):
+            self.logger.info('%s will be updated', container.name)
+
+            self.recreate(container, latest_image)
+
+            if self.config.cleanup:
                 try:
-                    depends_on_containers.append(self.client.containers.get(name))
-                except NotFound:
-                    self.logger.error("Could not find dependant container %s on socket %s. Ignoring", name, self.socket)
+                    self.client.images.remove(current_image.id)
+                except APIError as e:
+                    self.logger.error("Could not delete old image for %s, Error: %s", container.name, e)
+            updated_count += 1
 
-            if depends_on_containers:
-                for container in depends_on_containers:
-                    self.logger.debug('Restarting dependant container %s', container.name)
-                    container.restart()
+            self.logger.debug("Incrementing total container updated count")
+
+            self.data_manager.total_updated[self.socket] += 1
+            self.data_manager.add(label=container.name, socket=self.socket)
+            self.data_manager.add(label='all', socket=self.socket)
+
+        for container in depends_on_containers:
+            # Reload container to ensure it isn't referencing the old image
+            container.reload()
+            container.start()
+
+        for container in hard_depends_on_containers:
+            self.recreate(container, container.image)
 
         if updated_count > 0:
-            self.notification_manager.send(container_tuples=updated_container_tuples, socket=self.socket, kind='update')
+            self.notification_manager.send(container_tuples=updateable, socket=self.socket, kind='update')
 
     def update_self(self, count=None, old_container=None, me_list=None, new_image=None):
         if count == 2:
@@ -430,7 +455,7 @@ class Service(object):
                     self.data_manager.add(label=service.name, socket=self.socket)
                     self.data_manager.add(label='all', socket=self.socket)
                     self.notification_manager.send(container_tuples=updated_service_tuples,
-                                                   socket=self.socket, kind='update')
+                                                   socket=self.socket, kind='update', mode='service')
 
                 self.logger.info('%s will be updated', service.name)
                 service.update(image=tag)
