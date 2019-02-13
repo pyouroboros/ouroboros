@@ -5,7 +5,7 @@ from pyouroboros.logger import BlacklistFilter
 
 class Config(object):
     options = ['INTERVAL', 'PROMETHEUS', 'DOCKER_SOCKETS', 'MONITOR', 'IGNORE', 'LOG_LEVEL', 'PROMETHEUS_ADDR',
-               'PROMETHEUS_PORT', 'NOTIFIERS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'LATEST', 'CRON',
+               'PROMETHEUS_PORT', 'NOTIFIERS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'CRON',
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
                'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY',
                'DRY_RUN', 'HOSTNAME', 'DOCKER_TLS_VERIFY', 'SWARM']
@@ -21,7 +21,6 @@ class Config(object):
     ignore = []
     data_export = None
     log_level = 'info'
-    latest = False
     cleanup = False
     run_once = False
     dry_run = False
@@ -91,9 +90,8 @@ class Config(object):
                         setattr(self, option.lower(), opt)
                     except ValueError as e:
                         print(e)
-                elif option in ['LATEST', 'CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL', 'DRY_RUN',
-                                'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY', 'DOCKER_TLS_VERIFY',
-                                'SWARM']:
+                elif option in ['CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL', 'DRY_RUN', 'SWARM',
+                                'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY', 'DOCKER_TLS_VERIFY']:
                     if env_opt.lower() in ['true', 'yes']:
                         setattr(self, option.lower(), True)
                     elif env_opt.lower() in ['false', 'no']:

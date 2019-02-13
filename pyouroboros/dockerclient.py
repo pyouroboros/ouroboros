@@ -128,21 +128,11 @@ class Container(object):
         new_container.start()
 
     def pull(self, current_tag):
-        """Docker pull image tag/latest"""
+        """Docker pull image tag"""
         tag = current_tag
         if not tag:
             self.logger.error('Missing tag. Skipping...')
             raise ConnectionError
-        if self.config.latest and tag[-6:] != 'latest':
-            if ':' in tag:
-                split_tag = tag.split(':')
-                if len(split_tag) == 2:
-                    if '/' not in split_tag[1]:
-                        tag = split_tag[0]
-                else:
-                    tag = ':'.join(split_tag[:-1])
-            tag = f'{tag}:latest'
-
         self.logger.debug('Checking tag: %s', tag)
         try:
             if self.config.dry_run:
@@ -389,7 +379,7 @@ class Service(object):
         return monitored_services
 
     def pull(self, tag):
-        """Docker pull image tag/latest"""
+        """Docker pull image tag"""
         self.logger.debug('Checking tag: %s', tag)
         try:
             if self.config.dry_run:

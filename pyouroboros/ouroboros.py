@@ -86,9 +86,6 @@ def main():
     docker_group.add_argument('-c', '--cleanup', default=Config.cleanup, dest='CLEANUP', action='store_true',
                               help='Remove old images after updating')
 
-    docker_group.add_argument('-L', '--latest', default=Config.latest, dest='LATEST', action='store_true',
-                              help='Check for latest image instead of pulling current tag')
-
     docker_group.add_argument('-r', '--repo-user', default=Config.repo_user, dest='REPO_USER',
                               help='Private docker registry username\n'
                                    'EXAMPLE: foo@bar.baz')
