@@ -453,7 +453,7 @@ class Service(object):
                     (service, sha256[-10:], latest_image)
                 )
 
-                if 'ouroboros' in service.name:
+                if 'ouroboros' in service.name and self.config.self_update:
                     self.data_manager.total_updated[self.socket] += 1
                     self.data_manager.add(label=service.name, socket=self.socket)
                     self.data_manager.add(label='all', socket=self.socket)
