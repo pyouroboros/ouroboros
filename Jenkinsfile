@@ -127,8 +127,6 @@ pipeline {
                         sh """
                             python3 -m venv venv && venv/bin/pip install twine
                             venv/bin/python setup.py sdist && venv/bin/python -m twine upload --skip-existing -u ${PYPI_CREDS_USR} -p ${PYPI_CREDS_PSW} dist/*
-                            git tag ${TAG}
-                            git push --tags
                         """
                     }
                 }

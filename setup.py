@@ -18,6 +18,7 @@ setup(
     name='ouroboros-cli',
     version=VERSION,
     maintainer='circa10a',
+    maintainer_email='caleblemoine@gmail.com',
     description='Automatically update running docker containers',
     long_description=readme(),
     long_description_content_type='text/markdown',
