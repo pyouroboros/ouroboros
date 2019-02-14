@@ -25,8 +25,8 @@
 
 **Other Pull Requests**
 
-- v1.2.0 Merge [\#207](https://github.com/pyouroboros/ouroboros/pull/207) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
-- v1.2.0 to develop [\#206](https://github.com/pyouroboros/ouroboros/pull/206) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.2.0 Merge [\#208](https://github.com/pyouroboros/ouroboros/pull/208) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.2.0 to develop [\#207](https://github.com/pyouroboros/ouroboros/pull/207) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - Patch/tag bug [\#205](https://github.com/pyouroboros/ouroboros/pull/205) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - Patch/group 5 [\#201](https://github.com/pyouroboros/ouroboros/pull/201) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - Fix bug in user defined network detection [\#200](https://github.com/pyouroboros/ouroboros/pull/200) ([nightvisi0n](https://github.com/nightvisi0n))
