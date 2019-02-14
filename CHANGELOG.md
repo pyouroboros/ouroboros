@@ -1,6 +1,20 @@
 # Change Log
 
-## [1.2.0](https://github.com/pyouroboros/ouroboros/tree/1.2.0) (2019-02-13)
+## [1.2.1](https://github.com/pyouroboros/ouroboros/tree/1.2.1) (2019-02-13)
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.2.0...1.2.1)
+
+**Fixed bugs:**
+
+- Broken when no :tag specified  [\#210](https://github.com/pyouroboros/ouroboros/issues/210)
+
+**Other Pull Requests**
+
+- v1.2.1 Merge [\#213](https://github.com/pyouroboros/ouroboros/pull/213) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.2.1 to develop [\#212](https://github.com/pyouroboros/ouroboros/pull/212) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- fixes \#210 [\#211](https://github.com/pyouroboros/ouroboros/pull/211) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- version bump to 1.2.1 + develop branch + twine fix + … [\#209](https://github.com/pyouroboros/ouroboros/pull/209) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
+## [1.2.0](https://github.com/pyouroboros/ouroboros/tree/1.2.0) (2019-02-14)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.1.2...1.2.0)
 
 **Implemented enhancements:**
