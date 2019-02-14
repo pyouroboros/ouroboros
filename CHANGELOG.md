@@ -1,5 +1,40 @@
 # Change Log
 
+## [1.2.0](https://github.com/pyouroboros/ouroboros/tree/1.2.0) (2019-02-13)
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.1.2...1.2.0)
+
+**Implemented enhancements:**
+
+- Move "Interval container update" messages to debug log level [\#194](https://github.com/pyouroboros/ouroboros/issues/194)
+- \[Feature Request\] Support for Swarm Services [\#178](https://github.com/pyouroboros/ouroboros/issues/178)
+- Add Warning for label\_enable not set while using labels\_only [\#202](https://github.com/pyouroboros/ouroboros/pull/202) ([larsderidder](https://github.com/larsderidder))
+
+**Fixed bugs:**
+
+- Change depends\_on logic [\#198](https://github.com/pyouroboros/ouroboros/issues/198)
+- Containers relying upon network namespace of a container that gets updated breaks when the parent container is recreated [\#197](https://github.com/pyouroboros/ouroboros/issues/197)
+- Exception when trying to update container with complex compose networks [\#196](https://github.com/pyouroboros/ouroboros/issues/196)
+- Problem with network IPv4 address carry-over [\#193](https://github.com/pyouroboros/ouroboros/issues/193)
+- Monitor Ignored Re-Address + jenkins cleanup [\#191](https://github.com/pyouroboros/ouroboros/pull/191) [[cleanup](https://github.com/pyouroboros/ouroboros/labels/cleanup)] ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
+**Closed issues:**
+
+- Remove legacy --latest [\#206](https://github.com/pyouroboros/ouroboros/issues/206) [[breaking change](https://github.com/pyouroboros/ouroboros/labels/breaking%20change)] [[cleanup](https://github.com/pyouroboros/ouroboros/labels/cleanup)]
+- Add environment variables in Wiki [\#203](https://github.com/pyouroboros/ouroboros/issues/203) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)]
+- Slack notifications via webhook not working [\#187](https://github.com/pyouroboros/ouroboros/issues/187)
+
+**Other Pull Requests**
+
+- v1.2.0 Merge [\#208](https://github.com/pyouroboros/ouroboros/pull/208) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.2.0 to develop [\#207](https://github.com/pyouroboros/ouroboros/pull/207) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Patch/tag bug [\#205](https://github.com/pyouroboros/ouroboros/pull/205) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Patch/group 5 [\#201](https://github.com/pyouroboros/ouroboros/pull/201) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Fix bug in user defined network detection [\#200](https://github.com/pyouroboros/ouroboros/pull/200) ([nightvisi0n](https://github.com/nightvisi0n))
+- Adjust apscheduler logger [\#199](https://github.com/pyouroboros/ouroboros/pull/199) ([circa10a](https://github.com/circa10a))
+- Carry over network config [\#195](https://github.com/pyouroboros/ouroboros/pull/195) ([nightvisi0n](https://github.com/nightvisi0n))
+- Jenkins tweaks [\#192](https://github.com/pyouroboros/ouroboros/pull/192) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Swarm + Jenkins [\#188](https://github.com/pyouroboros/ouroboros/pull/188) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
 ## [1.1.2](https://github.com/pyouroboros/ouroboros/tree/1.1.2) (2019-02-02)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.1.1...1.1.2)
 
@@ -11,8 +46,11 @@
 
 - cron documentation example update [\#182](https://github.com/pyouroboros/ouroboros/issues/182) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)]
 
-***Other Pull Requests**
-- v1.1.2 Merge [\#185](https://github.com/pyouroboros/ouroboros/pull/185) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+**Other Pull Requests**
+
+- v1.1.2 Merge [\#186](https://github.com/pyouroboros/ouroboros/pull/186) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.1.2 to develop [\#183](https://github.com/pyouroboros/ouroboros/pull/183) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Fix default timezone [\#177](https://github.com/pyouroboros/ouroboros/pull/177) ([circa10a](https://github.com/circa10a))
 
 ## [1.1.1](https://github.com/pyouroboros/ouroboros/tree/1.1.1) (2019-02-01)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.1.0...1.1.1)
