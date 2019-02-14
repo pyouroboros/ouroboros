@@ -133,6 +133,8 @@ class Container(object):
         if not tag:
             self.logger.error('Missing tag. Skipping...')
             raise ConnectionError
+        elif ':' not in tag:
+            tag = f'{tag}:latest'
         self.logger.debug('Checking tag: %s', tag)
         try:
             if self.config.dry_run:
@@ -236,7 +238,6 @@ class Container(object):
                     latest_image = self.pull(current_tag)
                 except ConnectionError:
                     continue
-
             if current_image.id != latest_image.id:
                 updateable.append((container, current_image, latest_image))
             else:
