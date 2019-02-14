@@ -127,24 +127,12 @@ class Container(object):
 
         new_container.start()
 
-    def pull(self, image_object):
-        """Docker pull image tag/latest"""
-        image = image_object
-        try:
-            tag = image.tags[0]
-        except IndexError:
-            self.logger.error('Malformed or missing tag. Skipping...')
+    def pull(self, current_tag):
+        """Docker pull image tag"""
+        tag = current_tag
+        if not tag:
+            self.logger.error('Missing tag. Skipping...')
             raise ConnectionError
-        if self.config.latest and image.tags[0][-6:] != 'latest':
-            if ':' in tag:
-                split_tag = tag.split(':')
-                if len(split_tag) == 2:
-                    if '/' not in split_tag[1]:
-                        tag = split_tag[0]
-                else:
-                    tag = ':'.join(split_tag[:-1])
-            tag = f'{tag}:latest'
-
         self.logger.debug('Checking tag: %s', tag)
         try:
             if self.config.dry_run:
@@ -169,7 +157,7 @@ class Container(object):
                     self.logger.critical("Invalid Credentials. Exiting")
                     exit(1)
             elif 'Client.Timeout' in str(e):
-                self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", image.tags[0])
+                self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", tag)
                 raise ConnectionError
             elif ('pull access' or 'TLS handshake') in str(e):
                 self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
@@ -239,12 +227,13 @@ class Container(object):
 
         for container in self.monitored:
             current_image = container.image
+            current_tag = container.attrs['Config']['Image']
             shared_image = [uct for uct in updateable if uct[1].id == current_image.id]
             if shared_image:
                 latest_image = shared_image[0][2]
             else:
                 try:
-                    latest_image = self.pull(current_image)
+                    latest_image = self.pull(current_tag)
                 except ConnectionError:
                     continue
 
@@ -390,7 +379,7 @@ class Service(object):
         return monitored_services
 
     def pull(self, tag):
-        """Docker pull image tag/latest"""
+        """Docker pull image tag"""
         self.logger.debug('Checking tag: %s', tag)
         try:
             if self.config.dry_run:
@@ -431,8 +420,12 @@ class Service(object):
 
         for service in self.monitored:
             image_string = service.attrs['Spec']['TaskTemplate']['ContainerSpec']['Image']
-            tag = image_string.split('@')[0]
-            sha256 = image_string.split('@')[1][7:]
+            if '@' in image_string:
+                tag = image_string.split('@')[0]
+                sha256 = image_string.split('@')[1][7:]
+            else:
+                self.logger.error('No image SHA for %s. Skipping', image_string)
+                continue
 
             try:
                 latest_image = self.pull(tag)
@@ -450,7 +443,7 @@ class Service(object):
                     (service, sha256[-10:], latest_image)
                 )
 
-                if 'ouroboros' in service.name:
+                if 'ouroboros' in service.name and self.config.self_update:
                     self.data_manager.total_updated[self.socket] += 1
                     self.data_manager.add(label=service.name, socket=self.socket)
                     self.data_manager.add(label='all', socket=self.socket)
@@ -469,4 +462,9 @@ class Service(object):
                 self.data_manager.add(label='all', socket=self.socket)
 
         if updated_count > 0:
-            self.notification_manager.send(container_tuples=updated_service_tuples, socket=self.socket, kind='update')
+            self.notification_manager.send(
+                container_tuples=updated_service_tuples,
+                socket=self.socket,
+                kind='update',
+                mode='service'
+            )
