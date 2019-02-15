@@ -1,17 +1,16 @@
 from setuptools import setup, find_packages
 from pyouroboros import VERSION
 
-requirements = ['docker>=3.7.0',
-                'apscheduler>=3.5.3',
-                'prometheus_client>=0.5.0',
-                'requests>=2.21.0',
-                'influxdb>=5.2.1',
-                'apprise>=0.5.2']
 
-
-def readme():
-    with open('./README.md') as f:
+def read(filename):
+    with open(filename) as f:
         return f.read()
+
+
+def get_requirements(filename="requirements.txt"):
+    """returns a list of all requirements"""
+    requirements = read(filename)
+    return list(filter(None, [req.strip() for req in requirements.split() if not req.startswith('#')]))
 
 
 setup(
@@ -20,7 +19,7 @@ setup(
     maintainer='circa10a',
     maintainer_email='caleblemoine@gmail.com',
     description='Automatically update running docker containers',
-    long_description=readme(),
+    long_description=read('README.md'),
     long_description_content_type='text/markdown',
     url='https://github.com/pyouroboros/ouroboros',
     license='MIT',
@@ -29,6 +28,6 @@ setup(
                  'Programming Language :: Python :: 3.7'],
     packages=find_packages(),
     scripts=['ouroboros'],
-    install_requires=requirements,
+    install_requires=get_requirements(),
     python_requires='>=3.6.2'
 )
