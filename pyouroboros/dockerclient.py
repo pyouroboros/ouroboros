@@ -83,6 +83,13 @@ class Container(object):
             container.stop()
 
     def remove(self, container):
+        if container.attrs['HostConfig']['AutoRemove']:
+            self.logger.debug('Not removing container "%s" since autoremove was set during start.', container.name)
+            try:
+                container.wait(condition='removed')
+            except NotFound:
+                pass
+            return
         self.logger.debug('Removing container: %s', container.name)
         try:
             container.remove()
