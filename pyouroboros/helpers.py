@@ -4,6 +4,7 @@ def set_properties(old, new, self_name=None):
         'name': self_name if self_name else old.name,
         'hostname': old.attrs['Config']['Hostname'],
         'user': old.attrs['Config']['User'],
+        'detach': True,
         'domainname': old.attrs['Config']['Domainname'],
         'tty': old.attrs['Config']['Tty'],
         'ports': None if not old.attrs['Config'].get('ExposedPorts') else [
