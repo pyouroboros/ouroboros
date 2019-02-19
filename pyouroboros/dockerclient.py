@@ -371,7 +371,7 @@ class Service(object):
 
         for service in services:
             ouro_label = service.attrs['Spec']['Labels'].get('com.ouroboros.enable')
-            if ouro_label.lower() in ["true", "yes"]:
+            if not self.config.label_enable or ouro_label.lower() in ["true", "yes"]:
                 monitored_services.append(service)
 
         self.data_manager.monitored_containers[self.socket] = len(monitored_services)
