@@ -5,6 +5,7 @@ from os.path import isdir, isfile, join
 from docker.errors import DockerException, APIError, NotFound
 
 from pyouroboros.helpers import set_properties
+from pyouroboros.notifiers import ContainerUpdateMessage, ServiceUpdateMessage
 
 
 class Docker(object):
@@ -303,9 +304,14 @@ class Container(BaseImageObject):
                 self.data_manager.total_updated[self.socket] += 1
                 self.data_manager.add(label=container.name, socket=self.socket)
                 self.data_manager.add(label='all', socket=self.socket)
-                self.notification_manager.send(container_tuples=updateable,
-                                               socket=self.socket, kind='update')
-                self.update_self(old_container=container, new_image=latest_image, count=1)
+                self.notification_manager.send(
+                    ContainerUpdateMessage(
+                        self.config.hostname,
+                        self.socket,
+                        updateable,
+                        self.data_manager
+                    )
+                )
 
             self.logger.info('%s will be updated', container.name)
 
@@ -333,7 +339,14 @@ class Container(BaseImageObject):
             self.recreate(container, container.image)
 
         if updated_count > 0:
-            self.notification_manager.send(container_tuples=updateable, socket=self.socket, kind='update')
+            self.notification_manager.send(
+                ContainerUpdateMessage(
+                    self.config.hostname,
+                    self.socket,
+                    updateable,
+                    self.data_manager
+                )
+            )
 
     def update_self(self, count=None, old_container=None, me_list=None, new_image=None):
         if count == 2:
@@ -430,15 +443,21 @@ class Service(BaseImageObject):
                     continue
 
                 updated_service_tuples.append(
-                    (service, sha256[-10:], latest_image)
+                    (service, sha256[-10:], latest_image_sha256[-10:])
                 )
 
                 if 'ouroboros' in service.name and self.config.self_update:
                     self.data_manager.total_updated[self.socket] += 1
                     self.data_manager.add(label=service.name, socket=self.socket)
                     self.data_manager.add(label='all', socket=self.socket)
-                    self.notification_manager.send(container_tuples=updated_service_tuples,
-                                                   socket=self.socket, kind='update', mode='service')
+                    self.notification_manager.send(
+                        ServiceUpdateMessage(
+                            self.config.hostname,
+                            self.socket,
+                            updated_service_tuples,
+                            self.data_manager
+                        )
+                    )
 
                 self.logger.info('%s will be updated', service.name)
                 service.update(image=f"{tag}@sha256:{latest_image_sha256}")
@@ -449,8 +468,10 @@ class Service(BaseImageObject):
 
         if updated_service_tuples:
             self.notification_manager.send(
-                container_tuples=updated_service_tuples,
-                socket=self.socket,
-                kind='update',
-                mode='service'
+                ServiceUpdateMessage(
+                    self.config.hostname,
+                    self.socket,
+                    updated_service_tuples,
+                    self.data_manager
+                )
             )

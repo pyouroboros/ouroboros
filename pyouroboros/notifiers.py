@@ -4,6 +4,69 @@ from logging import getLogger
 from datetime import datetime, timezone
 
 
+class BaseMessage(object):
+    def __init__(self, title, body_fields):
+        self.title = title
+        self.body_fields = body_fields
+
+    @property
+    def body(self):
+        return '\r\n'.join(self.body_fields)
+
+
+class StartupMessage(BaseMessage):
+    def __init__(self, hostname, next_run=None):
+        now = datetime.now(timezone.utc).astimezone()
+        title = f'Ouroboros has started'
+        body_fields = [
+            f'Host: {hostname}',
+            f'Time: {now.strftime("%Y-%m-%d %H:%M:%S")}',
+            f'Next Run: {next_run}']
+        super().__init__(title, body_fields)
+
+
+class ContainerUpdateMessage(BaseMessage):
+    def __init__(self, hostname, socket, container_tuples, data_manager):
+        title = f'Ouroboros has updated containers!'
+        body_fields = [
+            f"Host/Socket: {hostname} / {socket.split('//')[1]}",
+            f"Containers Monitored: {data_manager.monitored_containers[socket]}",
+            f"Total Containers Updated: {data_manager.total_updated[socket]}",
+            f"Containers updated this pass: {len(container_tuples)}"
+        ]
+        body_fields.extend(
+            [
+                "{} updated from {} to {}".format(
+                    container.name,
+                    old_image.short_id.split(':')[1],
+                    new_image.short_id.split(':')[1]
+                ) for container, old_image, new_image in container_tuples
+            ]
+        )
+        super().__init__(title, body_fields)
+
+
+class ServiceUpdateMessage(BaseMessage):
+    def __init__(self, hostname, socket, service_tuples, data_manager):
+        title = f'Ouroboros has updated services!'
+        body_fields = [
+            f"Host/Socket: {hostname}",
+            f"Services Monitored: {data_manager.monitored_containers[socket]}",
+            f"Total services Updated: {data_manager.total_updated[socket]}",
+            f"Services updated this pass: {len(service_tuples)}"
+        ]
+        body_fields.extend(
+            [
+                "{} updated from {} to {}".format(
+                    service.name,
+                    old_image_sha,
+                    new_image_sha
+                ) for service, old_image_sha, new_image_sha in service_tuples
+            ]
+        )
+        super().__init__(title, body_fields)
+
+
 class NotificationManager(object):
     def __init__(self, config, data_manager):
         self.config = config
@@ -32,32 +95,6 @@ class NotificationManager(object):
 
         return apprise_obj
 
-    def send(self, container_tuples=None, socket=None, kind='update', next_run=None, mode='container'):
-        if kind == 'startup':
-            now = datetime.now(timezone.utc).astimezone()
-            title = f'Ouroboros has started'
-            body_fields = [
-                f'Host: {self.config.hostname}',
-                f'Time: {now.strftime("%Y-%m-%d %H:%M:%S")}',
-                f'Next Run: {next_run}']
-        else:
-            title = 'Ouroboros has updated containers!'
-            body_fields = [
-                f"Host/Socket: {self.config.hostname} / {socket.split('//')[1]}",
-                f"Containers Monitored: {self.data_manager.monitored_containers[socket]}",
-                f"Total Containers Updated: {self.data_manager.total_updated[socket]}",
-                f"Containers updated this pass: {len(container_tuples)}"
-            ]
-            body_fields.extend(
-                [
-                    "{} updated from {} to {}".format(
-                        container.name,
-                        old_image if mode == 'service' else old_image.short_id.split(':')[1],
-                        new_image.short_id.split(':')[1]
-                    ) for container, old_image, new_image in container_tuples
-                ]
-            )
-        body = '\r\n'.join(body_fields)
-
+    def send(self, message):
         if self.apprise.servers:
-            self.apprise.notify(title=title, body=body)
+            self.apprise.notify(title=message.title, body=message.body)

@@ -10,7 +10,7 @@ from pyouroboros.config import Config
 from pyouroboros import VERSION, BRANCH
 from pyouroboros.logger import OuroborosLogger
 from pyouroboros.dataexporters import DataManager
-from pyouroboros.notifiers import NotificationManager
+from pyouroboros.notifiers import NotificationManager, StartupMessage
 from pyouroboros.dockerclient import Docker, Container, Service
 
 
@@ -190,7 +190,7 @@ def main():
         now = datetime.now(timezone.utc).astimezone()
         next_run = (now + timedelta(0, config.interval)).strftime("%Y-%m-%d %H:%M:%S")
 
-    notification_manager.send(kind='startup', next_run=next_run)
+    notification_manager.send(StartupMessage(config.hostname, next_run=next_run))
 
     while scheduler.get_jobs():
         sleep(1)
