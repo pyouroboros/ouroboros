@@ -23,3 +23,9 @@ def set_properties(old, new, self_name=None):
     }
 
     return properties
+
+
+def remove_sha_prefix(digest):
+    if digest.startswith("sha256:"):
+        return digest[7:]
+    return digest

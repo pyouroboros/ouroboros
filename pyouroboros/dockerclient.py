@@ -4,7 +4,7 @@ from docker import DockerClient, tls
 from os.path import isdir, isfile, join
 from docker.errors import DockerException, APIError, NotFound
 
-from pyouroboros.helpers import set_properties
+from pyouroboros.helpers import set_properties, remove_sha_prefix
 from pyouroboros.notifiers import ContainerUpdateMessage, ServiceUpdateMessage
 
 
@@ -398,11 +398,6 @@ class Service(BaseImageObject):
         """Docker pull image tag"""
         return self._pull(tag)
 
-    def _remove_sha_prefix(self, digest):
-        if digest.startswith("sha256:"):
-            return digest[7:]
-        return digest
-
     def _get_digest(self, image):
         digest = image.attrs.get(
                 "Descriptor", {}
@@ -410,7 +405,7 @@ class Service(BaseImageObject):
                 "RepoDigests"
             )[0].split('@')[1] or image.id
 
-        return self._remove_sha_prefix(digest)
+        return remove_sha_prefix(digest)
 
     def update(self):
         updated_service_tuples = []
@@ -423,7 +418,7 @@ class Service(BaseImageObject):
             image_string = service.attrs['Spec']['TaskTemplate']['ContainerSpec']['Image']
             if '@' in image_string:
                 tag = image_string.split('@')[0]
-                sha256 = self._remove_sha_prefix(image_string.split('@')[1])
+                sha256 = remove_sha_prefix(image_string.split('@')[1])
             else:
                 self.logger.error('No image SHA for %s. Skipping', image_string)
                 continue
