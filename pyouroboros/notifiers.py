@@ -26,14 +26,18 @@ class StartupMessage(BaseMessage):
 
 
 class ContainerUpdateMessage(BaseMessage):
-    def __init__(self, hostname, socket, container_tuples, data_manager):
+    def __init__(self, config, socket, container_tuples, data_manager):
         title = f'Ouroboros has updated containers!'
-        body_fields = [
-            f"Host/Socket: {hostname} / {socket.split('//')[1]}",
-            f"Containers Monitored: {data_manager.monitored_containers[socket]}",
-            f"Total Containers Updated: {data_manager.total_updated[socket]}",
-            f"Containers updated this pass: {len(container_tuples)}"
-        ]
+        body_fields = []
+        if not config.notifier_short_message:
+            body_fields.extend(
+                [
+                    f"Host/Socket: {config.hostname} / {socket.split('//')[1]}",
+                    f"Containers Monitored: {data_manager.monitored_containers[socket]}",
+                    f"Total Containers Updated: {data_manager.total_updated[socket]}",
+                    f"Containers updated this pass: {len(container_tuples)}"
+                ]
+            )
         body_fields.extend(
             [
                 "{} updated from {} to {}".format(
@@ -47,14 +51,18 @@ class ContainerUpdateMessage(BaseMessage):
 
 
 class ServiceUpdateMessage(BaseMessage):
-    def __init__(self, hostname, socket, service_tuples, data_manager):
+    def __init__(self, config, socket, service_tuples, data_manager):
         title = f'Ouroboros has updated services!'
-        body_fields = [
-            f"Host/Socket: {hostname}",
-            f"Services Monitored: {data_manager.monitored_containers[socket]}",
-            f"Total services Updated: {data_manager.total_updated[socket]}",
-            f"Services updated this pass: {len(service_tuples)}"
-        ]
+        body_fields = []
+        if not config.notifier_short_message:
+            body_fields.extend(
+                [
+                    f"Host/Socket: {config.hostname}",
+                    f"Services Monitored: {data_manager.monitored_containers[socket]}",
+                    f"Total services Updated: {data_manager.total_updated[socket]}",
+                    f"Services updated this pass: {len(service_tuples)}"
+                ]
+            )
         body_fields.extend(
             [
                 "{} updated from {} to {}".format(

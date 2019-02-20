@@ -306,7 +306,7 @@ class Container(BaseImageObject):
                 self.data_manager.add(label='all', socket=self.socket)
                 self.notification_manager.send(
                     ContainerUpdateMessage(
-                        self.config.hostname,
+                        self.config,
                         self.socket,
                         updateable,
                         self.data_manager
@@ -341,7 +341,7 @@ class Container(BaseImageObject):
         if updated_count > 0:
             self.notification_manager.send(
                 ContainerUpdateMessage(
-                    self.config.hostname,
+                    self.config,
                     self.socket,
                     updateable,
                     self.data_manager
@@ -447,7 +447,7 @@ class Service(BaseImageObject):
                     self.data_manager.add(label='all', socket=self.socket)
                     self.notification_manager.send(
                         ServiceUpdateMessage(
-                            self.config.hostname,
+                            self.config,
                             self.socket,
                             updated_service_tuples,
                             self.data_manager
@@ -464,7 +464,7 @@ class Service(BaseImageObject):
         if updated_service_tuples:
             self.notification_manager.send(
                 ServiceUpdateMessage(
-                    self.config.hostname,
+                    self.config,
                     self.socket,
                     updated_service_tuples,
                     self.data_manager
