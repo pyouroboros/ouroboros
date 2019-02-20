@@ -1,0 +1,7 @@
+Host: {{ hostname }}
+Services Monitored: {{ total_monitored }}
+Total Services Updated: {{ total_updated }}
+Services updated this pass: {{ updated_tuples|length }}
+{% for service, old_image_sha, new_image_sha in updated_tuples %}
+ {{ service.name }} updated from {{ old_image_sha }} to {{ new_image_sha }}
+{% endfor %}

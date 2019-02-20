@@ -1,17 +1,14 @@
 import apprise
+from jinja2 import Environment, BaseLoader
 
 from logging import getLogger
 from datetime import datetime, timezone
 
 
 class BaseMessage(object):
-    def __init__(self, title, body_fields):
+    def __init__(self, title, body):
         self.title = title
-        self.body_fields = body_fields
-
-    @property
-    def body(self):
-        return '\r\n'.join(self.body_fields)
+        self.body = body
 
 
 class StartupMessage(BaseMessage):
@@ -22,57 +19,36 @@ class StartupMessage(BaseMessage):
             f'Host: {hostname}',
             f'Time: {now.strftime("%Y-%m-%d %H:%M:%S")}',
             f'Next Run: {next_run}']
-        super().__init__(title, body_fields)
+        super().__init__(title, '\n'.join(body_fields))
 
 
-class ContainerUpdateMessage(BaseMessage):
-    def __init__(self, config, socket, container_tuples, data_manager):
+class TemplateMessage(BaseMessage):
+    def __init__(self, title, config, socket, tuples, data_manager):
+        template = Environment(loader=BaseLoader).from_string(config.template)
+        body = template.render(
+            socket=socket.split('//')[1],
+            hostname=config.hostname,
+            total_monitored=data_manager.monitored_containers[socket],
+            total_updated=data_manager.total_updated[socket],
+            updated_tuples=tuples
+        )
+        super().__init__(title, body)
+
+
+class ContainerUpdateMessage(TemplateMessage):
+    def __init__(self, config, socket, tuples, data_manager):
         title = f'Ouroboros has updated containers!'
-        body_fields = []
-        if not config.notifier_short_message:
-            body_fields.extend(
-                [
-                    f"Host/Socket: {config.hostname} / {socket.split('//')[1]}",
-                    f"Containers Monitored: {data_manager.monitored_containers[socket]}",
-                    f"Total Containers Updated: {data_manager.total_updated[socket]}",
-                    f"Containers updated this pass: {len(container_tuples)}"
-                ]
-            )
-        body_fields.extend(
-            [
-                "{} updated from {} to {}".format(
-                    container.name,
-                    old_image.short_id.split(':')[1],
-                    new_image.short_id.split(':')[1]
-                ) for container, old_image, new_image in container_tuples
-            ]
-        )
-        super().__init__(title, body_fields)
+        tuples = [(container,
+                   old_image.short_id.split(':')[1],
+                   new_image.short_id.split(':')[1])
+                  for container, old_image, new_image in tuples]
+        super().__init__(title, config, socket, tuples, data_manager)
 
 
-class ServiceUpdateMessage(BaseMessage):
-    def __init__(self, config, socket, service_tuples, data_manager):
+class ServiceUpdateMessage(TemplateMessage):
+    def __init__(self, config, socket, tuples, data_manager):
         title = f'Ouroboros has updated services!'
-        body_fields = []
-        if not config.notifier_short_message:
-            body_fields.extend(
-                [
-                    f"Host/Socket: {config.hostname}",
-                    f"Services Monitored: {data_manager.monitored_containers[socket]}",
-                    f"Total services Updated: {data_manager.total_updated[socket]}",
-                    f"Services updated this pass: {len(service_tuples)}"
-                ]
-            )
-        body_fields.extend(
-            [
-                "{} updated from {} to {}".format(
-                    service.name,
-                    old_image_sha,
-                    new_image_sha
-                ) for service, old_image_sha, new_image_sha in service_tuples
-            ]
-        )
-        super().__init__(title, body_fields)
+        super().__init__(title, config, socket, tuples, data_manager)
 
 
 class NotificationManager(object):

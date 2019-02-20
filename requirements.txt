@@ -4,3 +4,4 @@ requests>=2.21.0
 influxdb>=5.2.1
 apprise>=0.5.2
 apscheduler>=3.5.3
+jinja2>=2.10

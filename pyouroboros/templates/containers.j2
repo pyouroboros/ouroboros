@@ -1,0 +1,7 @@
+Host/Socket: {{ hostname }} / {{ socket }}
+Containers Monitored: {{ total_monitored }}
+Total Containers Updated: {{ total_updated }}
+Containers updated this pass: {{ updated_tuples|length }}
+{% for container, old_image_id, new_image_id in updated_tuples %}
+ {{ container }} updated from {{ old_image_id }} to {{ new_image_id }}
+{% endfor %}
