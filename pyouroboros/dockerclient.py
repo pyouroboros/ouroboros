@@ -391,12 +391,11 @@ class Service(BaseImageObject):
         return digest
 
     def _get_digest(self, image):
-        # There are a descriptor on the response
-        digest = image.attrs.get("Descriptor", {}).get("digest")
-        # There are RepoDigests on the response
-        digest = digest or image.attrs.get("RepoDigests")[0].split('@')[1]
-        # There are nothing on the response, in this case id is the sha256 (dryrun)
-        digest = digest or image.id
+        digest = image.attrs.get(
+                "Descriptor", {}
+            ).get("digest") or image.attrs.get(
+                "RepoDigests"
+            )[0].split('@')[1] or image.id
 
         return self._remove_sha_prefix(digest)
 
