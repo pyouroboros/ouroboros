@@ -158,7 +158,7 @@ class Config(object):
                 self.template_file = dir_path.joinpath("pyouroboros/templates/services.j2")
             else:
                 self.template_file = dir_path.joinpath("pyouroboros/templates/containers.j2")
-    
+
         if Path(self.template_file).exists():
             with open(self.template_file) as f:
                 self.template = f.read()
