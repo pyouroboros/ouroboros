@@ -57,9 +57,9 @@ class NotificationManager(object):
         self.data_manager = data_manager
         self.logger = getLogger()
 
-        self.apprise = self.build_apprise()
+        self.apprise = self.build_apprise(self.config.notifiers)
 
-    def build_apprise(self):
+    def build_apprise(self, notifiers):
         asset = apprise.AppriseAsset(
             image_url_mask='https://bin.cajun.pro/images/ouroboros/notifications/ouroboros-logo-{XY}{EXTENSION}',
             default_extension='.png'
@@ -72,13 +72,19 @@ class NotificationManager(object):
 
         apprise_obj = apprise.Apprise(asset=asset)
 
-        for notifier in self.config.notifiers:
-            add = apprise_obj.add(notifier)
-            if not add:
-                self.logger.error('Could not add notifier %s', notifier)
+        for notifier in notifiers:
+            if notifier:
+                add = apprise_obj.add(notifier)
+                if not add:
+                    self.logger.error('Could not add notifier %s', notifier)
 
         return apprise_obj
 
-    def send(self, message):
-        if self.apprise.servers:
-            self.apprise.notify(title=message.title, body=message.body)
+    def send(self, message, notifiers=None):
+        if notifiers:
+            apprise = self.build_apprise(notifiers)
+        else:
+            apprise = self.apprise
+
+        if apprise.servers:
+            apprise.notify(title=message.title, body=message.body)

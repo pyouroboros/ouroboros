@@ -283,7 +283,7 @@ class Container(BaseImageObject):
         return updateable, depends_on_containers, hard_depends_on_containers
 
     def update(self):
-        updated_count = 0
+        updated_container_tuples = []
         try:
             updateable, depends_on_containers, hard_depends_on_containers = self.socket_check()
         except TypeError:
@@ -300,6 +300,24 @@ class Container(BaseImageObject):
                     self.logger.info('dry run : %s would be updated', container.name)
                 continue
 
+            updated_container = (container, current_image, latest_image)
+
+            # com.ouroboros.notifiers may have an empty value to disable notification
+            if 'com.ouroboros.notifiers' in container.labels:
+                label = container.labels.get('com.ouroboros.notifiers')
+                if label:
+                    self.notification_manager.send(
+                        ContainerUpdateMessage(
+                            self.config,
+                            self.socket,
+                            [],
+                            self.data_manager
+                        ), notifiers=label.split(' ')
+                    )
+            else:
+                # Add to global notifications
+                updated_container_tuples.append(updated_container)
+
             if container.name in ['ouroboros', 'ouroboros-updated']:
                 self.data_manager.total_updated[self.socket] += 1
                 self.data_manager.add(label=container.name, socket=self.socket)
@@ -308,7 +326,7 @@ class Container(BaseImageObject):
                     ContainerUpdateMessage(
                         self.config,
                         self.socket,
-                        updateable,
+                        updated_container_tuples,
                         self.data_manager
                     )
                 )
@@ -322,7 +340,6 @@ class Container(BaseImageObject):
                     self.client.images.remove(current_image.id)
                 except APIError as e:
                     self.logger.error("Could not delete old image for %s, Error: %s", container.name, e)
-            updated_count += 1
 
             self.logger.debug("Incrementing total container updated count")
 
@@ -338,12 +355,12 @@ class Container(BaseImageObject):
         for container in hard_depends_on_containers:
             self.recreate(container, container.image)
 
-        if updated_count > 0:
+        if updated_container_tuples:
             self.notification_manager.send(
                 ContainerUpdateMessage(
                     self.config,
                     self.socket,
-                    updateable,
+                    updated_container_tuples,
                     self.data_manager
                 )
             )
@@ -437,9 +454,23 @@ class Service(BaseImageObject):
                     self.logger.info('dry run : %s would be updated', service.name)
                     continue
 
-                updated_service_tuples.append(
-                    (service, sha256[-10:], latest_image_sha256[-10:])
-                )
+                updated_service = (service, sha256[-10:], latest_image_sha256[-10:])
+
+                # com.ouroboros.notifiers may have an empty value to disable notification
+                if 'com.ouroboros.notifiers' in service.attrs['Spec']['Labels']:
+                    label = service.attrs['Spec']['Labels'].get('com.ouroboros.notifiers')
+                    if label:
+                        self.notification_manager.send(
+                            ServiceUpdateMessage(
+                                self.config,
+                                self.socket,
+                                [updated_service],
+                                self.data_manager
+                            ), notifiers=label.split(' ')
+                        )
+                else:
+                    # Add to global notifications
+                    updated_service_tuples.append(updated_service)
 
                 if 'ouroboros' in service.name and self.config.self_update:
                     self.data_manager.total_updated[self.socket] += 1
