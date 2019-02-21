@@ -1,7 +1,6 @@
 from os import environ
 from pathlib import Path
 from logging import getLogger
-import pkg_resources
 from pyouroboros.logger import BlacklistFilter
 
 
