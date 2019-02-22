@@ -64,6 +64,9 @@ def main():
                                  'EXAMPLE: -N discord://1234123412341234/jasdfasdfasdfasddfasdf '
                                  'mailto://user:pass@gmail.com')
 
+    core_group.add_argument('--skip-start-notif', default=Config.dry_run, action='store_true', dest='SKIP_START_NOTIF',
+                            help='Skip notification of ouroboros has started')
+
     core_group.add_argument('--template-file', nargs='+', default=Config.template_file, dest='TEMPLATE_FILE',
                             help='Use a custom template for notification')
 
@@ -194,7 +197,8 @@ def main():
         now = datetime.now(timezone.utc).astimezone()
         next_run = (now + timedelta(0, config.interval)).strftime("%Y-%m-%d %H:%M:%S")
 
-    notification_manager.send(StartupMessage(config.hostname, next_run=next_run))
+    if not config.skip_start_notif:
+        notification_manager.send(StartupMessage(config.hostname, next_run=next_run))
 
     while scheduler.get_jobs():
         sleep(1)
