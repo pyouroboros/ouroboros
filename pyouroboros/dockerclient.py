@@ -249,10 +249,13 @@ class Container(BaseImageObject):
                     latest_image = self.pull(current_tag)
                 except ConnectionError:
                     continue
-            if current_image.id != latest_image.id:
-                updateable.append((container, current_image, latest_image))
-            else:
-                continue
+            try:
+                if current_image.id != latest_image.id:
+                    updateable.append((container, current_image, latest_image))
+                else:
+                    continue
+            except AttributeError:
+                self.logger.error("Issue detecting %s's image tag. Skipping...", container.name)
 
             # Get container list to restart after update complete
             depends_on = container.labels.get('com.ouroboros.depends_on', False)
