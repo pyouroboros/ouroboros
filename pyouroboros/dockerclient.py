@@ -176,7 +176,10 @@ class Container(object):
                 else:
                     try:
                         if 'ouroboros' not in container.image.tags[0]:
-                            running_containers.append(container)
+                            if container.attrs['HostConfig']['AutoRemove']:
+                                self.logger.debug("Skipping %s due to --rm property.", container.name)
+                            else:
+                                running_containers.append(container)
                     except IndexError:
                         self.logger.error("%s has no tags.. you should clean it up! Ignoring.", container.id)
                         continue
