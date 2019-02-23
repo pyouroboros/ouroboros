@@ -359,12 +359,17 @@ class Container(BaseImageObject):
             self.logger.debug('I need to update! Starting the ouroboros ;)')
             self_name = 'ouroboros-updated' if old_container.name == 'ouroboros' else 'ouroboros'
             new_config = set_properties(old=old_container, new=new_image, self_name=self_name)
-            me_created = self.client.api.create_container(**new_config)
-            new_me = self.client.containers.get(me_created.get("Id"))
-            new_me.start()
-            self.logger.debug('If you strike me down, I shall become more powerful than you could possibly imagine')
-            self.logger.debug('https://bit.ly/2VVY7GH')
-            sleep(30)
+            try:
+                me_created = self.client.api.create_container(**new_config)
+                new_me = self.client.containers.get(me_created.get("Id"))
+                new_me.start()
+                self.logger.debug('If you strike me down, I shall become \
+                                   more powerful than you could possibly imagine.')
+                self.logger.debug('https://bit.ly/2VVY7GH')
+                sleep(30)
+            except APIError as e:
+                self.logger.error("Self update failed.")
+                self.logger.error(e)
 
 
 class Service(BaseImageObject):
