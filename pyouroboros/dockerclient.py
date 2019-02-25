@@ -4,7 +4,7 @@ from docker import DockerClient, tls
 from os.path import isdir, isfile, join
 from docker.errors import DockerException, APIError, NotFound
 
-from pyouroboros.helpers import set_properties
+from pyouroboros.helpers import set_properties, remove_sha_prefix, get_digest
 
 
 class Docker(object):
@@ -66,8 +66,6 @@ class BaseImageObject(object):
         self.data_manager.total_updated[self.socket] = 0
         self.notification_manager = self.docker.notification_manager
 
-        self.monitored = self.monitor_filter()
-
     def _pull(self, tag):
         """Docker pull image tag"""
         self.logger.debug('Checking tag: %s', tag)
@@ -77,7 +75,7 @@ class BaseImageObject(object):
                     "username"), self.config.auth_json.get("password"))
 
             if self.config.dry_run:
-                # The authentification doesn't work with this call
+                # The authentication doesn't work with this call
                 # See bugs https://github.com/docker/docker-py/issues/2225
                 return self.client.images.get_registry_data(tag)
             else:
@@ -106,6 +104,7 @@ class BaseImageObject(object):
 class Container(BaseImageObject):
     def __init__(self, docker_client):
         super().__init__(docker_client)
+        self.monitored = self.monitor_filter()
 
     # Container sub functions
     def stop(self, container):
@@ -375,6 +374,7 @@ class Container(BaseImageObject):
 class Service(BaseImageObject):
     def __init__(self, docker_client):
         super().__init__(docker_client)
+        self.monitored = self.monitor_filter()
 
     def monitor_filter(self):
         """Return filtered service objects list"""
@@ -396,20 +396,6 @@ class Service(BaseImageObject):
         """Docker pull image tag"""
         return self._pull(tag)
 
-    def _remove_sha_prefix(self, digest):
-        if digest.startswith("sha256:"):
-            return digest[7:]
-        return digest
-
-    def _get_digest(self, image):
-        digest = image.attrs.get(
-                "Descriptor", {}
-            ).get("digest") or image.attrs.get(
-                "RepoDigests"
-            )[0].split('@')[1] or image.id
-
-        return self._remove_sha_prefix(digest)
-
     def update(self):
         updated_service_tuples = []
         self.monitored = self.monitor_filter()
@@ -421,7 +407,7 @@ class Service(BaseImageObject):
             image_string = service.attrs['Spec']['TaskTemplate']['ContainerSpec']['Image']
             if '@' in image_string:
                 tag = image_string.split('@')[0]
-                sha256 = self._remove_sha_prefix(image_string.split('@')[1])
+                sha256 = remove_sha_prefix(image_string.split('@')[1])
             else:
                 self.logger.error('No image SHA for %s. Skipping', image_string)
                 continue
@@ -431,7 +417,7 @@ class Service(BaseImageObject):
             except ConnectionError:
                 continue
 
-            latest_image_sha256 = self._get_digest(latest_image)
+            latest_image_sha256 = get_digest(latest_image)
             self.logger.debug('Latest sha256 for %s is %s', tag, latest_image_sha256)
 
             if sha256 != latest_image_sha256:
