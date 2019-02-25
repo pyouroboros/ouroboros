@@ -70,16 +70,16 @@ class BaseImageObject(object):
         """Docker pull image tag"""
         self.logger.debug('Checking tag: %s', tag)
         try:
-            if self.config.auth_json:
-                self.client.login(self.config.auth_json.get(
-                    "username"), self.config.auth_json.get("password"))
-
             if self.config.dry_run:
                 # The authentication doesn't work with this call
                 # See bugs https://github.com/docker/docker-py/issues/2225
                 return self.client.images.get_registry_data(tag)
             else:
-                return self.client.images.pull(tag)
+                if self.config.auth_json:
+                    return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
+                else:
+                    return_image = self.client.images.pull(tag)
+                return return_image
         except APIError as e:
             if '<html>' in str(e):
                 self.logger.debug("Docker api issue. Ignoring")
