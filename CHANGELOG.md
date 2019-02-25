@@ -1,6 +1,35 @@
 # Change Log
 
-## [1.2.1](https://github.com/pyouroboros/ouroboros/tree/1.2.1) (2019-02-13)
+## [1.3.0](https://github.com/pyouroboros/ouroboros/tree/1.3.0) (2019-02-25)
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.2.1...1.3.0)
+
+**Implemented enhancements:**
+
+- Start new container in detached mode [\#222](https://github.com/pyouroboros/ouroboros/pull/222) ([nightvisi0n](https://github.com/nightvisi0n))
+- Optimise dockerfile layers [\#218](https://github.com/pyouroboros/ouroboros/pull/218) ([nightvisi0n](https://github.com/nightvisi0n))
+
+**Fixed bugs:**
+
+- Catch Failed self-updates [\#230](https://github.com/pyouroboros/ouroboros/issues/230)
+- Cron scheduled missed following successful runs [\#229](https://github.com/pyouroboros/ouroboros/issues/229)
+- Catch attribute.id error [\#226](https://github.com/pyouroboros/ouroboros/issues/226)
+- AttachStdout and AttachStderr are not carried over properly [\#221](https://github.com/pyouroboros/ouroboros/issues/221)
+- Exception when updating container started with --rm \(autoremove\)  [\#219](https://github.com/pyouroboros/ouroboros/issues/219)
+- Issue with Swarm Mode V2 [\#216](https://github.com/pyouroboros/ouroboros/issues/216)
+- Fix docker swarm mode [\#227](https://github.com/pyouroboros/ouroboros/pull/227) ([mathcantin](https://github.com/mathcantin))
+
+**Other Pull Requests**
+
+- v1.3.0 Merge [\#241](https://github.com/pyouroboros/ouroboros/pull/241) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.3.0 to develop [\#240](https://github.com/pyouroboros/ouroboros/pull/240) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Catch self update apierror [\#238](https://github.com/pyouroboros/ouroboros/pull/238) ([circa10a](https://github.com/circa10a))
+- Catch attribute error [\#237](https://github.com/pyouroboros/ouroboros/pull/237) ([circa10a](https://github.com/circa10a))
+- Check for autoremove [\#236](https://github.com/pyouroboros/ouroboros/pull/236) ([circa10a](https://github.com/circa10a))
+- Add misfire\_grace\_time for cron scheduler [\#234](https://github.com/pyouroboros/ouroboros/pull/234) ([circa10a](https://github.com/circa10a))
+- Check all services by default on swarm mode [\#228](https://github.com/pyouroboros/ouroboros/pull/228) [[cleanup](https://github.com/pyouroboros/ouroboros/labels/cleanup)] ([mathcantin](https://github.com/mathcantin))
+- remove git in pypi + branch develop + version bump + maintainer\_email [\#214](https://github.com/pyouroboros/ouroboros/pull/214) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
+## [1.2.1](https://github.com/pyouroboros/ouroboros/tree/1.2.1) (2019-02-14)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.2.0...1.2.1)
 
 **Fixed bugs:**

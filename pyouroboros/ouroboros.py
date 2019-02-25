@@ -164,7 +164,8 @@ def main():
                     hour=config.cron[1],
                     day=config.cron[2],
                     month=config.cron[3],
-                    day_of_week=config.cron[4]
+                    day_of_week=config.cron[4],
+                    misfire_grace_time=15
                 )
             else:
                 if config.run_once:

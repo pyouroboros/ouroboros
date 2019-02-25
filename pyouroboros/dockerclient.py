@@ -4,7 +4,7 @@ from docker import DockerClient, tls
 from os.path import isdir, isfile, join
 from docker.errors import DockerException, APIError, NotFound
 
-from pyouroboros.helpers import set_properties
+from pyouroboros.helpers import set_properties, remove_sha_prefix, get_digest
 
 
 class Docker(object):
@@ -55,7 +55,7 @@ class Docker(object):
         return client
 
 
-class Container(object):
+class BaseImageObject(object):
     def __init__(self, docker_client):
         self.docker = docker_client
         self.logger = self.docker.logger
@@ -66,6 +66,44 @@ class Container(object):
         self.data_manager.total_updated[self.socket] = 0
         self.notification_manager = self.docker.notification_manager
 
+    def _pull(self, tag):
+        """Docker pull image tag"""
+        self.logger.debug('Checking tag: %s', tag)
+        try:
+            if self.config.auth_json:
+                self.client.login(self.config.auth_json.get(
+                    "username"), self.config.auth_json.get("password"))
+
+            if self.config.dry_run:
+                # The authentication doesn't work with this call
+                # See bugs https://github.com/docker/docker-py/issues/2225
+                return self.client.images.get_registry_data(tag)
+            else:
+                return self.client.images.pull(tag)
+        except APIError as e:
+            if '<html>' in str(e):
+                self.logger.debug("Docker api issue. Ignoring")
+                raise ConnectionError
+            elif 'unauthorized' in str(e):
+                if self.config.dry_run:
+                    self.logger.error('dry run : Upstream authentication issue while checking %s. See: '
+                                      'https://github.com/docker/docker-py/issues/2225', tag)
+                    raise ConnectionError
+                else:
+                    self.logger.critical("Invalid Credentials. Exiting")
+                    exit(1)
+            elif 'Client.Timeout' in str(e):
+                self.logger.critical(
+                    "Couldn't find an image on docker.com for %s. Local Build?", tag)
+                raise ConnectionError
+            elif ('pull access' or 'TLS handshake') in str(e):
+                self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
+                raise ConnectionError
+
+
+class Container(BaseImageObject):
+    def __init__(self, docker_client):
+        super().__init__(docker_client)
         self.monitored = self.monitor_filter()
 
     # Container sub functions
@@ -135,35 +173,7 @@ class Container(object):
             raise ConnectionError
         elif ':' not in tag:
             tag = f'{tag}:latest'
-        self.logger.debug('Checking tag: %s', tag)
-        try:
-            if self.config.dry_run:
-                registry_data = self.client.images.get_registry_data(tag)
-                return registry_data
-            else:
-                if self.config.auth_json:
-                    return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
-                else:
-                    return_image = self.client.images.pull(tag)
-                return return_image
-        except APIError as e:
-            if '<html>' in str(e):
-                self.logger.debug("Docker api issue. Ignoring")
-                raise ConnectionError
-            elif 'unauthorized' in str(e):
-                if self.config.dry_run:
-                    self.logger.error('dry run : Upstream authentication issue while checking %s. See: '
-                                      'https://github.com/docker/docker-py/issues/2225', tag)
-                    raise ConnectionError
-                else:
-                    self.logger.critical("Invalid Credentials. Exiting")
-                    exit(1)
-            elif 'Client.Timeout' in str(e):
-                self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", tag)
-                raise ConnectionError
-            elif ('pull access' or 'TLS handshake') in str(e):
-                self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
-                raise ConnectionError
+        return self._pull(tag)
 
     # Filters
     def running_filter(self):
@@ -176,7 +186,10 @@ class Container(object):
                 else:
                     try:
                         if 'ouroboros' not in container.image.tags[0]:
-                            running_containers.append(container)
+                            if container.attrs['HostConfig']['AutoRemove']:
+                                self.logger.debug("Skipping %s due to --rm property.", container.name)
+                            else:
+                                running_containers.append(container)
                     except IndexError:
                         self.logger.error("%s has no tags.. you should clean it up! Ignoring.", container.id)
                         continue
@@ -238,10 +251,13 @@ class Container(object):
                     latest_image = self.pull(current_tag)
                 except ConnectionError:
                     continue
-            if current_image.id != latest_image.id:
-                updateable.append((container, current_image, latest_image))
-            else:
-                continue
+            try:
+                if current_image.id != latest_image.id:
+                    updateable.append((container, current_image, latest_image))
+                else:
+                    continue
+            except AttributeError:
+                self.logger.error("Issue detecting %s's image tag. Skipping...", container.name)
 
             # Get container list to restart after update complete
             depends_on = container.labels.get('com.ouroboros.depends_on', False)
@@ -342,25 +358,22 @@ class Container(object):
             self.logger.debug('I need to update! Starting the ouroboros ;)')
             self_name = 'ouroboros-updated' if old_container.name == 'ouroboros' else 'ouroboros'
             new_config = set_properties(old=old_container, new=new_image, self_name=self_name)
-            me_created = self.client.api.create_container(**new_config)
-            new_me = self.client.containers.get(me_created.get("Id"))
-            new_me.start()
-            self.logger.debug('If you strike me down, I shall become more powerful than you could possibly imagine')
-            self.logger.debug('https://bit.ly/2VVY7GH')
-            sleep(30)
+            try:
+                me_created = self.client.api.create_container(**new_config)
+                new_me = self.client.containers.get(me_created.get("Id"))
+                new_me.start()
+                self.logger.debug('If you strike me down, I shall become \
+                                   more powerful than you could possibly imagine.')
+                self.logger.debug('https://bit.ly/2VVY7GH')
+                sleep(30)
+            except APIError as e:
+                self.logger.error("Self update failed.")
+                self.logger.error(e)
 
 
-class Service(object):
+class Service(BaseImageObject):
     def __init__(self, docker_client):
-        self.docker = docker_client
-        self.logger = self.docker.logger
-        self.config = self.docker.config
-        self.client = self.docker.client
-        self.socket = self.docker.socket
-        self.data_manager = self.docker.data_manager
-        self.data_manager.total_updated[self.socket] = 0
-        self.notification_manager = self.docker.notification_manager
-
+        super().__init__(docker_client)
         self.monitored = self.monitor_filter()
 
     def monitor_filter(self):
@@ -371,7 +384,7 @@ class Service(object):
 
         for service in services:
             ouro_label = service.attrs['Spec']['Labels'].get('com.ouroboros.enable')
-            if ouro_label.lower() in ["true", "yes"]:
+            if not self.config.label_enable or ouro_label.lower() in ["true", "yes"]:
                 monitored_services.append(service)
 
         self.data_manager.monitored_containers[self.socket] = len(monitored_services)
@@ -381,38 +394,9 @@ class Service(object):
 
     def pull(self, tag):
         """Docker pull image tag"""
-        self.logger.debug('Checking tag: %s', tag)
-        try:
-            if self.config.dry_run:
-                registry_data = self.client.images.get_registry_data(tag)
-                return registry_data
-            else:
-                if self.config.auth_json:
-                    return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
-                else:
-                    return_image = self.client.images.pull(tag)
-                return return_image
-        except APIError as e:
-            if '<html>' in str(e):
-                self.logger.debug("Docker api issue. Ignoring")
-                raise ConnectionError
-            elif 'unauthorized' in str(e):
-                if self.config.dry_run:
-                    self.logger.error('dry run : Upstream authentication issue while checking %s. See: '
-                                      'https://github.com/docker/docker-py/issues/2225', tag)
-                    raise ConnectionError
-                else:
-                    self.logger.critical("Invalid Credentials. Exiting")
-                    exit(1)
-            elif 'Client.Timeout' in str(e):
-                self.logger.critical("Couldn't find an image on docker.com for %s. Local Build?", tag)
-                raise ConnectionError
-            elif ('pull access' or 'TLS handshake') in str(e):
-                self.logger.critical("Couldn't pull. Skipping. Error: %s", e)
-                raise ConnectionError
+        return self._pull(tag)
 
     def update(self):
-        updated_count = 0
         updated_service_tuples = []
         self.monitored = self.monitor_filter()
 
@@ -423,7 +407,7 @@ class Service(object):
             image_string = service.attrs['Spec']['TaskTemplate']['ContainerSpec']['Image']
             if '@' in image_string:
                 tag = image_string.split('@')[0]
-                sha256 = image_string.split('@')[1][7:]
+                sha256 = remove_sha_prefix(image_string.split('@')[1])
             else:
                 self.logger.error('No image SHA for %s. Skipping', image_string)
                 continue
@@ -433,13 +417,15 @@ class Service(object):
             except ConnectionError:
                 continue
 
-            if self.config.dry_run:
-                # Ugly hack for repo digest
-                if sha256 != latest_image.id:
-                    self.logger.info('dry run : %s would be updated', service.name)
-                continue
+            latest_image_sha256 = get_digest(latest_image)
+            self.logger.debug('Latest sha256 for %s is %s', tag, latest_image_sha256)
 
-            if sha256 != latest_image.id:
+            if sha256 != latest_image_sha256:
+                if self.config.dry_run:
+                    # Ugly hack for repo digest
+                    self.logger.info('dry run : %s would be updated', service.name)
+                    continue
+
                 updated_service_tuples.append(
                     (service, sha256[-10:], latest_image)
                 )
@@ -452,17 +438,13 @@ class Service(object):
                                                    socket=self.socket, kind='update', mode='service')
 
                 self.logger.info('%s will be updated', service.name)
-                service.update(image=tag)
-
-                updated_count += 1
-
-                self.logger.debug("Incrementing total service updated count")
+                service.update(image=f"{tag}@sha256:{latest_image_sha256}")
 
                 self.data_manager.total_updated[self.socket] += 1
                 self.data_manager.add(label=service.name, socket=self.socket)
                 self.data_manager.add(label='all', socket=self.socket)
 
-        if updated_count > 0:
+        if updated_service_tuples:
             self.notification_manager.send(
                 container_tuples=updated_service_tuples,
                 socket=self.socket,
