@@ -102,6 +102,8 @@ class BaseImageObject(object):
 
 
 class Container(BaseImageObject):
+    mode = 'container'
+
     def __init__(self, docker_client):
         super().__init__(docker_client)
         self.monitored = self.monitor_filter()
@@ -226,6 +228,12 @@ class Container(BaseImageObject):
         return monitored_containers
 
     # Socket Functions
+    def self_check(self):
+        self.monitored = self.monitor_filter()
+        me_list = [c for c in self.monitored if 'ouroboros' in c['Names'][0].strip('/')]
+        if len(me_list) > 1:
+            self.update_self(count=2, me_list=me_list)
+
     def socket_check(self):
         depends_on_names = []
         hard_depends_on_names = []
@@ -235,10 +243,6 @@ class Container(BaseImageObject):
         if not self.monitored:
             self.logger.info('No containers are running or monitored on %s', self.socket)
             return
-
-        me_list = [c for c in self.client.api.containers() if 'ouroboros' in c['Names'][0].strip('/')]
-        if len(me_list) > 1:
-            self.update_self(count=2, me_list=me_list)
 
         for container in self.monitored:
             current_image = container.image
@@ -362,8 +366,8 @@ class Container(BaseImageObject):
                 me_created = self.client.api.create_container(**new_config)
                 new_me = self.client.containers.get(me_created.get("Id"))
                 new_me.start()
-                self.logger.debug('If you strike me down, I shall become \
-                                   more powerful than you could possibly imagine.')
+                self.logger.debug('If you strike me down, I shall become '
+                                  'more powerful than you could possibly imagine.')
                 self.logger.debug('https://bit.ly/2VVY7GH')
                 sleep(30)
             except APIError as e:
@@ -372,6 +376,8 @@ class Container(BaseImageObject):
 
 
 class Service(BaseImageObject):
+    mode = 'service'
+
     def __init__(self, docker_client):
         super().__init__(docker_client)
         self.monitored = self.monitor_filter()
