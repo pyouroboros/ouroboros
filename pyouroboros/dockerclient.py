@@ -70,16 +70,16 @@ class BaseImageObject(object):
         """Docker pull image tag"""
         self.logger.debug('Checking tag: %s', tag)
         try:
-            if self.config.auth_json:
-                self.client.login(self.config.auth_json.get(
-                    "username"), self.config.auth_json.get("password"))
-
             if self.config.dry_run:
                 # The authentication doesn't work with this call
                 # See bugs https://github.com/docker/docker-py/issues/2225
                 return self.client.images.get_registry_data(tag)
             else:
-                return self.client.images.pull(tag)
+                if self.config.auth_json:
+                    return_image = self.client.images.pull(tag, auth_config=self.config.auth_json)
+                else:
+                    return_image = self.client.images.pull(tag)
+                return return_image
         except APIError as e:
             if '<html>' in str(e):
                 self.logger.debug("Docker api issue. Ignoring")
@@ -102,6 +102,8 @@ class BaseImageObject(object):
 
 
 class Container(BaseImageObject):
+    mode = 'container'
+
     def __init__(self, docker_client):
         super().__init__(docker_client)
         self.monitored = self.monitor_filter()
@@ -226,6 +228,12 @@ class Container(BaseImageObject):
         return monitored_containers
 
     # Socket Functions
+    def self_check(self):
+        self.monitored = self.monitor_filter()
+        me_list = [container for container in self.monitored if 'ouroboros' in container.name]
+        if len(me_list) > 1:
+            self.update_self(count=2, me_list=me_list)
+
     def socket_check(self):
         depends_on_names = []
         hard_depends_on_names = []
@@ -235,10 +243,6 @@ class Container(BaseImageObject):
         if not self.monitored:
             self.logger.info('No containers are running or monitored on %s', self.socket)
             return
-
-        me_list = [c for c in self.client.api.containers() if 'ouroboros' in c['Names'][0].strip('/')]
-        if len(me_list) > 1:
-            self.update_self(count=2, me_list=me_list)
 
         for container in self.monitored:
             current_image = container.image
@@ -362,8 +366,8 @@ class Container(BaseImageObject):
                 me_created = self.client.api.create_container(**new_config)
                 new_me = self.client.containers.get(me_created.get("Id"))
                 new_me.start()
-                self.logger.debug('If you strike me down, I shall become \
-                                   more powerful than you could possibly imagine.')
+                self.logger.debug('If you strike me down, I shall become '
+                                  'more powerful than you could possibly imagine.')
                 self.logger.debug('https://bit.ly/2VVY7GH')
                 sleep(30)
             except APIError as e:
@@ -372,6 +376,8 @@ class Container(BaseImageObject):
 
 
 class Service(BaseImageObject):
+    mode = 'service'
+
     def __init__(self, docker_client):
         super().__init__(docker_client)
         self.monitored = self.monitor_filter()

@@ -155,21 +155,24 @@ def main():
                 mode = Service(docker)
             else:
                 mode = Container(docker)
-            if config.cron:
-                scheduler.add_job(
-                    mode.update,
-                    name=f'Cron container update for {socket}',
-                    trigger='cron',
-                    minute=config.cron[0],
-                    hour=config.cron[1],
-                    day=config.cron[2],
-                    month=config.cron[3],
-                    day_of_week=config.cron[4],
-                    misfire_grace_time=15
-                )
+
+            if config.run_once:
+                scheduler.add_job(mode.update, name=f'Run Once container update for {socket}')
             else:
-                if config.run_once:
-                    scheduler.add_job(mode.update, name=f'Run Once container update for {socket}')
+                if mode.mode == 'container':
+                    scheduler.add_job(mode.self_check, name=f'Self Check for {socket}')
+                if config.cron:
+                    scheduler.add_job(
+                        mode.update,
+                        name=f'Cron container update for {socket}',
+                        trigger='cron',
+                        minute=config.cron[0],
+                        hour=config.cron[1],
+                        day=config.cron[2],
+                        month=config.cron[3],
+                        day_of_week=config.cron[4],
+                        misfire_grace_time=15
+                    )
                 else:
                     scheduler.add_job(
                         mode.update,
