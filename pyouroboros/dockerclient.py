@@ -230,7 +230,7 @@ class Container(BaseImageObject):
     # Socket Functions
     def self_check(self):
         self.monitored = self.monitor_filter()
-        me_list = [c for c in self.monitored if 'ouroboros' in c['Names'][0].strip('/')]
+        me_list = [container for container in self.monitored if 'ouroboros' in container.name]
         if len(me_list) > 1:
             self.update_self(count=2, me_list=me_list)
 
