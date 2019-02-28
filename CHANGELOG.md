@@ -1,5 +1,23 @@
 # Change Log
 
+## [1.3.1](https://github.com/pyouroboros/ouroboros/tree/1.3.1) (2019-02-27)
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.3.0...1.3.1)
+
+**Fixed bugs:**
+
+- Since 1.3.0, docker login fails [\#243](https://github.com/pyouroboros/ouroboros/issues/243)
+
+**Closed issues:**
+
+- Issue when updating containers that use "--net=container" [\#245](https://github.com/pyouroboros/ouroboros/issues/245)
+
+**Other Pull Requests**
+
+- v1.3.1 Merge [\#249](https://github.com/pyouroboros/ouroboros/pull/249) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.3.1 to develop [\#248](https://github.com/pyouroboros/ouroboros/pull/248) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- fix name subscript for \#243 [\#247](https://github.com/pyouroboros/ouroboros/pull/247) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- fixes \#230 and \#243 [\#242](https://github.com/pyouroboros/ouroboros/pull/242) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
 ## [1.3.0](https://github.com/pyouroboros/ouroboros/tree/1.3.0) (2019-02-25)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.2.1...1.3.0)
 
@@ -10,7 +28,6 @@
 
 **Fixed bugs:**
 
-- Catch Failed self-updates [\#230](https://github.com/pyouroboros/ouroboros/issues/230)
 - Cron scheduled missed following successful runs [\#229](https://github.com/pyouroboros/ouroboros/issues/229)
 - Catch attribute.id error [\#226](https://github.com/pyouroboros/ouroboros/issues/226)
 - AttachStdout and AttachStderr are not carried over properly [\#221](https://github.com/pyouroboros/ouroboros/issues/221)
@@ -417,10 +434,6 @@
 - single client [\#9](https://github.com/pyouroboros/ouroboros/pull/9) ([circa10a](https://github.com/circa10a))
 - the less code the better [\#8](https://github.com/pyouroboros/ouroboros/pull/8) ([circa10a](https://github.com/circa10a))
 - Initial stuff [\#6](https://github.com/pyouroboros/ouroboros/pull/6) ([circa10a](https://github.com/circa10a))
-
-**Closed issues:**
-
-- Create good docs [\#7](https://github.com/pyouroboros/ouroboros/issues/7) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)]
 
 **Other Pull Requests**
 
