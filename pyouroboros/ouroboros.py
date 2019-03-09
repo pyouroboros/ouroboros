@@ -132,7 +132,8 @@ def main():
                             action='store_true', help='Verify SSL certificate when connecting to influxdb')
 
     docker_group.add_argument('--skip-startup-notifications', default=Config.skip_startup_notifications,
-                              dest='SKIP_STARTUP_NOTIFICATIONS', action='store_true', help='Do not send ouroboros notifications when starting')
+                              dest='SKIP_STARTUP_NOTIFICATIONS', action='store_true',
+                              help='Do not send ouroboros notifications when starting')
 
     args = parser.parse_args()
 
