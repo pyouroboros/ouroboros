@@ -131,10 +131,6 @@ def main():
     data_group.add_argument('-V', '--influx-verify-ssl', default=Config.influx_verify_ssl, dest='INFLUX_VERIFY_SSL',
                             action='store_true', help='Verify SSL certificate when connecting to influxdb')
 
-    docker_group.add_argument('--skip-startup-notifications', default=Config.skip_startup_notifications,
-                              dest='SKIP_STARTUP_NOTIFICATIONS', action='store_true',
-                              help='Do not send ouroboros notifications when starting')
-
     args = parser.parse_args()
 
     if environ.get('LOG_LEVEL'):
@@ -198,8 +194,7 @@ def main():
         now = datetime.now(timezone.utc).astimezone()
         next_run = (now + timedelta(0, config.interval)).strftime("%Y-%m-%d %H:%M:%S")
 
-    if not config.skip_startup_notifications:
-        notification_manager.send(kind='startup', next_run=next_run)
+    notification_manager.send(kind='startup', next_run=next_run)
 
     while scheduler.get_jobs():
         sleep(1)
