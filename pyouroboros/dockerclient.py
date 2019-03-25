@@ -229,10 +229,10 @@ class Container(BaseImageObject):
 
     # Socket Functions
     def self_check(self):
-        self.monitored = self.monitor_filter()
-        me_list = [container for container in self.monitored if 'ouroboros' in container.name]
-        if len(me_list) > 1:
-            self.update_self(count=2, me_list=me_list)
+        if self.config.self_update:
+            me_list = [container for container in self.client.containers.list() if 'ouroboros' in container.name]
+            if len(me_list) > 1:
+                self.update_self(count=2, me_list=me_list)
 
     def socket_check(self):
         depends_on_names = []
