@@ -149,10 +149,15 @@ class Container(BaseImageObject):
             new_network_config = {
                 'container': new_container,
                 'aliases': network_config['Aliases'],
-                'links': network_config['Links'],
-                'ipv4_address': network_config['IPAddress'],
-                'ipv6_address': network_config['GlobalIPv6Address']
+                'links': network_config['Links']
             }
+            if network_config['IPAMConfig']:
+                new_network_config.update(
+                    {
+                        'ipv4_address': network_config['IPAddress'],
+                        'ipv6_address': network_config['GlobalIPv6Address']
+                    }
+                )
             try:
                 network.connect(**new_network_config)
             except APIError as e:
