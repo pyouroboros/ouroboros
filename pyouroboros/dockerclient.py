@@ -149,10 +149,15 @@ class Container(BaseImageObject):
             new_network_config = {
                 'container': new_container,
                 'aliases': network_config['Aliases'],
-                'links': network_config['Links'],
-                'ipv4_address': network_config['IPAddress'],
-                'ipv6_address': network_config['GlobalIPv6Address']
+                'links': network_config['Links']
             }
+            if network_config['IPAMConfig']:
+                new_network_config.update(
+                    {
+                        'ipv4_address': network_config['IPAddress'],
+                        'ipv6_address': network_config['GlobalIPv6Address']
+                    }
+                )
             try:
                 network.connect(**new_network_config)
             except APIError as e:
@@ -229,10 +234,10 @@ class Container(BaseImageObject):
 
     # Socket Functions
     def self_check(self):
-        self.monitored = self.monitor_filter()
-        me_list = [container for container in self.monitored if 'ouroboros' in container.name]
-        if len(me_list) > 1:
-            self.update_self(count=2, me_list=me_list)
+        if self.config.self_update:
+            me_list = [container for container in self.client.containers.list() if 'ouroboros' in container.name]
+            if len(me_list) > 1:
+                self.update_self(count=2, me_list=me_list)
 
     def socket_check(self):
         depends_on_names = []
@@ -347,7 +352,7 @@ class Container(BaseImageObject):
     def update_self(self, count=None, old_container=None, me_list=None, new_image=None):
         if count == 2:
             self.logger.debug('God im messy... cleaning myself up.')
-            old_me_id = me_list[0]['Id'] if me_list[0]['Created'] < me_list[1]['Created'] else me_list[1]['Id']
+            old_me_id = me_list[0].id if me_list[0].attrs['Created'] < me_list[1].attrs['Created'] else me_list[1].id
             old_me = self.client.containers.get(old_me_id)
             old_me_image_id = old_me.image.id
 
