@@ -389,7 +389,8 @@ class Service(BaseImageObject):
 
     def monitor_filter(self):
         """Return filtered service objects list"""
-        services = self.client.services.list(filters={'label': 'com.ouroboros.enable'})
+        filter = {'label': 'com.ouroboros.enable'} if self.config.label_enable else None
+        services = self.client.services.list(filters=filter)
 
         monitored_services = []
 
