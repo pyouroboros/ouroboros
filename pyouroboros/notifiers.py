@@ -38,7 +38,7 @@ class NotificationManager(object):
             title = f'Ouroboros has started'
             body_fields = [
                 f'Host: {self.config.hostname}',
-                f'Containers Monitored: {self.data_manager.monitored_containers[socket]}',
+                f'Containers Monitored: {self.data_manager.monitored_containers}',
                 f'Time: {now.strftime("%Y-%m-%d %H:%M:%S")}',
                 f'Next Run: {next_run}']
         else:
