@@ -10,7 +10,7 @@
 
 Automatically update your running Docker containers to the latest available image.
 
-A python-based successor to [watchtower](https://github.com/v2tec/watchtower)
+The de-facto standard for docker update automation
 
 ## Overview
 

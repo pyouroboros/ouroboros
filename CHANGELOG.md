@@ -22,7 +22,8 @@
 
 **Other Pull Requests**
 
-- v1.4.0 Merge [\#298](https://github.com/pyouroboros/ouroboros/pull/298) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.4.0 Merge [\#299](https://github.com/pyouroboros/ouroboros/pull/299) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Remove Watchtower Reference [\#299](https://github.com/pyouroboros/ouroboros/pull/299) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - v1.4.0 to develop [\#297](https://github.com/pyouroboros/ouroboros/pull/297) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - Patches [\#295](https://github.com/pyouroboros/ouroboros/pull/295) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - Fix healthcheck attr [\#294](https://github.com/pyouroboros/ouroboros/pull/294) ([circa10a](https://github.com/circa10a))
