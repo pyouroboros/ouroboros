@@ -1,15 +1,44 @@
 # Change Log
 
-## [1.3.1](https://github.com/pyouroboros/ouroboros/tree/1.3.1) (2019-02-27)
+## [1.4.0](https://github.com/pyouroboros/ouroboros/tree/1.4.0) (2019-04-24)
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.3.1...1.4.0)
+
+**Implemented enhancements:**
+
+- Make startup notification optional [\#253](https://github.com/pyouroboros/ouroboros/issues/253)
+
+**Fixed bugs:**
+
+- Missing MANIFEST.in file causes pypi install to fail [\#284](https://github.com/pyouroboros/ouroboros/issues/284)
+- Healthcheck section not re-applied after container update [\#275](https://github.com/pyouroboros/ouroboros/issues/275)
+- docker-compose local and remote tls logger location [\#273](https://github.com/pyouroboros/ouroboros/issues/273)
+- Self update errors. Not deleting old self [\#262](https://github.com/pyouroboros/ouroboros/issues/262)
+- ouroboros sets fixed IP addresses [\#254](https://github.com/pyouroboros/ouroboros/issues/254)
+
+**Closed issues:**
+
+- Update apprise to v0.7.4 [\#266](https://github.com/pyouroboros/ouroboros/issues/266) [[cleanup](https://github.com/pyouroboros/ouroboros/labels/cleanup)]
+- Docker TLS verify: Does it  support server and client-side auth, or only server-side auth? [\#256](https://github.com/pyouroboros/ouroboros/issues/256) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)]
+
+**Other Pull Requests**
+
+- v1.4.0 Merge [\#299](https://github.com/pyouroboros/ouroboros/pull/299) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Remove Watchtower Reference [\#299](https://github.com/pyouroboros/ouroboros/pull/299) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.4.0 to develop [\#297](https://github.com/pyouroboros/ouroboros/pull/297) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Patches [\#295](https://github.com/pyouroboros/ouroboros/pull/295) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Fix healthcheck attr [\#294](https://github.com/pyouroboros/ouroboros/pull/294) ([circa10a](https://github.com/circa10a))
+- Patch/catch up [\#271](https://github.com/pyouroboros/ouroboros/pull/271) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Arg skip startup notifications [\#261](https://github.com/pyouroboros/ouroboros/pull/261) ([circa10a](https://github.com/circa10a))
+- Revert "add option to skip startup notifications" [\#260](https://github.com/pyouroboros/ouroboros/pull/260) ([circa10a](https://github.com/circa10a))
+- add option to skip startup notifications [\#259](https://github.com/pyouroboros/ouroboros/pull/259) ([circa10a](https://github.com/circa10a))
+
+## [1.3.1](https://github.com/pyouroboros/ouroboros/tree/1.3.1) (2019-02-28)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.3.0...1.3.1)
 
 **Fixed bugs:**
 
 - Since 1.3.0, docker login fails [\#243](https://github.com/pyouroboros/ouroboros/issues/243)
-
-**Closed issues:**
-
-- Issue when updating containers that use "--net=container" [\#245](https://github.com/pyouroboros/ouroboros/issues/245)
+- Catch Failed self-updates [\#230](https://github.com/pyouroboros/ouroboros/issues/230)
 
 **Other Pull Requests**
 
@@ -434,6 +463,10 @@
 - single client [\#9](https://github.com/pyouroboros/ouroboros/pull/9) ([circa10a](https://github.com/circa10a))
 - the less code the better [\#8](https://github.com/pyouroboros/ouroboros/pull/8) ([circa10a](https://github.com/circa10a))
 - Initial stuff [\#6](https://github.com/pyouroboros/ouroboros/pull/6) ([circa10a](https://github.com/circa10a))
+
+**Closed issues:**
+
+- Create good docs [\#7](https://github.com/pyouroboros/ouroboros/issues/7) [[documentation](https://github.com/pyouroboros/ouroboros/labels/documentation)]
 
 **Other Pull Requests**
 
