@@ -41,7 +41,10 @@ class NotificationManager(object):
                 f'Time: {now.strftime("%Y-%m-%d %H:%M:%S")}',
                 f'Next Run: {next_run}']
         else:
-            title = 'Ouroboros has updated containers!'
+            if len(container_tuples) == 1:
+                title = f'{container_tuples[0][0].name} updated on {self.config.hostname}'
+            else:
+                title = f'{len(container_tuples)} containers updated on {self.config.hostname}'
             body_fields = [
                 f"Host/Socket: {self.config.hostname} / {socket.split('//')[1]}",
                 f"Containers Monitored: {self.data_manager.monitored_containers[socket]}",
