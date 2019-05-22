@@ -442,18 +442,14 @@ class Service(BaseImageObject):
                 )
 
                 if 'ouroboros' in service.name and self.config.self_update:
-                    self.data_manager.total_updated[self.socket] += 1
                     self.data_manager.add(label=service.name, socket=self.socket)
-                    self.data_manager.add(label='all', socket=self.socket)
                     self.notification_manager.send(container_tuples=updated_service_tuples,
                                                    socket=self.socket, kind='update', mode='service')
 
                 self.logger.info('%s will be updated', service.name)
                 service.update(image=f"{tag}@sha256:{latest_image_sha256}")
 
-                self.data_manager.total_updated[self.socket] += 1
                 self.data_manager.add(label=service.name, socket=self.socket)
-                self.data_manager.add(label='all', socket=self.socket)
 
         if updated_service_tuples:
             self.notification_manager.send(

@@ -18,14 +18,15 @@ class DataManager(object):
         self.influx = InfluxClient(self, config) if self.config.data_export == "influxdb" else None
 
     def add(self, label, socket):
+        self.total_updated[socket] += 1
+
         if self.config.data_export == "prometheus" and self.enabled:
             self.prometheus.update(label, socket)
 
         elif self.config.data_export == "influxdb" and self.enabled:
-            if label == "all":
-                self.logger.debug("Total containers updated %s", self.total_updated[socket])
-
-            self.influx.write_points(label, socket)
+            self.influx.update(label, socket)
+        
+        self.logger.debug("Total containers updated %s", self.total_updated[socket])
 
     def set(self, socket):
         if self.config.data_export == "prometheus" and self.enabled:
@@ -40,35 +41,28 @@ class PrometheusExporter(object):
             self.config.prometheus_port,
             addr=self.config.prometheus_addr
         )
-        self.updated_containers_counter = prometheus_client.Counter(
-            'containers_updated',
-            'Count of containers updated',
+        self.updated_containers = prometheus_client.Counter(
+            'ouroboros_containers_updated',
+            'Number of containers updated',
             ['socket', 'container']
         )
-        self.monitored_containers_gauge = prometheus_client.Gauge(
-            'containers_being_monitored',
-            'Gauge of containers being monitored',
-            ['socket']
-        )
-        self.updated_all_containers_gauge = prometheus_client.Gauge(
-            'all_containers_updated',
-            'Count of total updated',
+        self.monitored_containers = prometheus_client.Gauge(
+            'ouroboros_containers_monitored',
+            'Number of monitored containers',
             ['socket']
         )
         self.logger = getLogger()
 
     def set_monitored(self, socket):
         """Set number of containers being monitoring with a gauge"""
-        self.monitored_containers_gauge.labels(socket=socket).set(self.data_manager.monitored_containers[socket])
+        self.monitored_containers.labels(socket=socket).set(self.data_manager.monitored_containers[socket])
         self.logger.debug("Prometheus Exporter monitored containers gauge set to %s",
                           self.data_manager.monitored_containers[socket])
 
     def update(self, label, socket):
         """Set container update count based on label"""
-        if label == "all":
-            self.updated_all_containers_gauge.labels(socket=socket).set(self.data_manager.total_updated[socket])
-        else:
-            self.updated_containers_counter.labels(socket=socket, container=label).inc()
+        self.updated_containers.labels(socket=socket, container=label).inc()
+        self.updated_containers.labels(socket=socket).inc()
 
         self.logger.debug("Prometheus Exporter container update counter incremented for %s", label)
 
@@ -98,6 +92,10 @@ class InfluxClient(object):
             self.logger.debug("Influxdb database existence failed for %s. Disabling exports.",
                               self.config.influx_database)
             self.data_manager.enabled = False
+
+    def update(self, label, socket):
+        self.write_points(label, socket)
+        self.write_points("all", socket)
 
     def write_points(self, label, socket):
         clean_socket = socket.split("//")[1]
