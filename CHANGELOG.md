@@ -7,6 +7,11 @@
 
 - Slack won't work [\#313](https://github.com/pyouroboros/ouroboros/issues/313)
 
+**Other Pull Requests**
+
+- v1.4.1 Merge [\#315](https://github.com/pyouroboros/ouroboros/pull/315) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.4.1 to develop [\#314](https://github.com/pyouroboros/ouroboros/pull/314) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
 ## [v1.4.0](https://github.com/pyouroboros/ouroboros/tree/v1.4.0) (2019-04-25)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.3.1...v1.4.0)
 
