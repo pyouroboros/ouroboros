@@ -1,4 +1,4 @@
-<img width="800" src="https://bin.cajun.pro/images/ouroboros/ouroboros_logo_primary_long_cropped.jpg">
+<img width="800" src="https://raw.githubusercontent.com/pyouroboros/ouroboros/master/assets/ouroboros_logo_primary_long_cropped.jpg" alt="Ouroboros Logo">
 
 [![Discord](https://img.shields.io/discord/532695326117593112.svg?colorB=7289DA&label=Discord&logo=Discord&logoColor=7289DA&style=flat-square)](https://discord.gg/qHNByUW)
 [![BuyUsCoffee](https://img.shields.io/badge/BuyMeACoffee-Donate-ff813f.svg?logo=CoffeeScript&style=flat-square)](https://buymeacoff.ee/ouroboros)  
