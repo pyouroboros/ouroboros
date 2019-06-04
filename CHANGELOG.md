@@ -1,7 +1,19 @@
 # Change Log
 
-## [1.4.0](https://github.com/pyouroboros/ouroboros/tree/1.4.0) (2019-04-24)
-[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.3.1...1.4.0)
+## [1.4.1](https://github.com/pyouroboros/ouroboros/tree/1.4.1) (2019-06-03)
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/v1.4.0...1.4.1)
+
+**Closed issues:**
+
+- Slack won't work [\#313](https://github.com/pyouroboros/ouroboros/issues/313)
+
+**Other Pull Requests**
+
+- v1.4.1 Merge [\#315](https://github.com/pyouroboros/ouroboros/pull/315) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.4.1 to develop [\#314](https://github.com/pyouroboros/ouroboros/pull/314) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+
+## [v1.4.0](https://github.com/pyouroboros/ouroboros/tree/v1.4.0) (2019-04-25)
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.3.1...v1.4.0)
 
 **Implemented enhancements:**
 
@@ -23,8 +35,9 @@
 **Other Pull Requests**
 
 - v1.4.0 Merge [\#299](https://github.com/pyouroboros/ouroboros/pull/299) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
-- Remove Watchtower Reference [\#299](https://github.com/pyouroboros/ouroboros/pull/299) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Remove Watchtower Reference [\#298](https://github.com/pyouroboros/ouroboros/pull/298) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - v1.4.0 to develop [\#297](https://github.com/pyouroboros/ouroboros/pull/297) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- fixes \#284 [\#296](https://github.com/pyouroboros/ouroboros/pull/296) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - Patches [\#295](https://github.com/pyouroboros/ouroboros/pull/295) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
 - Fix healthcheck attr [\#294](https://github.com/pyouroboros/ouroboros/pull/294) ([circa10a](https://github.com/circa10a))
 - Patch/catch up [\#271](https://github.com/pyouroboros/ouroboros/pull/271) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
