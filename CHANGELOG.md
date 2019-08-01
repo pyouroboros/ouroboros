@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.4.2](https://github.com/pyouroboros/ouroboros/tree/1.4.2) (2019-07-31)
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/v1.4.1...1.4.2)
+
+**Closed issues:**
+
+- Join Notifications truncated and icon returning 404 [\#325](https://github.com/pyouroboros/ouroboros/issues/325)
+
 ## [1.4.1](https://github.com/pyouroboros/ouroboros/tree/1.4.1) (2019-06-03)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/v1.4.0...1.4.1)
 
