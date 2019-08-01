@@ -14,7 +14,7 @@ class NotificationManager(object):
 
     def build_apprise(self):
         asset = apprise.AppriseAsset(
-            image_url_mask='https://bin.cajun.pro/images/ouroboros/notifications/ouroboros-logo-{XY}{EXTENSION}',
+            image_url_mask='https://i.imgur.com/L40ksWY.png',
             default_extension='.png'
         )
         asset.app_id = "Ouroboros"
