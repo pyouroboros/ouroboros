@@ -60,4 +60,4 @@ class NotificationManager(object):
         body = '\r\n'.join(body_fields)
 
         if self.apprise.servers:
-            self.apprise.notify(title=title, body=body, body_format=apprise.common.NotifyFormat.TEXT)
+            self.apprise.notify(title=title, body=body, body_format=apprise.NotifyFormat.TEXT)
