@@ -1,18 +1,28 @@
 # Change Log
 
-## [1.4.2](https://github.com/pyouroboros/ouroboros/tree/1.4.2) (2019-07-31)
-[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/v1.4.1...1.4.2)
+## [1.4.3](https://github.com/pyouroboros/ouroboros/tree/1.4.3) (2019-12-11)
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.4.3...1.4.2)
 
-**Closed issues:**
+**Fixed bugs:**
 
 - Join Notifications truncated and icon returning 404 [\#325](https://github.com/pyouroboros/ouroboros/issues/325)
 
-## [1.4.1](https://github.com/pyouroboros/ouroboros/tree/1.4.1) (2019-06-03)
+**Other Pull Requests**
+
+- v1.4.3 Merge [\#354](https://github.com/pyouroboros/ouroboros/pull/354) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- v1.4.3 to develop [\#353](https://github.com/pyouroboros/ouroboros/pull/353) ([DirtyCajunRice](https://github.com/DirtyCajunRice))
+- Update requirements.txt [\#349](https://github.com/pyouroboros/ouroboros/pull/349) ([nemchik](https://github.com/nemchik))
+
+## [1.4.2](https://github.com/pyouroboros/ouroboros/tree/1.4.2) (2019-08-01)
+[Full Changelog](https://github.com/pyouroboros/ouroboros/compare/1.4.1...1.4.2)
+
+**Other Pull Requests**
+
+- 1.4.2 Merge [\#327](https://github.com/pyouroboros/ouroboros/pull/327) ([circa10a](https://github.com/circa10a))
+- 1.4.2 to develop [\#326](https://github.com/pyouroboros/ouroboros/pull/326) ([circa10a](https://github.com/circa10a))
+
+## [1.4.1](https://github.com/pyouroboros/ouroboros/tree/1.4.1) (2019-06-04)
 [Full Changelog](https://github.com/pyouroboros/ouroboros/compare/v1.4.0...1.4.1)
-
-**Closed issues:**
-
-- Slack won't work [\#313](https://github.com/pyouroboros/ouroboros/issues/313)
 
 **Other Pull Requests**
 
