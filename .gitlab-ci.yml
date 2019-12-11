@@ -24,7 +24,7 @@ stages:
     - mkdir $HOME/.docker
     - echo '{"experimental":"enabled"}' > $HOME/.docker/config.json
     - if [[ $CI_COMMIT_REF_NAME == "master" ]]; then
-          export TAG=$(grep -i version varken/__init__.py | cut -d \  -f3 | tr -d \");
+          export TAG=$(grep -i version pyouroboros/__init__.py | cut -d \  -f3 | tr -d \");
       else
           export TAG="develop";
       fi
@@ -129,6 +129,7 @@ github:
     - git push --tags
 
 pypi:
+  <<: *common_release
   image: python:3.7.3-alpine
   stage: release
   cache:
