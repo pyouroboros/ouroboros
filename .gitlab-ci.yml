@@ -129,6 +129,7 @@ github:
     - git push --tags
 
 pypi:
+  <<: *common_release
   image: python:3.7.3-alpine
   stage: release
   cache:
