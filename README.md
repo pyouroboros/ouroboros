@@ -2,7 +2,7 @@
 
 [![Discord](https://img.shields.io/discord/532695326117593112.svg?colorB=7289DA&label=Discord&logo=Discord&logoColor=7289DA&style=flat-square)](https://discord.gg/qHNByUW)
 [![BuyUsCoffee](https://img.shields.io/badge/BuyMeACoffee-Donate-ff813f.svg?logo=CoffeeScript&style=flat-square)](https://buymeacoff.ee/ouroboros)  
-[![Build Status](https://jenkins.cajun.pro/buildStatus/icon?job=Ouroboros/master)](https://jenkins.cajun.pro/job/Ouroboros/job/master/)
+[![pipeline status](https://gitlab.com/pyouroboros/ouroboros/badges/master/pipeline.svg)](https://gitlab.com/pyouroboros/ouroboros/commits/master)
 [![Release](https://img.shields.io/github/release/pyouroboros/ouroboros.svg?style=flat-square)](https://hub.docker.com/r/pyouroboros/ouroboros/)
 [![Python Version](https://img.shields.io/pypi/pyversions/ouroboros-cli.svg?style=flat-square)](https://pypi.org/project/ouroboros-cli/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/pyouroboros/ouroboros.svg?style=flat-square)](https://hub.docker.com/r/pyouroboros/ouroboros/)
