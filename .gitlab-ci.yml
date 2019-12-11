@@ -1,0 +1,148 @@
+stages:
+  - test
+  - build and push
+  - manifests
+  - release
+
+.common_build: &common_build
+  image: docker:stable
+  stage: build and push
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+  services:
+    - docker:dind
+  except:
+    - tags
+  only:
+    changes:
+      - "Dockerfile*"
+      - ouroboros
+      - pyouroboros/*
+      - .gitlab-ci.yml
+  before_script:
+    - mkdir $HOME/.docker
+    - echo '{"experimental":"enabled"}' > $HOME/.docker/config.json
+    - if [[ $CI_COMMIT_REF_NAME == "master" ]]; then
+          export TAG=$(grep -i version varken/__init__.py | cut -d \  -f3 | tr -d \");
+      else
+          export TAG="develop";
+      fi
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+    - export CI_PROJECT_PATH=$(echo $CI_PROJECT_PATH | tr "[:upper:]" "[:lower:]")
+
+.common_release: &common_release
+  <<: *common_build
+  tags:
+    - docker
+    - shared
+  only:
+    refs:
+      - master
+
+flake8:
+  image: python:3.7.3-alpine
+  stage: test
+  cache:
+    key: "ouroboros-cache"
+    paths:
+      - .cache/pip
+      - venv/
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  tags:
+    - shared
+  before_script:
+    - python -m venv venv
+    - source venv/bin/activate
+    - pip install -U flake8
+  script:
+    - flake8 --max-line-length 120 ouroboros *.py pyouroboros/*.py
+
+amd64:
+  <<: *common_build
+  tags:
+    - docker
+    - shared
+  script:
+    - docker build --pull
+                   --cache-from "$CI_PROJECT_PATH":"$TAG-amd64"
+                   -t "$CI_PROJECT_PATH":"$TAG-amd64" .
+    - docker push "$CI_PROJECT_PATH":"$TAG-amd64"
+
+armv6:
+  <<: *common_build
+  tags:
+    - docker
+    - arm
+  script:
+    - docker build --pull
+                   --cache-from "$CI_PROJECT_PATH":"$TAG-arm"
+                   -t "$CI_PROJECT_PATH":"$TAG-arm"
+                   -f Dockerfile.arm .
+    - docker push "$CI_PROJECT_PATH":"$TAG-arm"
+
+arm64v8:
+  <<: *common_build
+  tags:
+    - docker
+    - arm64
+  script:
+    - docker build --pull
+                   --cache-from "$CI_PROJECT_PATH":"$TAG-arm64"
+                   -t "$CI_PROJECT_PATH":"$TAG-arm64"
+                   -f Dockerfile.arm64 .
+    - docker push "$CI_PROJECT_PATH":"$TAG-arm64"
+
+versioned:
+  <<: *common_build
+  stage: manifests
+  tags:
+    - docker
+    - shared
+  script:
+    - docker manifest create "$CI_PROJECT_PATH":"$TAG"
+      "$CI_PROJECT_PATH":"$TAG-amd64"
+      "$CI_PROJECT_PATH":"$TAG-arm64"
+      "$CI_PROJECT_PATH":"$TAG-arm"
+    - docker manifest push -p "$CI_PROJECT_PATH":"$TAG"
+
+latest:
+  <<: *common_release
+  stage: manifests
+  tags:
+    - docker
+  script:
+    - docker manifest create "$CI_PROJECT_PATH":latest
+      "$CI_PROJECT_PATH":"$TAG-amd64"
+      "$CI_PROJECT_PATH":"$TAG-arm64"
+      "$CI_PROJECT_PATH":"$TAG-arm"
+    - docker manifest push -p "$CI_PROJECT_PATH":latest
+
+github:
+  <<: *common_release
+  stage: release
+  script:
+    - apk add git
+    - git remote set-url origin "https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$CI_PROJECT_PATH.git"
+    - git tag $TAG
+    - git push --tags
+
+pypi:
+  image: python:3.7.3-alpine
+  stage: release
+  cache:
+    key: "ouroboros-cache"
+    paths:
+      - .cache/pip
+      - venv/
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  tags:
+    - shared
+  before_script:
+    - python -m venv venv
+    - source venv/bin/activate
+    - pip install -U twine
+  script:
+    - venv/bin/python setup.py sdist && venv/bin/python -m twine upload --skip-existing -u ${PYPI_CREDS_USR} -p ${PYPI_CREDS_PSW} dist/*
