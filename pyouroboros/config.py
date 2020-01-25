@@ -8,7 +8,8 @@ class Config(object):
                'PROMETHEUS_PORT', 'NOTIFIERS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'CRON',
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
                'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY',
-               'DRY_RUN', 'HOSTNAME', 'DOCKER_TLS_VERIFY', 'SWARM', 'SKIP_STARTUP_NOTIFICATIONS']
+               'DRY_RUN', 'HOSTNAME', 'DOCKER_TLS_VERIFY', 'SWARM', 'SKIP_STARTUP_NOTIFICATIONS',
+               'WEBHOOK', 'WEBHOOK_ADDR', 'WEBHOOK_PORT']
 
     hostname = environ.get('HOSTNAME')
     interval = 300
@@ -43,6 +44,10 @@ class Config(object):
     influx_username = 'root'
     influx_password = 'root'
     influx_database = None
+
+    webhook = False
+    webhook_addr = '127.0.0.1'
+    webhook_port = 8080
 
     notifiers = []
     skip_startup_notifications = False

@@ -10,6 +10,7 @@ from pyouroboros.config import Config
 from pyouroboros import VERSION, BRANCH
 from pyouroboros.logger import OuroborosLogger
 from pyouroboros.dataexporters import DataManager
+from pyouroboros.webhook import HookManager
 from pyouroboros.notifiers import NotificationManager
 from pyouroboros.dockerclient import Docker, Container, Service
 
@@ -135,6 +136,17 @@ def main():
                               dest='SKIP_STARTUP_NOTIFICATIONS', action='store_true',
                               help='Do not send ouroboros notifications when starting')
 
+    hook_group = parser.add_argument_group('Webhook', 'Configuration of web hook functionality')
+    hook_group.add_argument('-H', '--webhook', default=Config.webhook, dest='WEBHOOK', action='store_true',
+                            help='Enable the webhook functionality')
+
+    hook_group.add_argument('--webhook-addr', default=Config.webhook_addr, dest='WEBHOOK_ADDR',
+                            help='Bind address to run Webhook on\n'
+                                 'DEFAULT: 127.0.0.1')
+
+    hook_group.add_argument('--webhook-port', type=int, default=Config.webhook_port, dest='WEBHOOK_PORT',
+                            help='Port to run Webhook exporter on\n'
+                                 'DEFAULT: 8080')
     args = parser.parse_args()
 
     if environ.get('LOG_LEVEL'):
@@ -152,6 +164,7 @@ def main():
     scheduler = BackgroundScheduler()
     scheduler.start()
 
+    modes = []
     for socket in config.docker_sockets:
         try:
             docker = Docker(socket, config, data_manager, notification_manager)
@@ -163,6 +176,7 @@ def main():
             if config.run_once:
                 scheduler.add_job(mode.update, name=f'Run Once container update for {socket}')
             else:
+                modes.append(mode)
                 if mode.mode == 'container':
                     scheduler.add_job(mode.self_check, name=f'Self Check for {socket}')
                 if config.cron:
@@ -189,6 +203,8 @@ def main():
                     )
         except ConnectionError:
             ol.logger.error("Could not connect to socket %s. Check your config", socket)
+
+    HookManager(config, modes, scheduler)
 
     if config.run_once:
         next_run = None
