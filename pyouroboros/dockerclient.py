@@ -416,10 +416,12 @@ class Service(BaseImageObject):
 
         for service in self.monitored:
             image_string = service.attrs['Spec']['TaskTemplate']['ContainerSpec']['Image']
+            tag = image_string.split('@')[0]
             if '@' in image_string:
-                tag = image_string.split('@')[0]
                 sha256 = remove_sha_prefix(image_string.split('@')[1])
             else:
+                sha256 = remove_sha_prefix(self.client.images.get(tag).attrs['RepoDigests'][0])
+            if len(sha256) == 0:
                 self.logger.error('No image SHA for %s. Skipping', image_string)
                 continue
 
