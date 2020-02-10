@@ -9,7 +9,8 @@ class Config(object):
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
                'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY',
                'DRY_RUN', 'HOSTNAME', 'DOCKER_TLS_VERIFY', 'SWARM', 'SKIP_STARTUP_NOTIFICATIONS',
-               'WEBHOOK', 'WEBHOOK_ADDR', 'WEBHOOK_PORT']
+               'WEBHOOK', 'WEBHOOK_ADDR', 'WEBHOOK_PORT', 'WEBHOOK_INSECURE',
+               'WEBHOOK_CERT', 'WEBHOOK_KEY', 'WEBHOOK_CACERT', 'WEBHOOK_USERS']
 
     hostname = environ.get('HOSTNAME')
     interval = 300
@@ -47,7 +48,12 @@ class Config(object):
 
     webhook = False
     webhook_addr = '127.0.0.1'
-    webhook_port = 8080
+    webhook_port = 8443
+    webhook_insecure = False
+    webhook_cert = ''
+    webhook_key = ''
+    webhook_cacert = None
+    webhook_users = None
 
     notifiers = []
     skip_startup_notifications = False
@@ -98,7 +104,7 @@ class Config(object):
                         print(e)
                 elif option in ['CLEANUP', 'RUN_ONCE', 'INFLUX_SSL', 'INFLUX_VERIFY_SSL', 'DRY_RUN', 'SWARM',
                                 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY', 'DOCKER_TLS_VERIFY',
-                                'SKIP_STARTUP_NOTIFICATIONS']:
+                                'SKIP_STARTUP_NOTIFICATIONS', 'WEBHOOK_INSECURE']:
                     if env_opt.lower() in ['true', 'yes']:
                         setattr(self, option.lower(), True)
                     elif env_opt.lower() in ['false', 'no']:

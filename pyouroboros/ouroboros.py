@@ -146,7 +146,25 @@ def main():
 
     hook_group.add_argument('--webhook-port', type=int, default=Config.webhook_port, dest='WEBHOOK_PORT',
                             help='Port to run Webhook exporter on\n'
-                                 'DEFAULT: 8080')
+                                 'DEFAULT: 8443')
+
+    hook_group.add_argument('--webhook-insecure', default=Config.webhook_insecure, dest='WEBHOOK_INSECURE', action='store_true',
+                            help='Run webhook without TLS\n'
+                                 'DEFAULT: false')
+
+    hook_group.add_argument('--webhook-cert', default=Config.webhook_cert, dest='WEBHOOK_CERT',
+                            help='Certificate to use for webhook server')
+
+    hook_group.add_argument('--webhook-key', default=Config.webhook_key, dest='WEBHOOK_KEY',
+                            help='Key to use for webhook server')
+
+    hook_group.add_argument('--webhook-cacert', default=Config.webhook_cacert, dest='WEBHOOK_CACERT',
+                            help='CA Certificate for client verification on the webhook server')
+
+    hook_group.add_argument('--webhook-users', nargs='+', default=Config.webhook_users, dest='WEBHOOK_USERS',
+                            help='Authorized Client CNs\n'
+                                 'DEFAULT: ALL')
+
     args = parser.parse_args()
 
     if environ.get('LOG_LEVEL'):
