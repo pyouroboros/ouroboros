@@ -148,7 +148,10 @@ class Config(object):
                               "influxdb data export.")
 
         if self.data_export == 'prometheus' and self.self_update:
-            self.logger.warning("If you bind a port to ouroboros, it will be lost when it updates itself.")
+            self.logger.warning("If you bind a port for prometheus to ouroboros, it will be lost when it updates itself.")
+
+        if self.webhook and self.self_update:
+            self.logger.warning("If you bind a port for the webhook to ouroboros, it will be lost when it updates itself.")
 
         if self.dry_run and not self.run_once:
             self.logger.warning("Dry run is designed to be ran with run once. Setting for you.")
