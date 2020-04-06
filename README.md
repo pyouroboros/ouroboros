@@ -1,3 +1,4 @@
+⚠️⚠️⚠️ ouroboros is no longer in development. It does its job (more or less) and the devs have succumb to real life! Please feel free to fork and maintain as you wish. We appreicate all of the support in the last year :) ⚠️⚠️⚠️
 <img width="800" src="https://raw.githubusercontent.com/pyouroboros/ouroboros/master/assets/ouroboros_logo_primary_long_cropped.jpg" alt="Ouroboros Logo">
 
 [![Discord](https://img.shields.io/discord/532695326117593112.svg?colorB=7289DA&label=Discord&logo=Discord&logoColor=7289DA&style=flat-square)](https://discord.gg/qHNByUW)
