@@ -1,4 +1,4 @@
-FROM arm32v6/python:3.7.2-alpine
+FROM arm32v6/python:3.8.5-alpine
 
 LABEL maintainers="dirtycajunrice,circa10a"
 
