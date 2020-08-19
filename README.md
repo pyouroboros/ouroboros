@@ -1,9 +1,8 @@
-⚠️⚠️⚠️ ouroboros is no longer in development. It does its job (more or less) and the devs have succumb to real life! Please feel free to fork and maintain as you wish. We appreciate all of the support in the last year :) ⚠️⚠️⚠️
+⚠️⚠️⚠️ ouroboros is no longer in development. It does its job (more or less) and the devs have succumb to real life! Please feel free to fork and maintain as you wish. We appreciate all of the support in the last year :). After support from the community, automated version bumps will continue to try to keep ouroboros in check with dependancies. ⚠️⚠️⚠️
 <img width="800" src="https://raw.githubusercontent.com/pyouroboros/ouroboros/master/assets/ouroboros_logo_primary_long_cropped.jpg" alt="Ouroboros Logo">
 
 [![Discord](https://img.shields.io/discord/532695326117593112.svg?colorB=7289DA&label=Discord&logo=Discord&logoColor=7289DA&style=flat-square)](https://discord.gg/qHNByUW)
 [![BuyUsCoffee](https://img.shields.io/badge/BuyMeACoffee-Donate-ff813f.svg?logo=CoffeeScript&style=flat-square)](https://www.buymeacoffee.com/caleblemoine)  
-[![pipeline status](https://gitlab.com/pyouroboros/ouroboros/badges/master/pipeline.svg)](https://gitlab.com/pyouroboros/ouroboros/commits/master)
 [![Release](https://img.shields.io/github/release/pyouroboros/ouroboros.svg?style=flat-square)](https://hub.docker.com/r/pyouroboros/ouroboros/)
 [![Python Version](https://img.shields.io/pypi/pyversions/ouroboros-cli.svg?style=flat-square)](https://pypi.org/project/ouroboros-cli/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/pyouroboros/ouroboros.svg?style=flat-square)](https://hub.docker.com/r/pyouroboros/ouroboros/)
