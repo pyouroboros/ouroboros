@@ -252,14 +252,12 @@ class Container(BaseImageObject):
         for container in self.monitored:
             current_image = container.image
             current_tag = container.attrs['Config']['Image']
-            shared_image = [uct for uct in updateable if uct[1].id == current_image.id]
-            if shared_image:
-                latest_image = shared_image[0][2]
-            else:
-                try:
-                    latest_image = self.pull(current_tag)
-                except ConnectionError:
-                    continue
+
+            try:
+                latest_image = self.pull(current_tag)
+            except ConnectionError:
+                continue
+
             try:
                 if current_image.id != latest_image.id:
                     updateable.append((container, current_image, latest_image))
