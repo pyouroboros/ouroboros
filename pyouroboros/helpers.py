@@ -14,7 +14,7 @@ def set_properties(old, new, self_name=None):
             v for v in old.attrs['Config']['Volumes'].keys()
         ],
         'working_dir': old.attrs['Config']['WorkingDir'],
-        'image': new.tags[0],
+        'image': old.attrs['Config']['Image'],
         'command': old.attrs['Config']['Cmd'],
         'host_config': old.attrs['HostConfig'],
         'labels': old.attrs['Config']['Labels'],
