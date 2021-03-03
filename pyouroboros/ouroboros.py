@@ -1,3 +1,5 @@
+import gettext
+
 from time import sleep
 from os import environ
 
@@ -138,17 +140,25 @@ def main():
                               dest='SKIP_STARTUP_NOTIFICATIONS', action='store_true',
                               help='Do not send ouroboros notifications when starting')
 
+    _ = None
     args = parser.parse_args()
+
+    try:
+        language = gettext.translation('ouroboros', localedir='locales', languages=args.LANGUAGE)
+        language.install()
+        _ = language.gettext
+    except FileNotFoundError:
+        _ = gettext.gettext
 
     if environ.get('LOG_LEVEL'):
         log_level = environ.get('LOG_LEVEL')
     else:
         log_level = args.LOG_LEVEL
     ol = OuroborosLogger(level=log_level)
-    ol.logger.info('Version: %s-%s', VERSION, BRANCH)
+    ol.logger.info(_('Version: %s-%s'), VERSION, BRANCH)
     config = Config(environment_vars=environ, cli_args=args)
     config_dict = {key: value for key, value in vars(config).items() if key.upper() in config.options}
-    ol.logger.debug("Ouroboros configuration: %s", config_dict)
+    ol.logger.debug(_("Ouroboros configuration: %s"), config_dict)
 
     data_manager = DataManager(config)
     notification_manager = NotificationManager(config, data_manager)
@@ -164,14 +174,14 @@ def main():
                 mode = Container(docker)
 
             if config.run_once:
-                scheduler.add_job(mode.update, name=f'Run Once container update for {socket}')
+                scheduler.add_job(mode.update, name=_('Run Once container update for %s') % socket)
             else:
                 if mode.mode == 'container':
-                    scheduler.add_job(mode.self_check, name=f'Self Check for {socket}')
+                    scheduler.add_job(mode.self_check, name=_('Self Check for %s') % socket)
                 if config.cron:
                     scheduler.add_job(
                         mode.update,
-                        name=f'Cron container update for {socket}',
+                        name=_('Cron container update for %s') % socket,
                         trigger='cron',
                         minute=config.cron[0],
                         hour=config.cron[1],
@@ -183,15 +193,15 @@ def main():
                 else:
                     scheduler.add_job(
                         mode.update,
-                        name=f'Initial run interval container update for {socket}'
+                        name=_('Initial run interval container update for %s') % socket
                     )
                     scheduler.add_job(
                         mode.update,
-                        name=f'Interval container update for {socket}',
+                        name=_('Interval container update for %s') % socket,
                         trigger='interval', seconds=config.interval
                     )
         except ConnectionError:
-            ol.logger.error("Could not connect to socket %s. Check your config", socket)
+            ol.logger.error(_("Could not connect to socket %s. Check your config"), socket)
 
     if config.run_once:
         next_run = None
@@ -199,7 +209,7 @@ def main():
         next_run = scheduler.get_jobs()[0].next_run_time
     else:
         now = datetime.now(timezone.utc).astimezone()
-        next_run = (now + timedelta(0, config.interval)).strftime("%Y-%m-%d %H:%M:%S")
+        next_run = (now + timedelta(0, config.interval)).strftime(_("%Y-%m-%d %H:%M:%S"))
 
     if not config.skip_startup_notifications:
         notification_manager.send(kind='startup', next_run=next_run)
