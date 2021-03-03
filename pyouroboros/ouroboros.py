@@ -64,6 +64,9 @@ def main():
                                  'EXAMPLE: -N discord://1234123412341234/jasdfasdfasdfasddfasdf '
                                  'mailto://user:pass@gmail.com')
 
+    core_group.add_argument('-la', '--language', nargs='+', default=Config.language, dest='LANGUAGE',
+                            help='Set the language of the translation\nDEFAULT: en')
+
     docker_group = parser.add_argument_group("Docker", "Configuration of docker functionality")
     docker_group.add_argument('-m', '--monitor', nargs='+', default=Config.monitor, dest='MONITOR',
                               help='Which container(s) to monitor\n'

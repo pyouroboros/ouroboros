@@ -1,0 +1,65 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2021-03-03 21:07+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: pyouroboros/notifiers.py:41
+msgid "Could not add notifier %s"
+msgstr ""
+
+#: pyouroboros/notifiers.py:48
+msgid "Ouroboros has started"
+msgstr ""
+
+#: pyouroboros/notifiers.py:50
+msgid "Host: %s"
+msgstr ""
+
+#: pyouroboros/notifiers.py:51
+msgid "%Y-%m-%d %H:%M:%S"
+msgstr ""
+
+#: pyouroboros/notifiers.py:51
+msgid "Time: %s"
+msgstr ""
+
+#: pyouroboros/notifiers.py:52
+msgid "Next Run: %s"
+msgstr ""
+
+#: pyouroboros/notifiers.py:54
+msgid "Ouroboros has updated containers!"
+msgstr ""
+
+#: pyouroboros/notifiers.py:56
+msgid "Host/Socket: %s / %s"
+msgstr ""
+
+#: pyouroboros/notifiers.py:57
+msgid "Containers Monitored: %d"
+msgstr ""
+
+#: pyouroboros/notifiers.py:58
+msgid "Total Containers Updated: %d"
+msgstr ""
+
+#: pyouroboros/notifiers.py:59
+msgid "Containers updated this pass: %d"
+msgstr ""
+
+#: pyouroboros/notifiers.py:63
+msgid "{} updated from {} to {}"
+msgstr ""
+
