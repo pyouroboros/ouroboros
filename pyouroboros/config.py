@@ -8,7 +8,7 @@ class Config(object):
                'PROMETHEUS_PORT', 'NOTIFIERS', 'REPO_USER', 'REPO_PASS', 'CLEANUP', 'RUN_ONCE', 'CRON',
                'INFLUX_URL', 'INFLUX_PORT', 'INFLUX_USERNAME', 'INFLUX_PASSWORD', 'INFLUX_DATABASE', 'INFLUX_SSL',
                'INFLUX_VERIFY_SSL', 'DATA_EXPORT', 'SELF_UPDATE', 'LABEL_ENABLE', 'DOCKER_TLS', 'LABELS_ONLY',
-               'DRY_RUN', 'HOSTNAME', 'DOCKER_TLS_VERIFY', 'SWARM', 'SKIP_STARTUP_NOTIFICATIONS']
+               'DRY_RUN', 'HOSTNAME', 'DOCKER_TLS_VERIFY', 'SWARM', 'SKIP_STARTUP_NOTIFICATIONS', 'LANGUAGE']
 
     hostname = environ.get('HOSTNAME')
     interval = 300
@@ -27,6 +27,7 @@ class Config(object):
     self_update = False
     label_enable = False
     labels_only = False
+    language = 'en'
 
     repo_user = None
     repo_pass = None

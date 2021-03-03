@@ -1,4 +1,5 @@
 import apprise
+import gettext
 
 from logging import getLogger
 from datetime import datetime, timezone
@@ -11,6 +12,15 @@ class NotificationManager(object):
         self.logger = getLogger()
 
         self.apprise = self.build_apprise()
+        self._ = None
+
+        try:
+            language = gettext.translation('notifiers', localedir='locales', languages=self.config.language)
+            language.install()
+            self._ = language.gettext
+        except FileNotFoundError:
+            self.logger.error("Can't find the '%s' language", self.config.language)
+            self._ = gettext.gettext
 
     def build_apprise(self):
         asset = apprise.AppriseAsset(
@@ -28,29 +38,29 @@ class NotificationManager(object):
         for notifier in self.config.notifiers:
             add = apprise_obj.add(notifier)
             if not add:
-                self.logger.error('Could not add notifier %s', notifier)
+                self.logger.error(_('Could not add notifier %s'), notifier)
 
         return apprise_obj
 
     def send(self, container_tuples=None, socket=None, kind='update', next_run=None, mode='container'):
         if kind == 'startup':
-            now = datetime.now(timezone.utc).astimezone()
-            title = f'Ouroboros has started'
+            now = datetime.now(timezone.utc).astimezone()            
+            title = _('Ouroboros has started')
             body_fields = [
-                f'Host: {self.config.hostname}',
-                f'Time: {now.strftime("%Y-%m-%d %H:%M:%S")}',
-                f'Next Run: {next_run}']
+                _('Host: %s') % self.config.hostname,
+                _('Time: %s') % now.strftime(_("%Y-%m-%d %H:%M:%S")),
+                _('Next Run: %s') % next_run]
         else:
-            title = 'Ouroboros has updated containers!'
+            title = _('Ouroboros has updated containers!')
             body_fields = [
-                f"Host/Socket: {self.config.hostname} / {socket.split('//')[1]}",
-                f"Containers Monitored: {self.data_manager.monitored_containers[socket]}",
-                f"Total Containers Updated: {self.data_manager.total_updated[socket]}",
-                f"Containers updated this pass: {len(container_tuples)}"
+                _('Host/Socket: %s / %s') % (self.config.hostname, socket.split('//')[1]),
+                _('Containers Monitored: %d') % self.data_manager.monitored_containers[socket],
+                _('Total Containers Updated: %d') % self.data_manager.total_updated[socket],
+                _('Containers updated this pass: %d') % len(container_tuples)
             ]
             body_fields.extend(
                 [
-                    "{} updated from {} to {}".format(
+                    _("{} updated from {} to {}").format(
                         container.name,
                         old_image if mode == 'service' else old_image.short_id.split(':')[1],
                         new_image.short_id.split(':')[1]

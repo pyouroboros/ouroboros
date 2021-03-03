@@ -1,0 +1,53 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2021-03-03 21:33+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: pyouroboros/ouroboros.py:158
+msgid "Version: %s-%s"
+msgstr "Versión: %s-%s"
+
+#: pyouroboros/ouroboros.py:161
+msgid "Ouroboros configuration: %s"
+msgstr "Configuración de Ouroboros: %s"
+
+#: pyouroboros/ouroboros.py:177
+msgid "Run Once container update for %s"
+msgstr "Ejecutar una vez la actualización del contenedor para %s"
+
+#: pyouroboros/ouroboros.py:180
+msgid "Self Check for %s"
+msgstr "Autocomprobación de %s"
+
+#: pyouroboros/ouroboros.py:184
+msgid "Cron container update for %s"
+msgstr "Actualización de contenedor cron para %s"
+
+#: pyouroboros/ouroboros.py:196
+msgid "Initial run interval container update for %s"
+msgstr "Actualización del contenedor del intervalo de ejecución inicial para %s"
+
+#: pyouroboros/ouroboros.py:200
+msgid "Interval container update for %s"
+msgstr "Actualización de contenedor de intervalo para %s"
+
+#: pyouroboros/ouroboros.py:204
+msgid "Could not connect to socket %s. Check your config"
+msgstr "No se pudo conectar al socket %s. Comprueba tu configuración"
+
+#: pyouroboros/ouroboros.py:212
+msgid "%Y-%m-%d %H:%M:%S"
+msgstr "%d/%m/%Y %H:%M:%S"
+
