@@ -35,7 +35,7 @@ class NotificationManager(object):
     def send(self, container_tuples=None, socket=None, kind='update', next_run=None, mode='container'):
         if kind == 'startup':
             now = datetime.now(timezone.utc).astimezone()
-            title = f'Ouroboros has started'
+            title = 'Ouroboros has started'
             body_fields = [
                 f'Host: {self.config.hostname}',
                 f'Time: {now.strftime("%Y-%m-%d %H:%M:%S")}',
