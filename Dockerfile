@@ -1,4 +1,4 @@
-FROM amd64/python:3.8.5-alpine
+FROM amd64/python:3.12.0a4-alpine3.17
 
 LABEL maintainers="dirtycajunrice,circa10a"
 
